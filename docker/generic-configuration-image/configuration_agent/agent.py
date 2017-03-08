@@ -3,7 +3,6 @@
 
 from doubledecker import clientSafe
 from configuration_agent import utils
-from configuration_agent import constants
 
 from threading import Event
 from threading import Thread
@@ -12,6 +11,7 @@ import json
 import time
 import os
 import sys
+import shutil
 
 
 class ConfigurationAgent(clientSafe.ClientSafe):
@@ -56,12 +56,17 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         '''
         self.datadisk_path = "/datadisk"
         self.metadata_file = self.datadisk_path + "/metadata"
+        self.tenant_keys_file = self.datadisk_path + "/tenant-keys.json"
+        self.public_keys_file = self.datadisk_path + "/public-keys.json"
 
-        self.vnf = vnf
+        self.broker_url = None
+
+        self.configuration_interface = None
 
         assert os.path.isdir(self.datadisk_path) is True, "datadisk not mounted onto the VNF"
         assert os.path.exists(self.metadata_file) is True, "metadata file not found in datadisk"
         self.read_data_disk(self.metadata_file)
+        self.vnf = vnf(self.configuration_interface)
         self.start_agent()
 
     def read_data_disk(self, ds_metadata):
@@ -77,10 +82,14 @@ class ConfigurationAgent(clientSafe.ClientSafe):
                 words = "".join(line.split()).split('=')
                 if words[0] == "tenant-id":
                     self.tenant_id = words[1]
+                elif words[0] == "broker-url":
+                    self.broker_url = words[1]
                 elif words[0] == "vnf-name":
                     self.vnf_name = words[1]
                 elif words[0] == "vnf-id":
                     self.vnf_id = words[1]
+                elif words[0] == "configuration-interface":
+                    self.configuration_interface = words[1]
                 else:
                     logging.debug("unknown keyword in metadata: " + words[0])
         except Exception as e:
@@ -93,6 +102,16 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         assert self.tenant_id is not None, "tenant-id key not found in metedata file"
         assert self.vnf_name is not None, "vnf-name key not found in metedata file"
         assert self.vnf_id is not None, "vnf-id key not found in metedata file"
+        assert self.broker_url is not None, "broker-url key not found in metedata file"
+        assert self.configuration_interface is not None, "configuration-interface key not found in metedata file"
+        assert os.path.exists(self.public_keys_file) is True, "public_keys.json file not found in datadisk"
+        assert os.path.exists(self.tenant_keys_file) is True, "tenant_keys.json file not found in datadisk"
+        if os.path.isdir("/etc/doubledecker") is False:
+            os.makedirs("/etc/doubledecker")
+        assert os.path.exists("/etc/doubledecker/" + self.tenant_id + "-keys.json") is False, "tenant-keys.json file already exist in /etc/doubledecker"
+        assert os.path.exists("/etc/doubledecker/public-keys.json") is False, "public-keys.json file already exist in /etc/doubledecker"
+        shutil.copy(self.tenant_keys_file, "/etc/doubledecker/" + self.tenant_id + "-keys.json")
+        shutil.copy(self.public_keys_file, "/etc/doubledecker/public-keys.json")
 
     def registration(self, name, dealerurl, customer, keyfile):
         super().__init__(name=name.encode('utf8'), 
@@ -114,9 +133,9 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         assert self.vnf.mac_address is not None, "Mac address is undefined"
         logging.debug("Registering to the message broker")
         thread = self.registration(name=self.vnf.mac_address,
-                                   dealerurl=constants.dealer,
+                                   dealerurl=self.broker_url,
                                    customer=self.tenant_id,
-                                   keyfile=constants.keyfile)
+                                   keyfile="/etc/doubledecker/" + self.tenant_id + "-keys.json")
 
         while self.is_registered_to_dd is False:  # waiting for the agent to be registered to DD broker
             self.registered_to_dd.wait()
@@ -134,11 +153,11 @@ class ConfigurationAgent(clientSafe.ClientSafe):
 
     def publish_status(self):
         if self.publishable:
-            if self.last_published_status != self.vnf.get_json_instance():
+            if self.last_published_status != self.vnf.get_status():
                 logging.debug("Publishing a new status")
-                logging.debug("NEW STATUS: " + self.vnf.get_json_instance())
-                self.publish_public('public.status_exportation', self.vnf.get_json_instance())
-                self.last_published_status = self.vnf.get_json_instance()
+                logging.debug("NEW STATUS: " + self.vnf.get_status())
+                self.publish_public('public.status_exportation', self.vnf.get_status())
+                self.last_published_status = self.vnf.get_status()
         
     def config(self, name, dealerURL, customer):
         super().config(name, dealerURL, customer)
@@ -162,7 +181,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
             logging.debug("Good validation!")
 
         # Configure VNF
-        self.vnf.set_status(json.loads(msg))
+        self.vnf.set_configuration(json.loads(msg))
         # Export again the status
         self.publish_status()
             

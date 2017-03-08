@@ -22,13 +22,13 @@ import iptc
 from pyang.__init__ import Context, FileRepository
 from pyang.translators.yin import YINPlugin
 from pyang import plugin
-from configuration_agent.nat_config import constants
+from configuration_agent.natconfig.vnf_interface import VNF
 
 from configuration_agent import utils
 from configuration_agent.utils import Bash
 from configuration_agent.common.interface import Interface
 
-class Nat(object):
+class Nat(VNF):
     '''
     Class that configure and export
     the status of a NAT VNF
@@ -37,23 +37,17 @@ class Nat(object):
     yang_module_name = 'config-nat'
     type = 'nat'
 
-    def __init__(self):
+    def __init__(self, iface):
         self.interfaces = []
         self.json_instance = {self.yang_module_name+':'+'interfaces': {'ifEntry': []},
                               self.yang_module_name + ':' + 'staticBindings': {'floatingIP': []}}
         self.if_entries = self.json_instance[self.yang_module_name+':'+'interfaces']['ifEntry']
         self.yang_model = self.get_yang()
-        self.mac_address = utils.get_mac_address(constants.configuration_interface)
+        assert iface is not None, "You have to pass the configuration interface name to the class constructur"
+        self.configuration_interface = iface
+        self.mac_address = utils.get_mac_address(self.configuration_interface)
         self.wan_interface = None
         self.floating_ip = []
-
-    def get_json_instance(self):
-        '''
-        Get the json representing the status
-        of the VNF.
-        '''
-        logging.debug("exported status: "+json.dumps(self.get_status()))
-        return json.dumps(self.get_status())
 
     def get_yang(self):
         '''
@@ -74,7 +68,7 @@ class Nat(object):
         self.get_floating()
         self.get_floating_dict()
         logging.debug(json.dumps(self.json_instance))
-        return self.json_instance
+        return json.dumps(self.get_status())
 
     def get_interfaces_dict(self):
         '''
@@ -244,10 +238,10 @@ class Nat(object):
         '''
         wan_interface_name = self.get_wan_interface_name()
         for interface in self.interfaces:
-            logging.debug("actual if: "+interface.name+" conf: "+constants.configuration_interface)
+            logging.debug("actual if: "+interface.name+" conf: "+self.configuration_interface)
             if wan_interface_name is not None and interface.name == wan_interface_name:
                 interface.type = 'wan'
-            elif interface.name == constants.configuration_interface:
+            elif interface.name == self.configuration_interface:
                 interface.type = 'config'
                 interface.configuration_type = 'dhcp'
             elif wan_interface_name is not None:
@@ -310,5 +304,11 @@ class Nat(object):
 
     def base_conf(self):
         Bash('echo "UseDNS no" >> /etc/ssh/sshd_config')
+
+    def get_mac_address(self):
+        return self.mac_address
+
+    def set_yang_model(self):
+        pass
 
 logging.basicConfig(level=logging.DEBUG)

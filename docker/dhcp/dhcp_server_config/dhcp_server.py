@@ -21,18 +21,18 @@ import inspect
 import netifaces
 from netaddr import IPNetwork 
 import iptools
+from configuration_agent.dhcp_server_config.vnf_interface import VNF
 
 from pyang.__init__ import Context, FileRepository
 from pyang.translators.yin import YINPlugin
 from pyang import plugin
-from configuration_agent.dhcp_server_config import constants
 from configuration_agent.dhcp_server_config.client import Client
 
 from configuration_agent import utils
 from configuration_agent.utils import Bash
 from configuration_agent.common.interface import Interface
         
-class Dhcp(object):
+class Dhcp(VNF):
     '''
     Class that configure and export
     the status of a dhcp VNF
@@ -40,23 +40,19 @@ class Dhcp(object):
     yang_module_name = 'config-dhcp-server'
     type = 'dhcp'
     
-    def __init__(self):
+    def __init__(self, iface):
         self.interfaces = []
         self.json_instance = {self.yang_module_name+':'+'interfaces':{'ifEntry':[]}, 
                               self.yang_module_name+':'+'server':{'globalIpPool':{}}}
         self.if_entries = self.json_instance[self.yang_module_name+':'+'interfaces']['ifEntry']
         self.yang_model = self.get_yang()
         # MAC address of the configuration interface
-        self.mac_address = utils.get_mac_address(constants.configuration_interface)
+        assert iface is not None, "You have to pass the configuration interface name to the class constructur"
+        self.configuration_interface = iface
+        self.mac_address = utils.get_mac_address(self.configuration_interface)
         self.dhcp_interfaces = []
         self.clients = {}
-    
-    def get_json_instance(self):
-        '''
-        Get the json representing the status
-        of the VNF.
-        '''
-        return json.dumps(self.get_status())
+        self.configuration_interface = None
     
     def get_yang(self):
         '''
@@ -74,7 +70,7 @@ class Dhcp(object):
         self.get_interfaces()
         self.get_dhcp_configuration()
         self.get_interfaces_dict()
-        return self.json_instance
+        return json.dumps(self.json_instance)
     
     def get_dhcp_configuration(self):
         '''
@@ -128,7 +124,7 @@ class Dhcp(object):
             dict['default_gw'] = interface.default_gw
         return dict
     
-    def set_status(self, json_instance):
+    def set_configuration(self, json_instance):
         '''
         Set the status of the VNF starting from a
         json instance
@@ -334,7 +330,8 @@ class Dhcp(object):
             else:
                 ipv4_address = ""
                 netmask = ""
-            if interface == constants.configuration_interface:
+            assert self.configuration_interface is not None, "Configuration interface unknown"
+            if interface == self.configuration_interface:
                 _type = 'config'
                 configuration_type = 'dhcp'
             else:
@@ -349,5 +346,11 @@ class Dhcp(object):
         
     def base_conf(self):
         Bash('echo "UseDNS no" >> /etc/ssh/sshd_config')
+
+    def get_mac_address(self):
+        return self.mac_address
+
+    def set_yang_model(self):
+        pass
         
 logging.basicConfig(level=logging.DEBUG)

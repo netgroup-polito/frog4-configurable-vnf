@@ -6,7 +6,6 @@ Created on Dec 18, 2015
 import os
 import netifaces
 import logging
-import json
 import xmltodict
 
 try:
@@ -16,7 +15,7 @@ except ImportError:
 
 from pyang.__init__ import Context, FileRepository
 from pyang.translators.yin import YINPlugin
-from pyang import plugin
+
 
 class Bash():
     def __init__(self, command):
@@ -29,12 +28,14 @@ class Bash():
     
     def get_output(self):
         return self.output
-    
+
+
 def get_mac_address(configuration_interface):
     interfaces = netifaces.interfaces()
     for interface in interfaces:
         if interface == configuration_interface:
             return netifaces.ifaddresses(interface)[17][0]['addr']
+
 
 def _transform_yang_to_dict(yang_model_string): 
     class Opts(object):
@@ -52,7 +53,8 @@ def _transform_yang_to_dict(yang_model_string):
     yin.emit(ctx=ctx, modules=modules, fd=yin_string)
     xml = yin_string.getvalue()
     return xmltodict.parse(xml)
-       
+
+
 def validate_json(json_instance, yang_model):
     yang_model_dict = _transform_yang_to_dict(yang_model)
     working_dir = '/tmp/'

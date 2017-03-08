@@ -33,5 +33,5 @@ class Interface(object):
             if self.default_gw is not None:
                 Bash('route del default gw '+self.default_gw)
             Bash('ifconfig '+self.name+' 0')
-            Bash('if [ ! -e "/usr/sbin/dhclient" ]; then cp /sbin/dhclient /usr/sbin/dhclient done fi')
+            Bash('if [ ! -e "/usr/sbin/dhclient" ]; then cp /sbin/dhclient /usr/sbin/dhclient; fi')
             Bash('/usr/sbin/dhclient '+self.name+' -v')
