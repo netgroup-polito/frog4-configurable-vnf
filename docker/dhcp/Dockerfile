@@ -13,13 +13,13 @@ RUN sed '/PermitRootLogin without-password/d' /etc/ssh/sshd_config > tmp_file &&
 RUN apt-get install -y isc-dhcp-server
 ADD sysctl.conf /etc/sysctl.conf
 
-RUN pip3 install netifaces netaddr iptools
+RUN pip3 install netifaces netaddr iptools jsonschema
 
-#########################################################################
-#									#
-#			Script boot					#
-#									#
-#########################################################################
+
+#Insert template into the datadisk
+WORKDIR /datadisk
+ADD template.json template.json
+
 WORKDIR /configuration_agent
 RUN mkdir dhcp_server_config
 ADD dhcp_server_config dhcp_server_config

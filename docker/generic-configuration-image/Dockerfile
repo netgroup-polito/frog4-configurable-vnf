@@ -42,6 +42,9 @@ RUN mkdir /etc/doubledecker
 
 ADD ./configuration_agent /configuration_agent
 
+WORKDIR /
+ADD vnf_template_library vnf_template_library
+
 #########################
 #
 # DATADISK EMULATION

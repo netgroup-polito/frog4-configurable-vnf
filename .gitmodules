@@ -1,0 +1,8 @@
+[submodule "docker/dhcp/vnf-template-library"]
+	path = docker/dhcp/vnf-template-library
+	url = https://github.com/netgroup-polito/vnf-template-library.git
+	branch = yang_model_support
+[submodule "docker/generic-configuration-image/vnf-template-library"]
+	path = docker/generic-configuration-image/vnf-template-library
+	url = https://github.com/netgroup-polito/vnf-template-library.git
+	branch = yang_model_support

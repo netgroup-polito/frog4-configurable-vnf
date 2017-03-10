@@ -2,4 +2,3 @@ vnf-name = dhcp
 tenant-id = a
 vnf-id = 12
 broker-url = tcp://0.0.0.0:5555
-configuration-interface = eth0

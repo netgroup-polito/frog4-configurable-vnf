@@ -4,7 +4,7 @@ MAINTAINER Politecnico di Torino
 RUN apt-get update && apt-get install -y iptables
 ADD sysctl.conf /etc/sysctl.conf
 
-RUN pip3 install netifaces python-iptables
+RUN pip3 install netifaces python-iptables jsonschema
 #########################################################################
 #									#
 #			Script boot					#
@@ -15,6 +15,10 @@ RUN mkdir nat_config
 ADD nat_config nat_config
 RUN chmod +x nat_config
 RUN chmod +x nat_config
+
+#Insert template into the datadisk
+WORKDIR /datadisk
+ADD template.json template.json
 
 WORKDIR /
 ADD ./start_nat.sh start_nat.sh

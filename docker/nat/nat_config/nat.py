@@ -37,17 +37,25 @@ class Nat(VNF):
     yang_module_name = 'config-nat'
     type = 'nat'
 
-    def __init__(self, iface):
+    def __init__(self, management_iface):
         self.interfaces = []
         self.json_instance = {self.yang_module_name+':'+'interfaces': {'ifEntry': []},
                               self.yang_module_name + ':' + 'staticBindings': {'floatingIP': []}}
         self.if_entries = self.json_instance[self.yang_module_name+':'+'interfaces']['ifEntry']
         self.yang_model = self.get_yang()
-        assert iface is not None, "You have to pass the configuration interface name to the class constructur"
-        self.configuration_interface = iface
+        assert management_iface is not None, "You have to pass the configuration interface name to the class constructur"
+        self.configuration_interface = management_iface
         self.mac_address = utils.get_mac_address(self.configuration_interface)
         self.wan_interface = None
         self.floating_ip = []
+
+    def get_json_instance(self):
+        '''
+        Get the json representing the status
+        of the VNF.
+        '''
+        logging.debug("exported status: "+json.dumps(self.get_status()))
+        return
 
     def get_yang(self):
         '''

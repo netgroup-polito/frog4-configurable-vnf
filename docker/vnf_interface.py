@@ -5,7 +5,7 @@ class VNF(object):
     def get_status(self):
         pass
 
-    def set_configuration(self):
+    def set_configuration(self, configuration):
         pass
 
     def set_yang_model(self, yang_model):

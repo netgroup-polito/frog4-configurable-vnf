@@ -31,7 +31,8 @@ from configuration_agent.dhcp_server_config.client import Client
 from configuration_agent import utils
 from configuration_agent.utils import Bash
 from configuration_agent.common.interface import Interface
-        
+
+
 class Dhcp(VNF):
     '''
     Class that configure and export
@@ -40,15 +41,15 @@ class Dhcp(VNF):
     yang_module_name = 'config-dhcp-server'
     type = 'dhcp'
     
-    def __init__(self, iface):
+    def __init__(self, management_iface):
         self.interfaces = []
         self.json_instance = {self.yang_module_name+':'+'interfaces':{'ifEntry':[]}, 
                               self.yang_module_name+':'+'server':{'globalIpPool':{}}}
         self.if_entries = self.json_instance[self.yang_module_name+':'+'interfaces']['ifEntry']
         self.yang_model = self.get_yang()
         # MAC address of the configuration interface
-        assert iface is not None, "You have to pass the configuration interface name to the class constructur"
-        self.configuration_interface = iface
+        assert management_iface is not None, "You have to pass the configuration interface name to the class constructur"
+        self.configuration_interface = management_iface
         self.mac_address = utils.get_mac_address(self.configuration_interface)
         self.dhcp_interfaces = []
         self.clients = {}
