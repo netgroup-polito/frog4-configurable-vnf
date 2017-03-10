@@ -1,0 +1,4 @@
+vnf-name = dhcp
+tenant-id = 123
+vnf-id = 12
+broker-url = tcp://0.0.0.0:5555
