@@ -91,14 +91,6 @@ module config-dhcp-server {
 					enum static; 
 					enum not_defined;
 				} 
-			} 
-			leaf type { 
-				description "name='Interface type'";
-				type enumeration { 
-					enum dhcp; 
-					enum config; 
-					enum not_defined;
-				} 
 			}
 			leaf default_gw {                         
 				description "name='Default GW'";

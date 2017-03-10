@@ -39,7 +39,6 @@ class Dhcp(VNF):
     the status of a dhcp VNF
     '''
     yang_module_name = 'config-dhcp-server'
-    type = 'dhcp'
     
     def __init__(self, management_iface):
         self.interfaces = []
@@ -82,15 +81,6 @@ class Dhcp(VNF):
         with open('/etc/default/isc-dhcp-server', 'r') as isc_dhcp_server_file:
             interface_lines = isc_dhcp_server_file.readlines()
 
-        try:
-            interfaces = interface_lines[0].split('INTERFACES="')[1].split('"')[0].split(' ')
-            for dhcp_interface in interfaces:
-                for interface in self.interfaces:
-                    if interface.name == dhcp_interface:
-                        interface.type = 'dhcp'
-        except Exception:
-            logging.debug("no interface assigned to the DHCP server")
-
     def get_interfaces_dict(self):
         '''
         Get a python dictionary with the interfaces
@@ -114,10 +104,6 @@ class Dhcp(VNF):
             dict['configurationType'] = interface.configuration_type
         else:
             dict['configurationType'] = 'not_defined'
-        if interface.type is not None:
-            dict['type'] = interface.type
-        else:
-            dict['type'] = 'not_defined'
         if interface.ipv4_address is not None and interface.ipv4_address != "":
             dict['address'] = interface.ipv4_address
         if interface.default_gw is not None and interface.ipv4_address != "":
@@ -144,12 +130,11 @@ class Dhcp(VNF):
                 address = None
             else:
                 address = interface['address']
-            new_interface = Interface(name = interface['name'], 
-                                        ipv4_address= address,
-                                        _type = interface['type'],
-                                        configuration_type= interface['configurationType'],
-                                        default_gw = default_gw)
-            if new_interface.type == 'dhcp':
+            new_interface = Interface(name=interface['name'],
+                                      ipv4_address=address,
+                                      configuration_type=interface['configurationType'],
+                                      default_gw=default_gw)
+            if new_interface.name != self.configuration_interface:
                 self.dhcp_interfaces.append(new_interface)
             new_interface.set_interface()
             interfaces.append(new_interface)
@@ -318,7 +303,6 @@ class Dhcp(VNF):
             if interface == 'lo':
                 continue
             default_gw = ''
-            configuration_type = None
             gws = netifaces.gateways()
             if gws['default'] != {} and gws['default'][netifaces.AF_INET][1] == interface:
                 default_gw = gws['default'][netifaces.AF_INET][0]
@@ -332,18 +316,16 @@ class Dhcp(VNF):
                 netmask = ""
             assert self.configuration_interface is not None, "Configuration interface unknown"
             if interface == self.configuration_interface:
-                _type = 'config'
                 configuration_type = 'dhcp'
             else:
-                _type = 'not_defined'
-            self.interfaces.append(Interface(name = interface, status = None, 
-                      mac_address = interface_af_link_info[0]['addr'],
-                      ipv4_address = ipv4_address,
-                      netmask = netmask,
-                      default_gw = default_gw,
-                      _type = _type,
-                      configuration_type = configuration_type))
-        
+                configuration_type = 'static'
+            self.interfaces.append(Interface(name=interface, status=None,
+                                             mac_address=interface_af_link_info[0]['addr'],
+                                             ipv4_address=ipv4_address,
+                                             netmask=netmask,
+                                             default_gw=default_gw,
+                                             configuration_type=configuration_type))
+
     def base_conf(self):
         Bash('echo "UseDNS no" >> /etc/ssh/sshd_config')
 
