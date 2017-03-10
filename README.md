@@ -16,4 +16,5 @@ The datadisk contains:
 * the template of the VNF
 * an initial configuration, which the agent use in order to configure the VNF during the agent booting time (optional)
 * a metadata file
+
 Here you can find an example of metadata file (with the supported keyword)
