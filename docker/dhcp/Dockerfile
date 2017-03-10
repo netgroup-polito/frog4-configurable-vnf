@@ -16,9 +16,11 @@ ADD sysctl.conf /etc/sysctl.conf
 RUN pip3 install netifaces netaddr iptools jsonschema
 
 
-#Insert template into the datadisk
+#Insert template and the metadata file into the datadisk
 WORKDIR /datadisk
 ADD template.json template.json
+ADD metadata metadata
+ADD initial_configuration.json initial_configuration.json
 
 WORKDIR /configuration_agent
 RUN mkdir dhcp_server_config

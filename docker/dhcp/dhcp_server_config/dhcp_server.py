@@ -53,7 +53,6 @@ class Dhcp(VNF):
         self.mac_address = utils.get_mac_address(self.configuration_interface)
         self.dhcp_interfaces = []
         self.clients = {}
-        self.configuration_interface = None
     
     def get_yang(self):
         '''

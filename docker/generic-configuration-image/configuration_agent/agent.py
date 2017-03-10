@@ -57,15 +57,21 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         '''
         datadisk_path contains the path where an external volume is attached to the VNF.
         Inside such a module you can find a metadata file containing some information about the VNF
+        The datadisk contains:
+        - tenant private and public keys
+        - broker public key
+        - key of the DD public tenant
+        - template of the VNF
+        - a metadata file
+        - an initial configuration the VNF has tu use at bootstrap (optional)
         '''
         self.datadisk_path = "/datadisk"
         self.metadata_file = self.datadisk_path + "/metadata"
         self.tenant_keys_file = self.datadisk_path + "/tenant-keys.json"
         self.public_keys_file = self.datadisk_path + "/public-keys.json"
-
         self.template = self.datadisk_path + "/template.json"
-
         self.broker_url = None
+        self.initial_configuration_path = self.datadisk_path + "/initial_configuration.json"
 
         self.configuration_interface = None
 
@@ -75,6 +81,12 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         self.read_data_disk(self.metadata_file)
         self.configuration_interface = self.get_iface_from_template()
         self.vnf = vnf(self.configuration_interface)
+        if os.path.exists(self.initial_configuration_path):
+            with open(self.initial_configuration_path) as configuration:
+                initial_configuration = configuration.read()
+            self.publishable = True
+            self.configure_vnf(initial_configuration)
+
         self.start_agent()
 
     def read_data_disk(self, ds_metadata):
@@ -115,10 +127,10 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         assert os.path.exists(self.template) is True, "template (" + self.template + ") not found in datadisk"
         if os.path.isdir("/etc/doubledecker") is False:
             os.makedirs("/etc/doubledecker")
-        assert os.path.exists("/etc/doubledecker/" + self.tenant_id + "-keys.json") is False, "tenant-keys.json file already exist in /etc/doubledecker"
-        assert os.path.exists("/etc/doubledecker/public-keys.json") is False, "public-keys.json file already exist in /etc/doubledecker"
-        shutil.copy(self.tenant_keys_file, "/etc/doubledecker/" + self.tenant_id + "-keys.json")
-        shutil.copy(self.public_keys_file, "/etc/doubledecker/public-keys.json")
+        if os.path.exists("/etc/doubledecker/" + self.tenant_id + "-keys.json") is False:
+            shutil.copy(self.tenant_keys_file, "/etc/doubledecker/" + self.tenant_id + "-keys.json")
+        if os.path.exists("/etc/doubledecker/public-keys.json") is False:
+            shutil.copy(self.public_keys_file, "/etc/doubledecker/public-keys.json")
 
     def registration(self, name, dealerurl, customer, keyfile):
         super().__init__(name=name.encode('utf8'), 
@@ -186,7 +198,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
 
     def configure_vnf(self, configuration):
         # Validate json
-        exit_code, output = utils.validate_json(msg, self.vnf.yang_model)
+        exit_code, output = utils.validate_json(configuration, self.vnf.yang_model)
         if exit_code is not None:
             raise Exception("Wrong configuration file: " + output)
         else:

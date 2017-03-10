@@ -16,10 +16,9 @@ ADD nat_config nat_config
 RUN chmod +x nat_config
 RUN chmod +x nat_config
 
-#Insert template and the metadata file into the datadisk
+#Insert template into the datadisk
 WORKDIR /datadisk
 ADD template.json template.json
-ADD metadata metadata
 
 WORKDIR /
 ADD ./start_nat.sh start_nat.sh
