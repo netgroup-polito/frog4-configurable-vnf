@@ -6,6 +6,7 @@ Each configurable VNF is able to:
 * set the parameters described by the configuration into the VNF
 * retrieve the actual status of the VNF
 * describe the actual status of the VNF and export it to interested components (e.g., the configuration service)
+
 ##Datadisk
 After a VNF deployment, the Universal Node attaches a volume (datadisk) containing some information needed by the configuration agent in order to work properly. 
 The datadisk contains:
