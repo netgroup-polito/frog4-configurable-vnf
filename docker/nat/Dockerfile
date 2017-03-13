@@ -14,12 +14,15 @@ WORKDIR /configuration_agent
 RUN mkdir nat_config
 ADD nat_config nat_config
 RUN chmod +x nat_config
-RUN chmod +x nat_config
+RUN mkdir model
+ADD model model
+RUN chmod +x model
 
 #Insert template and the metadata file into the datadisk
 WORKDIR /datadisk
 ADD template.json template.json
 ADD metadata metadata
+ADD initial_configuration.json initial_configuration.json
 
 WORKDIR /
 ADD ./start_nat.sh start_nat.sh
