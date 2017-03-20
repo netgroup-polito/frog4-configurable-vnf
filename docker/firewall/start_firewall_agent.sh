@@ -1,0 +1,1 @@
+sudo python3 -m configuration_agent.firewall_config.firewall_agent

@@ -1,0 +1,73 @@
+{
+	"config-firewall:interfaces": {
+		"ifEntry": [	
+			{ 
+			"name": "eth0",
+			"management": true,
+			"ipv4_configuration": {
+				"configurationType": "dhcp"
+			}},
+			{
+			"name": "eth1"
+			},
+			{
+			"name": "eth2"
+			}
+		]
+	},
+	"config-firewall:firewall": {
+		"wan-interface": "eth2",
+		"policies": [
+			{
+			"policy-name": "pol1",
+			"description": "allow ssh",
+			"action": "accept",
+			"protocol": "tcp",
+			"destination-port": "22"
+			},
+			{
+			"policy-name": "pol2",
+			"description": "allow incoming http traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"source-port": "80"
+			},
+			{
+			"policy-name": "pol3",
+			"description": "allow outgoing http traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"destination-port": "80"
+			},
+			{
+			"policy-name": "pol4",
+			"description": "allow incoming https traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"source-port": "443"
+			},
+			{
+			"policy-name": "pol5",
+			"description": "allow outgoing https traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"destination-port": "443"
+			},
+			{
+			"policy-name": "pol6",
+			"description": "block all tcp traffic",
+			"action": "drop",
+			"protocol": "tcp"
+			}
+		],
+		"blacklist" : [
+			{
+				"uri": "www.wikipedia.com"
+			},
+			{
+				"uri": "www.youtube.com"
+			}
+		],
+		"whitelist" : []
+	}
+} 
