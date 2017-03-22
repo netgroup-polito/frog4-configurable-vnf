@@ -4,9 +4,6 @@ module config-firewall {
     import ietf-inet-types { 
 		prefix inet; 
 	}
-	import ietf-yang-types {
-		prefix yang;
-	}
     description "Firewall configuration";
 
 	container interfaces { 
@@ -16,7 +13,7 @@ module config-firewall {
 				type string;
 			}
 			leaf mac-address{
-			    type yang:mac-address;
+			    type string;
 			    mandatory false;
 			}
 			leaf management{

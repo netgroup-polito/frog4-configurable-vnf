@@ -160,10 +160,13 @@ class Firewall(VNF):
         logging.debug("Scanning interfaces...done!\n")
 
     def _create_bridge(self, br_name, if1, if2):
-        Bash('ifconfig ' + if1 + 'down')
-        Bash('ifconfig ' + if2 + 'down')
-        Bash('ifconfig ' + if1 + 'up 0.0.0.0')
-        Bash('ifconfig ' + if2 + 'up 0.0.0.0')
+        Bash('ifconfig ' + if1 + ' down')
+        Bash('ifconfig ' + if2 + ' down')
+        Bash('ifconfig ' + if1 + ' up 0.0.0.0')
+        Bash('ifconfig ' + if2 + ' up 0.0.0.0')
+        Bash('brctl delif ' + br_name + ' ' + if1 + ' ' + if2)
+        Bash('ifconfig ' + br_name + ' down')
+        Bash('brctl delbr ' + br_name)
         Bash('brctl addbr ' + br_name)
         Bash('brctl addif ' + br_name + ' ' + if1)
         Bash('brctl addif ' + br_name + ' ' + if2)
@@ -254,8 +257,6 @@ class Firewall(VNF):
         :return: json file
         """
 
-        logging.debug("Getting the current state in a json file...")
-
         json_instance = {self.yang_module_name + ':' + 'interfaces': {'ifEntry': []},
                          self.yang_module_name + ':' + 'firewall': {'wan-interface': {}},
                          self.yang_module_name + ':' + 'firewall': {'policies': []},
@@ -292,8 +293,7 @@ class Firewall(VNF):
         self.blacklist = set(self.blacklist)
         self.whitelist = set(self.whitelist)
 
-        logging.debug("Getting the current state in a json file...done!\n")
-
+        logging.debug(json_instance)
         return json.dumps(json_instance)
 
     def _get_policies_dict(self):
@@ -389,6 +389,8 @@ class Firewall(VNF):
     def _get_interface_dict(self, interface):
         dict = {}
         dict['name'] = interface.name
+        if interface.mac_address is not None:
+            dict['mac-address'] = interface.mac_address
         if interface.configuration_type is not None:
             dict['configurationType'] = interface.configuration_type
         else:
