@@ -97,6 +97,10 @@ module config-dhcp-server {
                                 mandatory "false"; 
 				type inet:ip-address;
 			}
+			leaf management{
+			    mandatory false;
+			    type boolean;
+			}
 		}
 	}
 }
