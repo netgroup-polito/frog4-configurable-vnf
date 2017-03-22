@@ -12,7 +12,8 @@ RUN mkdir -p /var/run/sshd && mkdir -p /root/.ssh && echo 'root:root' | chpasswd
 
 
 ENV TERM xterm
-RUN apt-get install -y htop net-tools nano vim iputils-ping #Tools for debug and management, xterm variable required in order to run nano
+RUN apt-get install -y htop net-tools nano vim iputils-ping tcpdump #Tools for debug and management, xterm variable required in order to run nano
+RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump
 
 RUN apt-get install -y python3-setuptools python3-pip python3-nacl libffi-dev git sudo
 

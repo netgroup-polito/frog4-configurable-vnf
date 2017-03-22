@@ -3,6 +3,7 @@
 
 from doubledecker import clientSafe
 from configuration_agent import utils
+from configuration_agent.utils import Bash
 
 from vnf_template_library.exception import TemplateValidationError
 from vnf_template_library.template import Template
@@ -17,6 +18,7 @@ import os
 import sys
 import shutil
 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
 class ConfigurationAgent(clientSafe.ClientSafe):
     """
@@ -87,6 +89,9 @@ class ConfigurationAgent(clientSafe.ClientSafe):
             self.publishable = True
             self.configure_vnf(initial_configuration)
 
+        # Add rule in the routing table to contact the broker
+        self._add_broker_rule(self.broker_url, self.configuration_interface)
+
         self.start_agent()
 
     def read_data_disk(self, ds_metadata):
@@ -141,9 +146,19 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         thread.start()
         return thread
 
+    def _add_broker_rule(self, broker_url, management_iface):
+        """
+        This method add a route in the routing table that allow the vnf to contact the broker
+        :param broker_url: read by the metadata file format: tcp://address:url
+        :return:
+        """
+        broker_address = (broker_url.split(':')[1])[2:]
+        logging.debug('route add ' + broker_address + ' dev ' + management_iface)
+        Bash('route add ' + broker_address + ' dev ' + management_iface)
+
     def start_agent(self):
         """
-        Agent core method. It manages the registrion both to the message broker and to the configuration service
+        Agent core method. It manages the registration both to the message broker and to the configuration service
         :return:
         """
         self.registered_to_dd.clear()
@@ -164,6 +179,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
                 if self.is_registered_to_cs is False:
                     self.vnf_registration()
         logging.debug("Registration successful")
+
         while True:
             # Export the status every 3 seconds
             time.sleep(3)
