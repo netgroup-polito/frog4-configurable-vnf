@@ -41,7 +41,7 @@ class Nat(VNF):
 
     def __init__(self, management_iface):
         self.yang_model = self.get_yang()
-        assert management_iface is not None, "You have to pass the management interface name to the class constructur"
+        assert management_iface is not None, "You have to pass the management interface name to the class constructor"
         self.configuration_interface = management_iface
         self.mac_address = utils.get_mac_address(self.configuration_interface)
         self.wan_interface = None
@@ -62,8 +62,7 @@ class Nat(VNF):
         '''
         self.get_interfaces()
         self.get_floating()
-        logging.debug(json.dumps(self.json_instance))
-        return json.dumps(self.get_status())
+        return json.dumps(self.nat.get_nat_model_dict())
 
     def set_configuration(self, json_instance):
         '''
@@ -74,19 +73,42 @@ class Nat(VNF):
         self.clean_nat()
         self.nat.set_nat_model(json_instance)
         self.wan_interface = self.nat.nat_parameters.wan_interface
+        logging.debug("\nScanning interfaces...")
+        wan_iface = None
         for interface in self.nat.interfaces:
+
             if interface.name == self.wan_interface:
-                Bash('route del default gw 0.0.0.0')
-                Bash('ip addr flush dev ' + self.wan_interface.name)
+                logging.debug("Found a wan interface: " + interface.name)
+                wan_iface = interface
+                continue
+
+            logging.debug("Setting interface " + interface.name + "...")
+            try:
                 InterfaceService.set_interface(interface)
-                self.set_nat(self.wan_interface.name)
-            else:
-                InterfaceService.set_interface(interface)
+            except Exception as ex:
+                logging.debug("Setting interface " + interface.name + "...Error:" + ex.message + "\n")
+            logging.debug("Setting interface " + interface.name + "...done!")
+
+        logging.debug("Scanning interfaces...done!")
+
+        assert wan_iface is not None, "Error: no wan interface found"
+        logging.debug("Setting wan interface " + wan_iface.name + "...")
+        Bash('route del default')
+        try:
+            InterfaceService.set_interface(wan_iface)
+        except Exception as ex:
+            logging.debug("Setting wan interface " + interface.name + "...Error:" + ex.message + "\n")
+        logging.debug("Setting wan interface " + wan_iface.name + "...done!")
+
+        logging.debug("Enabling nat...")
+        self.set_nat(wan_iface.name)
+        logging.debug("Enabling nat...done!")
 
         #self.get_interfaces()
         #self.get_interfaces_dict()
         #self.floating_ip = json_instance[self.yang_module_name+':'+'staticBindings']['floatingIP']
         self.set_floating()
+
 
     def set_floating(self):
         logging.debug("setting floating IP:")
@@ -140,6 +162,7 @@ class Nat(VNF):
             if interface == 'lo':
                 continue
             default_gw = ''
+            configuration_type = None
             gws = netifaces.gateways()
             if gws['default'] == {}:
                 default_gw = ''
@@ -159,9 +182,11 @@ class Nat(VNF):
                 management = True
             else:
                 management = None
+
             self.nat.interfaces.append(Interface(name=interface,
+                                                 configuration_type=configuration_type,
                                                  mac_address=interface_af_link_info[0]['addr'],
-                                                 ipv4_address=address,
+                                                 address=address,
                                                  netmask=netmask,
                                                  default_gw=default_gw,
                                                  management=management))
@@ -219,7 +244,7 @@ class Nat(VNF):
         #rule.target = target
         #chain.insert_rule(rule)
         bash = Bash('iptables -t nat -A POSTROUTING -o '+wan_interface+' -j MASQUERADE')
-        Bash('service iptables restart')
+        #Bash('service iptables restart')
 
     def base_conf(self):
         Bash('echo "UseDNS no" >> /etc/ssh/sshd_config')

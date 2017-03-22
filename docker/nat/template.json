@@ -12,7 +12,7 @@
   "functional-capability": "nat_docker",
   "memory-size": 2048,
   "vnf-type": "docker",
-  "uri-yang": "http://130.192.225.193:8081/yang/nat_cfg/",
+  "uri-yang": "http://130.192.225.179:8081/yang/nat_cfg/",
   "uri-image-type": "docker-registry",
   "swap-disk-size": 0,
   "expandable": false,

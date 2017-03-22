@@ -1,21 +1,14 @@
 class Interface:
-    def __init__(self):
-        self.name = None
-        self.configuration_type = None
-        self.address = None
-        self.default_gw = None
-        self.management = None
-        self.netmask = 24
-        self.mac_address = None
 
-    def __init(self, name, configuration_type, mac_address, address=None, default_gw=None, management=None, netmask=24):
+    def __init__(self, name=None, configuration_type=None, mac_address=None, address=None, netmask='24', default_gw=None, management=None):
         self.name = name
         self.configuration_type = configuration_type
+        self.mac_address = mac_address
         self.address = address
+        self.netmask = netmask
         self.default_gw = default_gw
         self.management = management
-        self.netmask = netmask
-        self.mac_address = mac_address
+
 
     def set_interface(self, interface_dict):
         self.address = None

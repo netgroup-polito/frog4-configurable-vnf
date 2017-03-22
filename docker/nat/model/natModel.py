@@ -14,8 +14,8 @@ class NatModel:
         self.interfaces = list()
 
         self.nat_parameters.set_static_bindings(nat_model[self.yang_module_name + ':' + 'nat']['staticBindings'])
-        if 'wan_interface' in nat_model[self.yang_module_name + ':' + 'nat']:
-            self.nat_parameters.set_wan_interface(nat_model[self.yang_module_name + ':' + 'nat']['wan_interface'])
+        if 'wan-interface' in nat_model[self.yang_module_name + ':' + 'nat']:
+            self.nat_parameters.set_wan_interface(nat_model[self.yang_module_name + ':' + 'nat']['wan-interface'])
         else:
             self.nat_parameters.set_wan_interface(None)
         for interface in nat_model[self.yang_module_name+':'+'interfaces']['ifEntry']:
@@ -31,5 +31,6 @@ class NatModel:
 
         for interface in self.interfaces:
             interfaces.append(interface.get_interface_dict())
-        nat.append(self.nat_parameters.get_static_bindings_dict)
-        nat.append(self.nat_parameters.get_wan_interface_dict)
+        nat.update(self.nat_parameters.get_static_bindings_dict())
+        nat.update(self.nat_parameters.get_wan_interface_dict())
+        return json_instance
