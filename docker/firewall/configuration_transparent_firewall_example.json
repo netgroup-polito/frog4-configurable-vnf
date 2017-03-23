@@ -30,34 +30,55 @@
 			"description": "allow incoming http traffic",
 			"action": "accept",
 			"protocol": "tcp",
-			"source-port": "80"
+			"source-port": "80",
+			"in-interface": "eth1"
 			},
 			{
 			"policy-name": "pol3",
 			"description": "allow outgoing http traffic",
 			"action": "accept",
 			"protocol": "tcp",
-			"destination-port": "80"
+			"destination-port": "80",
+			"out-interface": "eth2"
 			},
 			{
 			"policy-name": "pol4",
 			"description": "allow incoming https traffic",
 			"action": "accept",
 			"protocol": "tcp",
-			"source-port": "443"
+			"source-port": "443",
+			"in-interface": "eth1"
 			},
 			{
 			"policy-name": "pol5",
 			"description": "allow outgoing https traffic",
 			"action": "accept",
 			"protocol": "tcp",
-			"destination-port": "443"
+			"destination-port": "443",
+			"out-interface": "eth2"
 			},
 			{
 			"policy-name": "pol6",
-			"description": "block all tcp traffic",
+			"description": "allow incoming request dns ",
+			"action": "accept",
+			"protocol": "udp",
+			"source-port": "53",
+			"in-interface": "eth1"
+			},
+			{
+			"policy-name": "pol7",
+			"description": "allow outgoing request dns",
+			"action": "accept",
+			"protocol": "udp",
+			"destination-port": "53",
+			"out-interface": "eth2"
+			},
+			{
+			"policy-name": "pol8",
+			"description": "block all outgoing traffic",
 			"action": "drop",
-			"protocol": "tcp"
+			"protocol": "all",
+			"out-interface": "eth2"
 			}
 		],
 		"blacklist" : [

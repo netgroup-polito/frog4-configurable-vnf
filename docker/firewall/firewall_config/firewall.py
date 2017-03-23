@@ -176,10 +176,6 @@ class Firewall(VNF):
 
     def _set_policies(self, json_policies):
 
-        # Filter: INPUT, OUTPUT, FORWARD
-        # FORWARD because i want a transparent proxy
-        filter_type = "FORWARD"
-
         logging.debug("Setting Policies...")
         logging.debug("There are " + str(len(json_policies)) + " policies to set\n")
 
@@ -189,40 +185,75 @@ class Firewall(VNF):
             logging.debug("Setting policy " + policy_name + "...")
             logging.debug(policy)
 
-            rule = iptc.Rule()
-            """
-            if('in-interface' in policy):
-                rule.in_interface = policy['in-interface']['name']
-            if('out-interface' in policy):
-                rule.out_interface = policy['out-interface']['name']
-            """
-            if('source-address' in policy and 'source-mask' in policy):
-                rule.src = policy['source-address']
-                #rule.src = policy['source-address']+'/'+policy['source-mask']
-            if('destination-address' in policy and 'destination-mask' in policy):
-                rule.dst = policy['destination-address']
-                #rule.dst = policy['destination-address'] + '/' + policy['destination-mask']
-            if('protocol' in policy):
-                if(policy['protocol']!="all"):
-                    rule.protocol = policy['protocol']
-                    match = rule.create_match(policy['protocol'])
-
-            if('source-port' in policy):
-                match.sport = policy['source-port']
-            if('destination-port' in policy):
-                match.dport = policy['destination-port']
-            if('description' in policy):
-                match = rule.create_match("comment")
-                match.comment = policy['description']
-
-            rule.target = iptc.Target(rule, policy['action'].upper())
-
-            chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), filter_type)
-            chain.insert_rule(rule)
+            if('in-interface' in policy or 'out-interface' in policy):
+                self._set_ebtables(policy)
+            else:
+                self._set_iptables(policy)
 
             logging.debug("Setting policy " + policy_name + "...done!\n")
 
         logging.debug("Setting Policies...done!\n")
+
+    def _set_iptables(self, policy):
+
+        rule = iptc.Rule()
+
+        if ('source-address' in policy and 'source-mask' in policy):
+            rule.src = policy['source-address']
+            # rule.src = policy['source-address']+'/'+policy['source-mask']
+        if ('destination-address' in policy and 'destination-mask' in policy):
+            rule.dst = policy['destination-address']
+            # rule.dst = policy['destination-address'] + '/' + policy['destination-mask']
+        if (policy['protocol'] != "all"):
+            rule.protocol = policy['protocol']
+            match = rule.create_match(policy['protocol'])
+
+        if ('source-port' in policy):
+            match.sport = policy['source-port']
+        if ('destination-port' in policy):
+            match.dport = policy['destination-port']
+        if ('description' in policy):
+            match = rule.create_match("comment")
+            match.comment = policy['description']
+
+        rule.target = iptc.Target(rule, policy['action'].upper())
+
+        chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), "FORWARD")
+        chain.insert_rule(rule)
+
+    def _set_ebtables(self, policy):
+
+        protocols = []
+        if(policy['protocol'] != "all"):
+            protocols.append("-p ip --ip-proto " + str(policy['protocol']) + " ")
+        else:
+            protocols.append("-p ip --ip-proto tcp ")
+            protocols.append("-p ip --ip-proto udp ")
+            protocols.append("-p ip --ip-proto icmp ")
+
+        action = policy['action'].upper()
+        protocol = "-p ip --ip-proto " + str(policy['protocol']) + " "
+        in_interface = ""
+        if('in-interface' in policy):
+            in_interface = "--in-interface " + str(policy['in-interface']['name']) + " "
+        out_interface = ""
+        if('out-interface' in policy):
+            out_interface = "--out-interface " + str(policy['out-interface']['name']) + " "
+        src_address = ""
+        if('source-address' in policy and 'source-mask' in policy):
+            src_address = "--ip-src " + str(policy['source-address']) + " "
+        dst_address = ""
+        if('destination-address' in policy and 'destination-mask' in policy):
+            dst_address = "--ip-dst " + str(policy['destination-address']) + " "
+        src_port = ""
+        if('source-port' in policy):
+            src_port = "--ip-source-port " + str(policy['source-port']) + " "
+        dst_port = ""
+        if('destination-port' in policy):
+            dst_port = "--ip-destination-port " + str(policy['destination-port']) + " "
+
+        for protocol in protocols:
+            Bash('ebtables -I FORWARD ' + protocol + in_interface + src_address + src_port + out_interface + dst_address + dst_port + '-j ' + action)
 
     def _set_blacklist(self, json_blacklist):
 

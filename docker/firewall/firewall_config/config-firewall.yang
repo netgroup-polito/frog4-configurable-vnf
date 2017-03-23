@@ -10,33 +10,40 @@ module config-firewall {
 		list ifEntry{
 		    key "name";
 		    leaf name {
+				description "name='Name'";
 				type string;
 			}
 			leaf mac-address{
+			    description "name='MAC Address'";
 			    type string;
 			    mandatory false;
 			}
 			leaf management{
+			    description "name='Management'";
 			    type boolean;
 			    mandatory false;
 			}
 			container ipv4_configuration{
 			    presence "it contains ipv4 configuration";
 			    leaf configurationType{
+			        description "name='Configuration type'";
 			        type enumeration {
                         enum dhcp;
                         enum static;
     				}
 			    }
 			    leaf address{
+			        description "name='IP Address";
 			        type inet:ipv4-address;
 			        mandatory false;
 			    }
 			    leaf netmask{
-			        type inet:ipv4-address;
+			        description "name='Netmask";
+			        type inet:ip-address;
 			        mandatory false;
 			    }
 			    leaf default_gw{
+			        description "name='Default GW";
 			        type inet:ipv4-address;
 			        mandatory false;
 			    }
@@ -44,19 +51,26 @@ module config-firewall {
 			container ipv6_configuration{
 			    presence "it contains ipv4 configuration";
 			    leaf configurationType{
+			        description "name='Configuration type'";
 			        type enumeration {
                         enum dhcp;
                         enum static;
     				}
 			    }
 			    leaf address{
+			        description "name='IP Address";
 			        type inet:ipv6-address;
+			        mandatory false;
 			    }
 			    leaf netmask{
-			        type inet:ipv6-address;
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
 			    }
 			    leaf default_gw{
+			        description "name='Default GW";
 			        type inet:ipv6-address;
+			        mandatory false;
 			    }
 			}
 		}
@@ -64,7 +78,9 @@ module config-firewall {
 	} 
        
 	container firewall {
+		description "name='Firewall";
 		leaf wan-interface {
+            description "name='WAN Interface";
             type leafref {
                 path "/interfaces/ifEntry/name";
             }
@@ -130,12 +146,14 @@ module config-firewall {
 		}
 		list blacklist {
 		    key "uri";
+		    description "name='URL', tooltip='eg: www.youtube.com'";
 		    leaf uri{
 		        type string;
 		    }
 		}
 		list whitelist {
 		    key "uri";
+		    description "name='URL', tooltip='eg: www.youtube.com'";
 		    leaf uri{
 		        type string;
 		    }
