@@ -1,10 +1,12 @@
-#Docker configurable VNF
-##How to build a configurable VNF
+# Docker configurable VNFs
+
+## How to build a configurable VNF
+
 In this repository you will find 2 types of images:
-* a generic-configuration-image: it contains all the stuffs that the VNF needs in order to communicate with the configuration service 
-and to retrieve some essential information (e.g., message broker url)
+* a generic configuration image (generic-configuration-image): it contains all the components needed by the VNF to communicate with the configuration service 
+and to retrieve some essential information (e.g., URL of the message broker)
 * specific network function images (e.g., DHCP or NAT): they are built starting from the generic-configuration-image, they are able to 
-configure a specific network function and export their actual state
+configure a specific network function and export their current state
 
 Since the specific network function image is based on the generic-configuration-image, first you have to build the generic image
 ```sh
@@ -14,7 +16,7 @@ then you can build the specific image you need starting from the generic one (us
 ```sh
 $ sudo docker build --tag="nat_config" .
 ```
-##How to create a configurable VNF
+## How to create a configurable VNF
 You can build your own VNF starting from the generic-configuration-image, which offers you:
 * some basic libraries (YANG parsing and validation libraries, DoubleDecker, nano, net-tools)
 * some generic feature (message bus communication, json validation against a YANG model)
