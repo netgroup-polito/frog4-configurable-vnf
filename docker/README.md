@@ -10,7 +10,7 @@ configure a specific network function and export their current state
 
 Since the specific network function image is based on the generic-configuration-image, first you have to build the generic image
 ```sh
-$ sudo docker build --tag="generic-agent-image" .
+$ sudo docker build --tag="generic-configuration-agent" .
 ```
 then you can build the specific image you need starting from the generic one (using the keyword 'FROM' into the Dockerfile)
 ```sh
