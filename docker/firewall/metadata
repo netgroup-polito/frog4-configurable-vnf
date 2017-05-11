@@ -1,4 +1,0 @@
-vnf-name = firewall
-tenant-id = fw_id
-vnf-id = 121
-broker-url = tcp://10.0.0.2:5555
