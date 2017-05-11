@@ -1,0 +1,28 @@
+from nat.model.floating_ip import FloatingIp
+
+class FloatingIpParser():
+
+    def parse_floating_ip(self, json_floating_ip):
+
+        private_adress = None
+        if 'private_address' in json_floating_ip:
+            private_address = json_floating_ip['private_address']
+
+        public_address = None
+        if 'public_address' in json_floating_ip:
+            public_address = json_floating_ip['public_address']
+
+        return FloatingIp(private_adress, public_address)
+
+
+    def get_floating_ip_dict(self, floating_ip):
+
+        floating_ip_dict = {}
+
+        if floating_ip.private_address is not None:
+            floating_ip_dict['private_address'] = floating_ip.private_address
+
+        if floating_ip.public_address is not None:
+            floating_ip_dict['public_address'] = floating_ip.public_address
+
+        return floating_ip_dict

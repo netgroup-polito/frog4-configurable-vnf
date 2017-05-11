@@ -1,0 +1,89 @@
+{
+	"config-firewall:interfaces": {
+		"ifEntry": [
+			{ 
+			"name": "eth50",
+			"type": "L3",
+			"management": true,
+			"ipv4_configuration": {
+				"configurationType": "dhcp"
+			}},
+			{
+			"name": "eth12",
+			"type": "transparent"
+			},
+			{
+			"name": "eth20",
+			"type": "transparent"
+			}
+		],
+		"wan-interface": "eth2"
+	},
+	"config-firewall:firewall": {
+		"policies": [
+			{
+			"description": "allow ssh",
+			"action": "accept",
+			"protocol": "tcp",
+			"dst_port": "22"
+			},
+			{
+			"description": "allow incoming http traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"src_port": "80",
+			"in-interface": "eth1"
+			},
+			{
+			"description": "allow outgoing http traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"dst_port": "80",
+			"out-interface": "eth2"
+			},
+			{
+			"description": "allow incoming https traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"src_port": "443",
+			"in-interface": "eth1"
+			},
+			{
+			"description": "allow outgoing https traffic",
+			"action": "accept",
+			"protocol": "tcp",
+			"dst_port": "443",
+			"out-interface": "eth2"
+			},
+			{
+			"description": "allow incoming request dns ",
+			"action": "accept",
+			"protocol": "udp",
+			"src_port": "53",
+			"in-interface": "eth1"
+			},
+			{
+			"description": "allow outgoing request dns",
+			"action": "accept",
+			"protocol": "udp",
+			"dst_port": "53",
+			"out-interface": "eth2"
+			},
+			{
+			"description": "block all outgoing traffic",
+			"action": "drop",
+			"protocol": "all",
+			"out-interface": "eth2"
+			}
+		],
+		"blacklist" : [
+			{
+				"url": "www.wikipedia.com"
+			},
+			{
+				"url": "www.youtube.com"
+			}
+		],
+		"whitelist" : []
+	}
+} 
