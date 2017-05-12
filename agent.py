@@ -46,11 +46,11 @@ class ConfigurationAgent(clientSafe.ClientSafe):
 
         #json_data = open("tmp/FW_initial_configuration.json").read()
         #json_data = open("tmp/NAT_initial_configuration.json").read()
-        #json_data = open("tmp/DHCP_initial_configuration.json").read()
-        #data = json.loads(json_data)
+        json_data = open("tmp/DHCP_initial_configuration.json").read()
+        data = json.loads(json_data)
         #self.firewallController.set_configuration(data)
         #self.natController.set_configuration(data)
-        #self.dhcpController.set_configuration(data)
+        self.dhcpController.set_configuration(data)
 
         #status = self.firewallController.get_status()
         #status = self.natController.get_status()

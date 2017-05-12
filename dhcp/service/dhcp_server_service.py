@@ -3,16 +3,73 @@ from dhcp.model.dhcp_server import Range
 from dhcp.model.dhcp_server import Dns
 from dhcp.model.dhcp_server import DhcpServer
 from dhcp.model.client import Client
+from common.controller.interface_controller import InterfaceController
 from utils import Bash
 
 class DhcpServerService():
 
     def configure_dhcp_server(self, dhcp_server):
-        pass
+        '''
+        example of configuration
+
+        default-lease-time 600;
+        max-lease-time 7200;
+        option subnet-mask 255.255.255.0;
+        option broadcast-address 192.168.1.255;
+        option routers 192.168.1.254;
+        option domain-name-servers 192.168.1.1, 192.168.1.2;
+        option domain-name "mydomain.example";
+
+        subnet 192.168.1.0 netmask 255.255.255.0 {
+            range 192.168.1.10 192.168.1.100;
+            range 192.168.1.150 192.168.1.200;
+        }
+        '''
+        try:
+            with open('/home/giuseppe/Desktop/SETdhcpd.conf', 'w') as dhcpd_file:
+            #with open('/etc/dhcp/dhcpd.conf', 'w') as dhcpd_file:
+                dhcpd_file.write('default-lease-time ' + dhcp_server.default_lease_time + ';\n')
+                dhcpd_file.write('max-lease-time ' + dhcp_server.max_lease_time + ';\n')
+                dhcpd_file.write('option subnet-mask ' + dhcp_server.gateway.address + ';\n')
+                dhcpd_file.write('option routers ' + dhcp_server.gateway.netmask + ';\n')
+                dhcpd_file.write('option domain-name-servers ' + dhcp_server.dns.domain_name_server + ';\n')
+                dhcpd_file.write('option domain-name "' + dhcp_server.dns.domain_name + '";\n')
+                dhcpd_file.write('subnet ' + dhcp_server.gateway.address + ' netmask ' + dhcp_server.gateway.netmask + ' {\n')
+                for range in dhcp_server.ranges:
+                    dhcpd_file.write('    range ' + range.start_ip + ' ' + range.end_ip + ';\n')
+                dhcpd_file.write('}')
+                dhcpd_file.truncate()
+        except Exception as e:
+            raise IOError("Unable to create file: /etc/dhcp/dhcpd.conf")
+
+        interfacesController = InterfaceController()
+        interfaces = interfacesController.get_interfaces()
+        isc_dhcp_server = 'INTERFACES="'
+        k = 0
+        for interface in interfaces:
+            if k != 0:
+                isc_dhcp_server += ' '
+            isc_dhcp_server += interface.name
+            k+=1
+        isc_dhcp_server += '"'
+        try:
+            with open('/home/giuseppe/Desktop/SETisc-dhcp-server', 'w') as isc_dhcp_server_file:
+            #with open('/etc/default/isc-dhcp-server', 'w') as isc_dhcp_server_file:
+                isc_dhcp_server_file.write(isc_dhcp_server)
+                isc_dhcp_server_file.truncate()
+        except Exception as e:
+            raise IOError("Unable to create file: /etc/default/isc-dhcp-server")
+
+        # Restart service
+        #Bash('service isc-dhcp-server restart')
+        #if interfaces.length == 0:
+            #Bash('service isc-dhcp-server stop')
+
+
 
     def get_dhcp_server_configuration(self):
         try:
-            with open('/home/giuseppe/Desktop/mydhcp.conf') as dhcpd_file:
+            with open('/home/giuseppe/Desktop/SETdhcpd.conf') as dhcpd_file:
             #with open('/etc/dhcp/dhcpd.conf') as dhcpd_file:
                 dhcpd_lines = dhcpd_file.readlines()
         except Exception as e:

@@ -1,21 +1,21 @@
 class Gateway():
     def __init__(self, gateway_address=None, gateway_netmask=None):
-        self.gateway_address = gateway_address
-        self.gateway_netmask = gateway_netmask
+        self.address = gateway_address
+        self.netmask = gateway_netmask
 
     def __str__(self):
         str = "{"
-        if self.gateway_address is not None:
-            str += "'address': " + self.gateway_address + ", "
-        if self.gateway_netmask is not None:
-            str += "'netmask': " + self.gateway_netmask
+        if self.address is not None:
+            str += "'address': " + self.address + ", "
+        if self.netmask is not None:
+            str += "'netmask': " + self.netmask
         str += "}"
         return str
 
     def __eq__(self, other):
-        if self.gateway_address != other.gateway_address:
+        if self.address != other.address:
             return False
-        if self.gateway_netmask != other.gateway_netmask:
+        if self.netmask != other.netmask:
             return False
         return True
 
@@ -97,9 +97,8 @@ class DhcpServer():
     def __eq__(self, other):
         if not self.gateway.__eq__(other.gateway):
             return False
-        for range in self.ranges:
-            if not range.__eq__(other.range):
-                return False
+        if not self.ranges.__eq__(other.ranges):
+            return False
         if self.default_lease_time != other.default_lease_time:
             return False
         if self.max_lease_time != other.max_lease_time:

@@ -1,4 +1,4 @@
-from backports import configparser
+import configparser
 
 class ConfigParser():
 

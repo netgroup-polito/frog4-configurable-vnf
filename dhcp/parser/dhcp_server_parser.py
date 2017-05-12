@@ -102,10 +102,10 @@ class DhcpServerParser():
         dhcp_server_dict = {}
 
         gateway_dict = {}
-        if dhcp_server.gateway.gateway_address is not None:
-            gateway_dict['gatewayAddress'] = dhcp_server.gateway.gateway_address
-        if dhcp_server.gateway.gateway_netmask is not None:
-            gateway_dict['gatewayMask'] = dhcp_server.gateway.gateway_netmask
+        if dhcp_server.gateway.address is not None:
+            gateway_dict['gatewayAddress'] = dhcp_server.gateway.address
+        if dhcp_server.gateway.netmask is not None:
+            gateway_dict['gatewayMask'] = dhcp_server.gateway.netmask
         dhcp_server_dict['gatewayIp'] = gateway_dict
 
         ranges_dict = []
