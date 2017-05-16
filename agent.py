@@ -1,23 +1,19 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-#from dhcp.dhcp_agent import Dhcp
-#from firewall.firewall_agent import Firewall
 from config_parser import ConfigParser
 from config_instance import ConfigurationInstance
-from firewall.controller.firewall_controller import FirewallController
-from nat.controller.nat_controller import NatController
-from dhcp.controller.dhcp_controller import DhcpController
 from threading import Event
 from threading import Thread
-#from nat.nat_agent import Nat
-
 from utils import Bash
-from doubledecker import clientSafe
+from message_bus import MessageBus
 
 from vnf_template_library.exception import TemplateValidationError
 from vnf_template_library.template import Template
 from vnf_template_library.validator import ValidateTemplate
+
+from dhcp.controller.dd_dhcp_controller import DoubleDeckerDhcpController
+#from firewall.controller.dd_firewall_controller import DoubleDeckerFirewallController
+#from nat.controller.dd_nat_controller import DoubleDeckerNatController
 
 import sys
 import logging
@@ -27,11 +23,18 @@ import json
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
-class ConfigurationAgent(clientSafe.ClientSafe):
+class ConfigurationAgent():
 
     def __init__(self, nf_type, datadisk_path):
 
         self.configParser = ConfigParser()
+        self.messageBus = MessageBus(self)
+
+        self.vnf = self.configParser.get("settings", "vnf")
+        assert self.vnf=="dhcp" or \
+               self.vnf =="firewall" or \
+               self.vnf=="nat", \
+               "Error, found an invalid vnf name in the config file"
 
         ConfigurationInstance.set_vnf(self, self.configParser.get("settings", "vnf"))
         ConfigurationInstance.set_nf_type(self, nf_type)
@@ -79,7 +82,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         self.template = self.datadisk_path + "/template.json"
         self.metadata_file = self.datadisk_path + "/metadata"
         self.initial_configuration_path = self.datadisk_path + "/initial_configuration.json"
-        assert os.path.exists(self.tenant_keys_file) is True, "tenant_keys.json file not found in datadisk"
+        assert os.path.exists(self.tenant_keys_file) is True, "tenant-keys.json file not found in datadisk"
         assert os.path.exists(self.template), "Error, VNF template not found in datadisk"
         assert os.path.exists(self.metadata_file) is True, "metadata file not found in datadisk"
         self._read_metadata_file(self.metadata_file)
@@ -89,9 +92,10 @@ class ConfigurationAgent(clientSafe.ClientSafe):
             shutil.copy(self.tenant_keys_file, "/etc/doubledecker/" + self.tenant_id + "-keys.json")
 
         self.configuration_interface = self._get_iface_from_template()
+        logging.debug("configuration interface: " + self.configuration_interface)
 
         # Add rule in the routing table to contact the broker
-        self._add_broker_rule(self.broker_url, self.configuration_interface)
+        #self._add_broker_rule(self.broker_url, self.configuration_interface)
 
         self.start_agent()
 
@@ -102,9 +106,9 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         #vnf_agent_class = getattr(sys.modules[__name__], self.vnf)
         #self.vnf_agent = vnf_agent_class()
 
-        self.firewallController = FirewallController()
-        self.natController = NatController()
-        self.dhcpController = DhcpController()
+        #self.firewallController = FirewallController()
+        #self.natController = NatController()
+        #self.dhcpController = DhcpController()
 
         #json_data = open("tmp/FW_initial_configuration.json").read()
         #json_data = open("tmp/NAT_initial_configuration.json").read()
@@ -116,13 +120,66 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         #self.natController.set_configuration(data)
         #self.dhcpController.set_configuration(data)
 
-        ###################################################################
 
         #status = self.firewallController.get_status()
         #status = self.natController.get_status()
         #status = self.dhcpController.get_status()
 
         #print(json.dumps(status, indent=4, sort_keys=True))
+
+
+
+    def start_agent(self):
+        """
+        Agent core method. It manages the registration both to the message broker and to the configuration service
+        :return:
+        """
+        self.registered_to_dd.clear()
+        self.registered_to_cs.clear()
+
+        logging.debug("Trying to register to the message broker...")
+        self.messageBus.register_to_dd(name=self.vnf,
+                                       dealer_url=self.broker_url,
+                                       customer=self.tenant_id,
+                                       keyfile="/etc/doubledecker/" + self.tenant_id + "-keys.json")
+        while self.is_registered_to_dd is False:  # waiting for the agent to be registered to DD broker
+            self.registered_to_dd.wait()
+        logging.debug("Trying to register to the message broker...done!")
+        while self.is_registered_to_cs is False:  # waiting for the agent to be registered to the configuration service
+            logging.debug("Trying to register to the configuration service...")
+            if not self.registered_to_cs.wait(5):
+                if self.is_registered_to_cs is False:
+                    self._vnf_registration()
+        logging.debug("Trying to register to the configuration service...done!")
+
+        controller = self._select_controller()
+        controller.start()
+
+        logging.debug("End program")
+
+    def on_reg_callback(self):
+        self.is_registered_to_dd = True
+        self.registered_to_dd.set()
+        self._vnf_registration()
+
+    def on_data_callback(self, src, msg):
+        logging.debug("[agent] From: " + src + " Msg: " + msg)
+
+        if msg == "REGISTERED " + self.tenant_id + '.' + self.vnf_id:
+            self.is_registered_to_cs = True
+            self.registered_to_cs.set()
+            return
+
+    def _select_controller(self):
+        controller = None
+        if self.vnf == "dhcp":
+            return DoubleDeckerDhcpController(self.messageBus)
+        elif self.vnf == "firewall":
+            pass
+            #return DoubleDeckerFirewallController(self.messageBus)
+        elif self.vnf == "nat":
+            pass
+            #return DoubleDeckerNatController(self.messageBus)
 
     def _read_metadata_file(self, metadata_path):
         """
@@ -157,92 +214,6 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         assert self.vnf_id is not None, "vnf-id key not found in metadata file"
         assert self.broker_url is not None, "broker-url key not found in metadata file"
 
-
-
-
-    def start_agent(self):
-        """
-        Agent core method. It manages the registration both to the message broker and to the configuration service
-        :return:
-        """
-        self.registered_to_dd.clear()
-        self.registered_to_cs.clear()
-
-        logging.debug("Trying to register to the message broker...")
-        self.tenant_id = "a"
-        self.graph_id = "0001"
-        self.vnf_id = "firewall_id"
-        broker_url = "tcp://127.0.0.1:5555"
-
-        thread = self.registration(name=self.vnf,
-                                   dealer_url=broker_url,
-                                   customer=self.tenant_id,
-                                   keyfile="/etc/doubledecker/" + self.tenant_id + "-keys.json")
-
-        while self.is_registered_to_dd is False:  # waiting for the agent to be registered to DD broker
-            self.registered_to_dd.wait()
-        logging.debug("Trying to register to the message broker...done!")
-        while self.is_registered_to_cs is False:  # waiting for the agent to be registered to the configuration service
-            logging.debug("Trying to register to the configuration service...")
-            if not self.registered_to_cs.wait(5):
-                if self.is_registered_to_cs is False:
-                    self.vnf_registration()
-        logging.debug("Trying to register to the configuration service...done!")
-
-        logging.debug("End program")
-
-
-    def registration(self, name, dealer_url, customer, keyfile):
-        super().__init__(name=name.encode('utf8'),
-                         dealerurl=dealer_url,
-                         customer=customer.encode('utf8'),
-                         keyfile=keyfile)
-        thread = Thread(target=self.start)
-        thread.start()
-        return thread
-
-    def vnf_registration(self):
-        msg = ""
-        msg += "tenant-id:" + self.tenant_id + "\n"
-        msg += "graph-id:" + self.graph_id + "\n"
-        msg += "vnf-id:" + self.vnf_id + "\n"
-        logging.debug('Registering to the configuration service: ' + msg)
-        self.publish_public('public.vnf_registration', msg)
-
-    def start(self):
-        super().start()
-
-    def unsubscribe(self):
-        super().unsubscribe()
-
-    def on_data(self):
-        pass
-
-    def on_discon(self):
-        pass
-
-    def on_error(self, code, msg):
-        logging.debug("Error: " + str(code) + ": " + str(msg))
-
-    def on_pub(self):
-        pass
-
-    def on_reg(self):
-        self.is_registered_to_dd = True
-        self.registered_to_dd.set()
-        self.vnf_registration()
-
-    def _add_broker_rule(self, broker_url, management_iface):
-        """
-        This method add a route in the routing table that allow the vnf to contact the broker
-        :param broker_url: read by the metadata file format: tcp://address:url
-        :return:
-        """
-        broker_address = (broker_url.split(':')[1])[2:]
-        logging.debug('route add ' + broker_address + ' dev ' + management_iface)
-        Bash('route add ' + broker_address + ' dev ' + management_iface)
-
-
     def _get_iface_from_template(self):
         with open(self.template) as template_data:
             tmpl = json.load(template_data)
@@ -263,6 +234,32 @@ class ConfigurationAgent(clientSafe.ClientSafe):
 
         return iface
 
+    def _add_broker_rule(self, broker_url, management_iface):
+        """
+        This method add a route in the routing table that allow the vnf to contact the broker
+        :param broker_url: read by the metadata file format: tcp://address:url
+        :return:
+        """
+        broker_address = (broker_url.split(':')[1])[2:]
+        logging.debug('route add ' + broker_address + ' dev ' + management_iface)
+        Bash('route add ' + broker_address + ' dev ' + management_iface)
+
+    def _register_to_dd(self, name, dealer_url, customer, keyfile):
+        super().__init__(name=name.encode('utf8'),
+                         dealerurl=dealer_url,
+                         customer=customer.encode('utf8'),
+                         keyfile=keyfile)
+        thread = Thread(target=self.start)
+        thread.start()
+        return thread
+
+    def _vnf_registration(self):
+        msg = ""
+        msg += "tenant-id:" + self.tenant_id + "\n"
+        msg += "graph-id:" + self.graph_id + "\n"
+        msg += "vnf-id:" + self.vnf_id
+        logging.debug('Registering to the configuration service: ' + msg)
+        self.messageBus.publish_public_topic('public.vnf_registration', msg)
 
 
 if __name__ == "__main__":
