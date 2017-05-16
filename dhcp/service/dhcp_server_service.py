@@ -65,8 +65,6 @@ class DhcpServerService():
         #if interfaces.length == 0:
             #Bash('service isc-dhcp-server stop')
 
-
-
     def get_dhcp_server_configuration(self):
         try:
             with open('/home/giuseppe/Desktop/SETdhcpd.conf') as dhcpd_file:

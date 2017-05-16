@@ -34,18 +34,6 @@ class DhcpController():
         conf_global_ip_pool = conf_dhcp_server['globalIpPool']
         self.configure_dhcp_server(conf_global_ip_pool)
 
-        logging.debug("interfaces_to_export: ")
-        for x in self.interfaces_to_export:
-            logging.debug(x.__str__())
-
-        logging.debug("dhcp_configuration_to_export: ")
-        logging.debug(self.dhcp_server_configuration_to_export.__str__())
-
-        logging.debug("clients_to_export: ")
-        for x in self.dhcp_clients_to_export:
-            logging.debug(x.__str__())
-
-
 
     def get_status(self):
 

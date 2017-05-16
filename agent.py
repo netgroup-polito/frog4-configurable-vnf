@@ -152,8 +152,14 @@ class ConfigurationAgent():
                     self._vnf_registration()
         logging.debug("Trying to register to the configuration service...done!")
 
+        initial_configuration = None
+        if os.path.exists(self.initial_configuration_path):
+            with open(self.initial_configuration_path) as configuration:
+                json_data = configuration.read()
+                initial_configuration = json.loads(json_data)
+
         controller = self._select_controller()
-        controller.start()
+        controller.start(initial_configuration)
 
         logging.debug("End program")
 
