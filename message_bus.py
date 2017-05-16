@@ -15,7 +15,7 @@ class MessageBus(clientSafe.ClientSafe):
     def set_controller(self, controller):
         self.controller = controller
 
-    def register_to_dd(self, name, dealer_url, customer, keyfile):
+    def register_to_bus(self, name, dealer_url, customer, keyfile):
         super().__init__(name=name.encode('utf8'),
                          dealerurl=dealer_url,
                          customer=customer.encode('utf8'),

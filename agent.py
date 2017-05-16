@@ -55,12 +55,12 @@ class ConfigurationAgent():
         self.broker_url = None
         self.configuration_interface = None
         '''
-        is_registered_to_dd is a flag notifying if the agent is already registered to the message broker
+        is_registered_to_bus is a flag notifying if the agent is already registered to the message broker
         Only after such a registration the agent can ask for the configuration service registration
-        registered_to_dd is a condition variable which awakes when the registration with the broker is successfull
+        registered_to_bus is a condition variable which awakes when the registration with the broker is successfull
         '''
-        self.is_registered_to_dd = False
-        self.registered_to_dd = Event()
+        self.is_registered_to_bus = False
+        self.registered_to_bus = Event()
         '''
         is_registered_to_cs is a flag notifying if the agent is already registered to the configuration service
         Only after such a registration the agent can start exporting its status
@@ -134,16 +134,16 @@ class ConfigurationAgent():
         Agent core method. It manages the registration both to the message broker and to the configuration service
         :return:
         """
-        self.registered_to_dd.clear()
+        self.registered_to_bus.clear()
         self.registered_to_cs.clear()
 
         logging.debug("Trying to register to the message broker...")
-        self.messageBus.register_to_dd(name=self.vnf,
+        self.messageBus.register_to_bus(name=self.vnf,
                                        dealer_url=self.broker_url,
                                        customer=self.tenant_id,
                                        keyfile="/etc/doubledecker/" + self.tenant_id + "-keys.json")
-        while self.is_registered_to_dd is False:  # waiting for the agent to be registered to DD broker
-            self.registered_to_dd.wait()
+        while self.is_registered_to_bus is False:  # waiting for the agent to be registered to DD broker
+            self.registered_to_bus.wait()
         logging.debug("Trying to register to the message broker...done!")
         while self.is_registered_to_cs is False:  # waiting for the agent to be registered to the configuration service
             logging.debug("Trying to register to the configuration service...")
@@ -158,8 +158,8 @@ class ConfigurationAgent():
         logging.debug("End program")
 
     def on_reg_callback(self):
-        self.is_registered_to_dd = True
-        self.registered_to_dd.set()
+        self.is_registered_to_bus = True
+        self.registered_to_bus.set()
         self._vnf_registration()
 
     def on_data_callback(self, src, msg):
@@ -243,15 +243,6 @@ class ConfigurationAgent():
         broker_address = (broker_url.split(':')[1])[2:]
         logging.debug('route add ' + broker_address + ' dev ' + management_iface)
         Bash('route add ' + broker_address + ' dev ' + management_iface)
-
-    def _register_to_dd(self, name, dealer_url, customer, keyfile):
-        super().__init__(name=name.encode('utf8'),
-                         dealerurl=dealer_url,
-                         customer=customer.encode('utf8'),
-                         keyfile=keyfile)
-        thread = Thread(target=self.start)
-        thread.start()
-        return thread
 
     def _vnf_registration(self):
         msg = ""
