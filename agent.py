@@ -12,8 +12,8 @@ from vnf_template_library.template import Template
 from vnf_template_library.validator import ValidateTemplate
 
 from dhcp.controller.dd_dhcp_controller import DoubleDeckerDhcpController
-#from firewall.controller.dd_firewall_controller import DoubleDeckerFirewallController
-#from nat.controller.dd_nat_controller import DoubleDeckerNatController
+from firewall.controller.dd_firewall_controller import DoubleDeckerFirewallController
+from nat.controller.dd_nat_controller import DoubleDeckerNatController
 
 import sys
 import logging
@@ -179,13 +179,13 @@ class ConfigurationAgent():
     def _select_controller(self):
         controller = None
         if self.vnf == "dhcp":
-            return DoubleDeckerDhcpController(self.messageBus)
+            return DoubleDeckerDhcpController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
         elif self.vnf == "firewall":
             pass
-            #return DoubleDeckerFirewallController(self.messageBus)
+            return DoubleDeckerFirewallController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
         elif self.vnf == "nat":
             pass
-            #return DoubleDeckerNatController(self.messageBus)
+            return DoubleDeckerNatController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
 
     def _read_metadata_file(self, metadata_path):
         """
