@@ -88,24 +88,26 @@ class InterfaceParser():
             interface_dict['management'] = interface.management
 
         if interface.ipv4_configuration is not None:
-            ipv4_configuration = interface.ipv4_configuration
-            ipv4_configuration_dict = {}
-
-            if ipv4_configuration.configuration_type is not None:
-                ipv4_configuration_dict['configurationType'] = ipv4_configuration.configuration_type
-
-            if ipv4_configuration.address is not None:
-                ipv4_configuration_dict['address'] = ipv4_configuration.address
-
-            if ipv4_configuration.netmask is not None:
-                ipv4_configuration_dict['netmask'] = ipv4_configuration.netmask
-
-            if ipv4_configuration.mac_address is not None:
-                ipv4_configuration_dict['mac-address'] = ipv4_configuration.mac_address
-
-            if ipv4_configuration.default_gw is not None:
-                ipv4_configuration_dict['default_gw'] = ipv4_configuration.default_gw
-
-            interface_dict['ipv4_configuration'] = ipv4_configuration_dict
+            interface_dict['ipv4_configuration'] = self.get_interface_ipv4Configuration(interface.ipv4_configuration)
 
         return interface_dict
+
+    def get_interface_ipv4Configuration(self, ipv4_configuration):
+        ipv4_configuration_dict = {}
+
+        if ipv4_configuration.configuration_type is not None:
+            ipv4_configuration_dict['configurationType'] = ipv4_configuration.configuration_type
+
+        if ipv4_configuration.address is not None:
+            ipv4_configuration_dict['address'] = ipv4_configuration.address
+
+        if ipv4_configuration.netmask is not None:
+            ipv4_configuration_dict['netmask'] = ipv4_configuration.netmask
+
+        if ipv4_configuration.mac_address is not None:
+            ipv4_configuration_dict['mac-address'] = ipv4_configuration.mac_address
+
+        if ipv4_configuration.default_gw is not None:
+            ipv4_configuration_dict['default_gw'] = ipv4_configuration.default_gw
+
+        return ipv4_configuration_dict

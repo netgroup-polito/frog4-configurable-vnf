@@ -126,6 +126,27 @@ class NatController():
         interface_dict = self.interfaceParser.get_interface_dict(interface)
         return interface_dict
 
+    def get_interface_ipv4Configuration(self, name):
+        interface = self.interfaceController.get_interface(name)
+        ipv4_configuration_dict = self.interfaceParser.get_interface_ipv4Configuration(interface.ipv4_configuration)
+        return ipv4_configuration_dict
+
+    def get_interface_ipv4Configuration_address(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.address
+
+    def get_interface_ipv4Configuration_netmask(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.netmask
+
+    def get_interface_ipv4Configuration_default_gw(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.default_gw
+
+    def get_interface_ipv4Configuration_mac_address(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.mac_address
+
     def reset_interface(self, name):
         self.interfaceController.reset_interface(name)
 

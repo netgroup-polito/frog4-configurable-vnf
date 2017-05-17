@@ -110,6 +110,27 @@ class DhcpController():
         interface_dict = self.interfaceParser.get_interface_dict(interface)
         return interface_dict
 
+    def get_interface_ipv4Configuration(self, name):
+        interface = self.interfaceController.get_interface(name)
+        ipv4_configuration_dict = self.interfaceParser.get_interface_ipv4Configuration(interface.ipv4_configuration)
+        return ipv4_configuration_dict
+
+    def get_interface_ipv4Configuration_address(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.address
+
+    def get_interface_ipv4Configuration_netmask(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.netmask
+
+    def get_interface_ipv4Configuration_default_gw(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.default_gw
+
+    def get_interface_ipv4Configuration_mac_address(self, name):
+        interface = self.interfaceController.get_interface(name)
+        return interface.ipv4_configuration.mac_address
+
     def reset_interface(self, name):
         self.interfaceController.reset_interface(name)
 
@@ -145,10 +166,31 @@ class DhcpController():
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_ranges(self, json_range_params):
-        ranges = self.dhcpServerParser.parse_range(json_range_params)
+    def add_section(self, json_section):
+        section = self.dhcpServerParser.parse_section(json_section)
         if self.dhcpServerController.exists_configuration():
-            dhcp_server_configuration = self.dhcpServerController.update_ranges(ranges)
+            dhcp_server_configuration = self.dhcpServerController.add_section(section)
+            self.dhcp_server_configuration_to_export = dhcp_server_configuration
+        return
+
+    def update_section(self, section_start_ip, json_section):
+        section = self.dhcpServerParser.parse_section(json_section)
+        if self.dhcpServerController.exists_configuration():
+            dhcp_server_configuration = self.dhcpServerController.update_section(section_start_ip, section)
+            self.dhcp_server_configuration_to_export = dhcp_server_configuration
+        return
+
+    def update_section_start_ip(self, section_start_ip, json_start_ip):
+        start_ip = self.dhcpServerParser.parse_start_ip(json_start_ip)
+        if self.dhcpServerController.exists_configuration():
+            dhcp_server_configuration = self.dhcpServerController.add_section_start_ip(section_start_ip, start_ip)
+            self.dhcp_server_configuration_to_export = dhcp_server_configuration
+        return
+
+    def update_section_end_ip(self, section_start_ip, json_end_ip):
+        end_ip = self.dhcpServerParser.parse_end_ip(json_end_ip)
+        if self.dhcpServerController.exists_configuration():
+            dhcp_server_configuration = self.dhcpServerController.add_section_end_ip(section_start_ip, end_ip)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
