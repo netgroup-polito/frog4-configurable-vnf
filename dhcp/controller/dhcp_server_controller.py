@@ -29,10 +29,34 @@ class DhcpServerController():
         self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
-    def update_ranges(self, range_params):
+    def add_section(self, section):
         current_dhcp_server_configuration = self.get_dhcp_server_configuration()
-        current_dhcp_server_configuration.ranges = range_params
-        self.configure_dhcp_server(current_dhcp_server_configuration)
+        sections = current_dhcp_server_configuration.ranges
+        sections.append(section)
+        return current_dhcp_server_configuration
+
+    def update_section(self, section_start_ip, section):
+        current_dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = current_dhcp_server_configuration.ranges
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                section = section
+        return current_dhcp_server_configuration
+
+    def update_section_start_ip(self, section_start_ip, start_ip):
+        current_dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = current_dhcp_server_configuration.ranges
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                section.start_ip = start_ip
+        return current_dhcp_server_configuration
+
+    def update_section_end_ip(self, section_start_ip, end_ip):
+        current_dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = current_dhcp_server_configuration.ranges
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                section.end_ip = end_ip
         return current_dhcp_server_configuration
 
     def update_default_lease_time(self, default_lease_time):

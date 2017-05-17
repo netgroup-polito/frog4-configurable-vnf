@@ -50,20 +50,20 @@ class DhcpServerParser():
         return json_gateway_params['gatewayMask']
 
     def parse_sections(self, json_sections):
-        ranges = []
-        for json_range in json_sections['section']:
-            range = self.parse_range(json_range)
-            ranges.append(range)
-        return ranges
+        sections = []
+        for json_section in json_sections['section']:
+            section = self.parse_section(json_section)
+            sections.append(section)
+        return sections
 
-    def parse_range(self, json_range):
+    def parse_section(self, json_section):
         start_ip = None
-        if 'sectionStartIp' in json_range:
-            start_ip = self.parse_start_ip(json_range)
+        if 'sectionStartIp' in json_section:
+            start_ip = self.parse_start_ip(json_section)
 
         end_ip = None
-        if 'sectionEndIp' in json_range:
-            end_ip = self.parse_end_ip(json_range)
+        if 'sectionEndIp' in json_section:
+            end_ip = self.parse_end_ip(json_section)
 
         return Range(start_ip, end_ip)
 
