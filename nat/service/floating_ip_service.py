@@ -10,8 +10,12 @@ class FloatingIpService():
         Bash('iptables -t nat -I PREROUTING -d ' + floating_ip.public_address + ' -j DNAT --to-destination ' + floating_ip.private_address)
         Bash('ip addr add ' + floating_ip.public_address + ' dev ' + wan_interface)
 
+    def delete_floating_ip(self, floating_ip, wan_interface):
+        Bash('iptables -t nat -D POSTROUTING -s ' + floating_ip.private_address + ' -j SNAT --to ' + floating_ip.public_address)
+        Bash('iptables -t nat -D PREROUTING -d ' + floating_ip.public_address + ' -j DNAT --to-destination ' + floating_ip.private_address)
+        Bash('ip addr del ' + floating_ip.public_address + ' dev ' + wan_interface)
 
-    def get_floating_ip(self):
+    def get_all_floating_ip(self):
         '''
         Retrieve the floating ip entries
         A floating IP is described by 2 rules of the NAT table:
@@ -46,3 +50,9 @@ class FloatingIpService():
 
         return floating_ip_list
 
+    def get_floating_ip(self, private_address):
+        floating_ip_list = self.get_all_floating_ip()
+        for floating_ip in floating_ip_list:
+            if floating_ip.private_address == private_address:
+                return floating_ip
+        return None

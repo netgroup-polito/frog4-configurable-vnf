@@ -123,31 +123,45 @@ class NatController():
 
     def get_interface(self, name):
         interface = self.interfaceController.get_interface(name)
+        if interface is None:
+            raise ValueError("could not find interface: " + name)
         interface_dict = self.interfaceParser.get_interface_dict(interface)
         return interface_dict
 
     def get_interface_ipv4Configuration(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         ipv4_configuration_dict = self.interfaceParser.get_interface_ipv4Configuration(interface.ipv4_configuration)
         return ipv4_configuration_dict
 
     def get_interface_ipv4Configuration_address(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.address
 
     def get_interface_ipv4Configuration_netmask(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.netmask
 
     def get_interface_ipv4Configuration_default_gw(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.default_gw
 
     def get_interface_ipv4Configuration_mac_address(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.mac_address
 
     def reset_interface(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         self.interfaceController.reset_interface(name)
 
 
@@ -179,7 +193,7 @@ class NatController():
 
 
     # Floating ip
-    def configure_floating_ip(self, json_floating_ip):
+    def add_floating_ip(self, json_floating_ip):
         floating_ip = self.floatingIpParser.parse_floating_ip(json_floating_ip)
         floating_ip_list = self.floatingIpController.get_floating_ip()
         for curr_floating_ip in floating_ip_list:
@@ -190,9 +204,45 @@ class NatController():
         self.floating_ip_to_export.append(floating_ip)
         logging.debug("floating_ip set: private address " + floating_ip.private_address + " => public address" + floating_ip.public_address)
 
-    def get_floating_ip(self):
-        floating_ip = self.floatingIpController.get_floating_ip()
+    def update_floating_ip(self, private_address, json_floating_ip):
+        pass
+
+    def update_floating_ip_private_address(self, private_address, json_private_address):
+        pass
+
+    def update_floating_ip_public_address(self, private_address, json_private_address):
+        pass
+
+    def delete_floating_ip(self, private_address):
+        if self.floatingIpController.floating_ip_exists(private_address):
+            self.floatingIpController.delete_floating_ip(private_address)
+        else:
+            raise ValueError("could not find a floating_ip with private address " + private_address)
+
+    def get_all_floating_ip(self):
+        floating_ip_list = self.floatingIpController.get_all_floating_ip()
         floating_ip_dict = []
-        for curr_floating_ip in floating_ip:
-            floating_ip_dict.append(self.floatingIpParser.get_floating_ip_dict(curr_floating_ip))
+        for floating_ip in floating_ip_list:
+            floating_ip_dict.append(self.floatingIpParser.get_floating_ip_dict(floating_ip))
         return floating_ip_dict
+
+    def get_floating_ip(self, private_address):
+        floating_ip = self.floatingIpController.get_floating_ip(private_address)
+        if floating_ip is None:
+            raise ValueError("could not find a floating_ip with private address " + private_address)
+        floating_ip_dict = self.floatingIpParser.get_floating_ip_dict(floating_ip)
+        return floating_ip_dict
+
+    def get_floating_ip_private_address(self, private_address):
+        floating_ip_list = self.floatingIpController.get_all_floating_ip()
+        for floating_ip in floating_ip_list:
+            if floating_ip.private_address == private_address:
+                return floating_ip.private_address
+        raise ValueError("could not find a floating_ip with private address " + private_address)
+
+    def get_floating_ip_public_address(self, private_address):
+        floating_ip_list = self.floatingIpController.get_all_floating_ip()
+        for floating_ip in floating_ip_list:
+            if floating_ip.private_address == private_address:
+                return floating_ip.public_address
+        raise ValueError("could not find a floating_ip with private address " + private_address)
