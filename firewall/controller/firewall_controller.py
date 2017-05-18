@@ -177,31 +177,45 @@ class FirewallController():
 
     def get_interface(self, name):
         interface = self.interfaceController.get_interface(name)
+        if interface is None:
+            raise ValueError("could not find interface: " + name)
         interface_dict = self.interfaceParser.get_interface_dict(interface)
         return interface_dict
 
     def get_interface_ipv4Configuration(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         ipv4_configuration_dict = self.interfaceParser.get_interface_ipv4Configuration(interface.ipv4_configuration)
         return ipv4_configuration_dict
 
     def get_interface_ipv4Configuration_address(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.address
 
     def get_interface_ipv4Configuration_netmask(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.netmask
 
     def get_interface_ipv4Configuration_default_gw(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.default_gw
 
     def get_interface_ipv4Configuration_mac_address(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.mac_address
 
     def reset_interface(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         self.interfaceController.reset_interface(name)
 
 
@@ -222,15 +236,16 @@ class FirewallController():
 
 
     # Policies
-    def configure_policy(self, json_policy):
+    def add_policy(self, json_policy):
         policy = self.policyParser.parse_policies(json_policy)
         policies = self.policyController.get_policies()
         for pol in policies:
             if pol.__str__(policy):
                 return
-        self.policyController.configure_policy(policy)
+        id = self.policyController.add_policy(policy)
         self.policies_to_export = policy
         logging.debug("Configured policy: " + policy.__str__())
+        return id
 
     def update_policy(self, id, json_policy):
         pass
@@ -271,14 +286,74 @@ class FirewallController():
 
     def get_policy(self, id):
         policy = self.policyController.get_policy(id)
+        if policy is None:
+            raise ValueError("could not find policy: " + id)
         policy_dict = self.policyParser.get_policy_dict(policy)
         return policy_dict
+
+    def get_policy_description(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.description
+
+    def get_policy_action(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.action
+
+    def get_policy_protocol(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.protocol
+
+    def get_policy_in_interface(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.in_interface
+
+    def get_policy_out_interface(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.out_interface
+
+    def get_policy_src_address(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.src_address
+
+    def get_policy_dst_address(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.dst_address
+
+    def get_policy_src_port(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.src_port
+
+    def get_policy_dst_port(self, id):
+        if not self.policyController.policy_exists(id):
+            raise ValueError("could not find policy: " + id)
+        policy = self.policyController.get_policy(id)
+        return policy.dst_port
 
     def delete_policies(self):
         pass
 
     def delete_policy(self, id):
-        pass
+        if self.policyController.policy_exists(id):
+            self.policyController.delete_policy(id)
+        else:
+            raise ValueError("could not find policy: " + id)
+
 
 
     # Blacklist

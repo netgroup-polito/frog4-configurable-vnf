@@ -71,3 +71,13 @@ class Policy:
         if self.dst_port != other.dst_port:
             return False
         return True
+
+    def __hash__(self):
+        return hash((self.action,
+                     self.protocol,
+                     self.in_interface,
+                     self.out_interface,
+                     self.src_address,
+                     self.dst_address,
+                     self.src_port,
+                     self.dst_port))

@@ -1,27 +1,29 @@
 from firewall.model.policy import Policy
 from utils import Bash
-from pprint import pprint
 
 import iptc
 import logging
 
 class PolicyService():
 
-    # configure a policy
-    def configure_policy(self, policy, table, chain):
+    def add_policy(self, policy, table, chain):
         if(policy.in_interface is not None or policy.out_interface is not None):
             self._add_policy_in_ebtables(policy, table, chain)
         else:
             self._add_policy_in_iptables(policy, table, chain)
 
-    # return all current policies
+    def remove_policy(self, policy, table, chain):
+        if (policy.in_interface is not None or policy.out_interface is not None):
+            self._remove_policy_from_ebtables(policy, table, chain)
+        else:
+            self._remove_policy_from_iptables(policy, table, chain)
+
     def get_policies(self, table, chain):
         policies = []
         policies.extend(self._get_policies_from_iptables(table, chain))
         policies.extend(self._get_policies_from_ebtables(table, chain))
         return policies
 
-    # return a specific policies
     def get_policy(self, id, table, chain):
         policies = self.get_policies()
         for policy in policies:
@@ -119,6 +121,12 @@ class PolicyService():
         for protocol in protocols:
             Bash(
                 'ebtables -I ' + chain_name + protocol + in_interface + src_address + src_port + out_interface + dst_address + dst_port + '-j ' + action)
+
+    def _remove_policy_from_iptables(self, policy, table, chain):
+        pass
+
+    def _remove_policy_from_ebtables(self, policy, table, chain):
+        pass
 
     def _get_policies_from_iptables(self, table, chain):
         # table: FILTER | NAT
