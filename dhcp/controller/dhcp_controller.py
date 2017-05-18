@@ -35,30 +35,26 @@ class DhcpController():
         self.configure_dhcp_server(conf_global_ip_pool)
 
 
-    def get_status(self):
+    def get_full_status(self):
 
         status = {}
 
-        conf_interfaces = status["config-firewall:interfaces"] = {}
-        conf_interfaces["ifEntry"] = []
-        conf_interfaces["ifEntry"].append(self.get_interfaces())
-
-        conf_dhcp_server = status["config-dhcp-server:server"] = {}
-        conf_dhcp_server['globalIpPool'] = {}
-        conf_dhcp_server['globalIpPool'] = self.get_dhcp_server_configuration()
-        conf_dhcp_server['clients'] = []
-        conf_dhcp_server['clients'].append(self.get_clients())
+        status["config-firewall:interfaces"] = self.get_interfaces_status()
+        status["config-dhcp-server:server"] = self.get_dhcp_status()
 
         return status
 
 
     # Interfaces
+    def get_interfaces_status(self):
+        conf_interfaces = {}
+        conf_interfaces["ifEntry"] = self.get_interfaces_ifEntry()
+        return conf_interfaces
+
+    # Interfaces/ifEntry
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
-        if interface.type == "transparent":
-            self.transparent_intefaces.append(interface)
-            return
-        else:
+        if interface.type != "transparent":
             iface_found = self.interfaceController.get_interface(interface.name)
             if iface_found is not None:
                 if iface_found.__eq__(interface):
@@ -98,7 +94,7 @@ class DhcpController():
         else:
             raise ValueError("could not find interface: " + ifname)
 
-    def get_interfaces(self):
+    def get_interfaces_ifEntry(self):
         interfaces = self.interfaceController.get_interfaces()
         interfaces_dict = []
         for interface in interfaces:
@@ -149,7 +145,14 @@ class DhcpController():
         self.interfaceController.reset_interface(name)
 
 
-    # Dhcp Server
+    # Dhcp
+    def get_dhcp_status(self):
+        conf_dhcp_server = {}
+        conf_dhcp_server['globalIpPool'] = self.get_dhcp_server_configuration()
+        conf_dhcp_server['clients'] = self.get_clients()
+        return conf_dhcp_server
+
+    # Dhcp Server/Configuration
     def configure_dhcp_server(self, json_dhcp_server_params):
         dhcp_server_configuration = self.dhcpServerParser.parse_dhcp_server(json_dhcp_server_params)
         if self.dhcpServerController.exists_configuration():
@@ -356,6 +359,7 @@ class DhcpController():
         dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
         return dhcp_server_configuration.dns.domain_name
 
+    # Dhcp Server/Clients
     def get_clients(self):
         clients = self.dhcpServerController.get_clients()
         clients_dict = []

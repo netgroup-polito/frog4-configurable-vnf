@@ -102,27 +102,24 @@ class FirewallController():
             logging.debug(x.__str__())
 
 
-    def get_status(self):
+    def get_full_status(self):
 
         status = {}
 
-        conf_interfaces = status["config-firewall:interfaces"] = {}
-        conf_interfaces["ifEntry"] = []
-        conf_interfaces["ifEntry"].append(self.get_interfaces())
-        conf_interfaces["wan-interface"] = self.get_wan_interface()
-
-        conf_firewall = status["config-firewall:firewall"] = {}
-        conf_firewall['policies'] = []
-        conf_firewall['blacklist'] = []
-        conf_firewall['whitelist'] = []
-        conf_firewall['policies'].append(self.get_policies())
-        conf_firewall['blacklist'].append(self.get_blacklist())
-        conf_firewall['whitelist'].append(self.get_whitelist())
+        status["config-firewall:interfaces"] = self.get_interfaces_status()
+        status["config-firewall:firewall"] = self.get_firewall_status()
 
         return status
 
 
     # Interfaces
+    def get_interfaces_status(self):
+        conf_interfaces = {}
+        conf_interfaces["ifEntry"] = self.get_interfaces_ifEntry()
+        conf_interfaces["wan-interface"] = self.get_wan_interface()
+        return conf_interfaces
+
+    # Interfaces/ifEntry
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
         if interface.type == "transparent":
@@ -168,7 +165,7 @@ class FirewallController():
         else:
             raise ValueError("could not find interface: " + ifname)
 
-    def get_interfaces(self):
+    def get_interfaces_ifEntry(self):
         interfaces = self.interfaceController.get_interfaces()
         interfaces_dict = []
         for interface in interfaces:
@@ -218,8 +215,7 @@ class FirewallController():
             raise ValueError("could not find interface: " + name)
         self.interfaceController.reset_interface(name)
 
-
-    # Wan-interface
+    # Interfaces/Wan-interface
     def get_wan_interface(self):
         return self.wan_interface
 
@@ -235,7 +231,15 @@ class FirewallController():
             return False
 
 
-    # Policies
+    # Firewall
+    def get_firewall_status(self):
+        firewall = {}
+        firewall['policies'] = self.get_policies()
+        firewall['blacklist'] = self.get_blacklist()
+        firewall['whitelist'] = self.get_whitelist()
+        return firewall
+
+    # Firewall/Policies
     def add_policy(self, json_policy):
         policy = self.policyParser.parse_policies(json_policy)
         policies = self.policyController.get_policies()
@@ -356,7 +360,7 @@ class FirewallController():
 
 
 
-    # Blacklist
+    # Firewall/Blacklist
     def configure_blacklist_url(self, json_url):
         url = self.blacklistParser.parse_url(json_url)
         blacklist = self.blacklistController.get_blacklist()
@@ -381,7 +385,7 @@ class FirewallController():
         self.blacklistController.delete_url(url)
 
 
-    # Whitelist
+    # Firewall/Whitelist
     def configure_whitelist_url(self, json_url):
         url = self.whitelistParser.parse_url(json_url)
         whitelist = self.whitelistController.get_whitelist()

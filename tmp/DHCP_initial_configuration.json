@@ -17,8 +17,10 @@
 			},
 			"defaultLeaseTime": "100",
 			"maxLeaseTime": "1000",
-			"domainNameServer": "8.8.8.8",
-			"domainName": "polito.it"
+			"dns":{
+				"primaryServer": "8.8.8.8",
+				"domainName": "polito.it"
+			}
 		},
 		"clients": []
 	},

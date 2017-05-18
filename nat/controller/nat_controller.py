@@ -54,24 +54,23 @@ class NatController():
             logging.debug(x.__str__())
 
 
-    def get_status(self):
+    def get_full_status(self):
 
         status = {}
 
-        conf_interfaces = status["config-nat:interfaces"] = {}
-        conf_interfaces["ifEntry"] = []
-        conf_interfaces["ifEntry"].append(self.get_interfaces())
-
-        conf_nat = status["config-nat:nat"] = {}
-        conf_nat['wan-interface'] = self.get_wan_interface()
-        conf_nat_static_bindings = conf_nat['staticBindings'] = {}
-        conf_nat_static_bindings['floatingIP'] = []
-        conf_nat_static_bindings['floatingIP'].append(self.get_floating_ip())
+        status["config-nat:interfaces"] = self.get_interfaces_status()
+        status["config-nat:nat"] = self.get_nat_status()
 
         return status
 
 
     # Interfaces
+    def get_interfaces_status(self):
+        conf_interfaces = {}
+        conf_interfaces["ifEntry"] = self.get_interfaces_ifEntry()
+        return conf_interfaces
+
+    # Interfaces/ifEntry
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
         if interface.type != "transparent":
@@ -114,7 +113,7 @@ class NatController():
         else:
             raise ValueError("could not find interface: " + ifname)
 
-    def get_interfaces(self):
+    def get_interfaces_ifEntry(self):
         interfaces = self.interfaceController.get_interfaces()
         interfaces_dict = []
         for interface in interfaces:
@@ -166,6 +165,13 @@ class NatController():
 
 
     # Nat
+    def get_nat_status(self):
+        nat = {}
+        nat['wan-interface'] = self.get_wan_interface()
+        nat['staticBindings'] = self.get_static_bindings()
+        return nat
+
+    # Nat/Wan-interface
     def set_ip_forward(self, json_nat_configurations):
         wan_interface = json_nat_configurations['wan-interface']
         current_wan_iface = self.get_wan_interface()
@@ -191,8 +197,7 @@ class NatController():
                 logging.debug("Exception: " + str(e))
                 return None
 
-
-    # Floating ip
+    # Nat/StaticBindings
     def add_floating_ip(self, json_floating_ip):
         floating_ip = self.floatingIpParser.parse_floating_ip(json_floating_ip)
         floating_ip_list = self.floatingIpController.get_floating_ip()
@@ -218,6 +223,11 @@ class NatController():
             self.floatingIpController.delete_floating_ip(private_address)
         else:
             raise ValueError("could not find a floating_ip with private address " + private_address)
+
+    def get_static_bindings(self):
+        static_bindings = {}
+        static_bindings["floatingIP"] = self.get_floating_ip()
+        return static_bindings
 
     def get_all_floating_ip(self):
         floating_ip_list = self.floatingIpController.get_all_floating_ip()
