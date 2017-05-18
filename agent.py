@@ -80,7 +80,7 @@ class ConfigurationAgent():
         assert os.path.isdir(self.datadisk_path) is True, "datadisk not mounted onto the VNF"
         self.tenant_keys_file = self.datadisk_path + "/tenant-keys.json"
         self.template = self.datadisk_path + "/template.json"
-        self.metadata_file = self.datadisk_path + "/metadata"
+        self.metadata_file = self.datadisk_path + "/metadata.json"
         self.initial_configuration_path = self.datadisk_path + "/initial_configuration.json"
         assert os.path.exists(self.tenant_keys_file) is True, "tenant-keys.json file not found in datadisk"
         assert os.path.exists(self.template), "Error, VNF template not found in datadisk"
@@ -195,30 +195,24 @@ class ConfigurationAgent():
         :return:
         """
         try:
-            metadata = open(metadata_path, "r")
-            for line in metadata.readlines():
-                words = "".join(line.split()).split('=')
-                if words[0] == "tenant-id":
-                    self.tenant_id = words[1]
-                elif words[0] == "graph-id":
-                    self.graph_id = words[1]
-                elif words[0] == "vnf-id":
-                    self.vnf_id = words[1]
-                elif words[0] == "broker-url":
-                    self.broker_url = words[1]
-                else:
-                    logging.debug("unknown keyword in metadata: " + words[0])
+            with open(metadata_path) as metadata_file:
+
+                json_data = metadata_file.read()
+                metadata = json.loads(json_data)
+
+                assert 'tenant-id' in metadata, "tenant-id key not found in metadata file"
+                assert 'graph-id' in metadata, "graph-id key not found in metadata file"
+                assert 'vnf-id' in metadata, "vnf-id key not found in metadata file"
+                assert 'broker-url' in metadata, "broker-url key not found in metadata file"
+
+                self.tenant_id = metadata['tenant-id']
+                self.graph_id = metadata['graph-id']
+                self.vnf_id = metadata['vnf-id']
+                self.broker_url = metadata['broker-url']
+
         except Exception as e:
             logging.debug("Error during metadata reading.\n" + str(e))
             sys.exit(1)
-        finally:
-            if metadata is not None:
-                metadata.close()
-
-        assert self.tenant_id is not None, "tenant-id key not found in metadata file"
-        assert self.graph_id is not None, "graph-id key not found in metadata file"
-        assert self.vnf_id is not None, "vnf-id key not found in metadata file"
-        assert self.broker_url is not None, "broker-url key not found in metadata file"
 
     def _get_iface_from_template(self):
         with open(self.template) as template_data:
