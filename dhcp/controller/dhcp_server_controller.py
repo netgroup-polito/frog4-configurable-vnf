@@ -31,32 +31,36 @@ class DhcpServerController():
 
     def add_section(self, section):
         current_dhcp_server_configuration = self.get_dhcp_server_configuration()
-        sections = current_dhcp_server_configuration.ranges
+        sections = current_dhcp_server_configuration.sections
         sections.append(section)
+        self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
     def update_section(self, section_start_ip, section):
         current_dhcp_server_configuration = self.get_dhcp_server_configuration()
-        sections = current_dhcp_server_configuration.ranges
+        sections = current_dhcp_server_configuration.sections
         for section in sections:
             if section.start_ip == section_start_ip:
                 section = section
+        self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
     def update_section_start_ip(self, section_start_ip, start_ip):
         current_dhcp_server_configuration = self.get_dhcp_server_configuration()
-        sections = current_dhcp_server_configuration.ranges
+        sections = current_dhcp_server_configuration.sections
         for section in sections:
             if section.start_ip == section_start_ip:
                 section.start_ip = start_ip
+        self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
     def update_section_end_ip(self, section_start_ip, end_ip):
         current_dhcp_server_configuration = self.get_dhcp_server_configuration()
-        sections = current_dhcp_server_configuration.ranges
+        sections = current_dhcp_server_configuration.sections
         for section in sections:
             if section.start_ip == section_start_ip:
                 section.end_ip = end_ip
+        self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
     def update_default_lease_time(self, default_lease_time):
@@ -77,9 +81,15 @@ class DhcpServerController():
         self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
-    def update_domain_name_server(self, domain_name_server):
+    def update_dns_primary_server(self, primary_server):
         current_dhcp_server_configuration = self.get_dhcp_server_configuration()
-        current_dhcp_server_configuration.dns.domain_name_server = domain_name_server
+        current_dhcp_server_configuration.dns.primary_server = primary_server
+        self.configure_dhcp_server(current_dhcp_server_configuration)
+        return current_dhcp_server_configuration
+    
+    def update_dns_secondary_server(self, secondary_server):
+        current_dhcp_server_configuration = self.get_dhcp_server_configuration()
+        current_dhcp_server_configuration.dns.secondary_server = secondary_server
         self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
@@ -89,7 +99,7 @@ class DhcpServerController():
         self.configure_dhcp_server(current_dhcp_server_configuration)
         return current_dhcp_server_configuration
 
-    def exists_configuration(self):
+    def configuration_exists(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
             try:
                 self.dhcpServerService.get_dhcp_server_configuration()
@@ -104,3 +114,7 @@ class DhcpServerController():
     def get_clients(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
             return self.dhcpServerService.get_clients()
+
+    def get_client(self, mac_address):
+        if self.nf_type == "docker" or self.nf_type == "vm":
+            return self.dhcpServerService.get_client(mac_address)

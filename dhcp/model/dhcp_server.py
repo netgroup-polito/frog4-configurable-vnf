@@ -19,7 +19,7 @@ class Gateway():
             return False
         return True
 
-class Range():
+class Section():
     def __init__(self, start_ip=None, end_ip=None):
         self.start_ip = start_ip
         self.end_ip = end_ip
@@ -41,21 +41,26 @@ class Range():
         return True
 
 class Dns():
-    def __init__(self, domain_name_server=None, domain_name=None):
-        self.domain_name_server = domain_name_server
+    def __init__(self, primary_server=None, secondary_server=None, domain_name=None):
+        self.primary_server = primary_server
+        self.secondary_server = secondary_server
         self.domain_name = domain_name
 
     def __str__(self):
         str = "{"
-        if self.domain_name_server is not None:
-            str += "'domain_name_server': " + self.domain_name_server + ", "
+        if self.primary_server is not None:
+            str += "'primary_server': " + self.primary_server + ", "
+        if self.secondary_server is not None:
+            str += "'secondary_server': " + self.secondary_server + ", "
         if self.domain_name is not None:
             str += "'domain_name': " + self.domain_name
         str += "}"
         return str
 
     def __eq__(self, other):
-        if self.domain_name_server != other.domain_name_server:
+        if self.primary_server != other.primary_server:
+            return False
+        if self.secondary_server != other.secondary_server:
             return False
         if self.domain_name != other.domain_name:
             return False
@@ -64,13 +69,13 @@ class Dns():
 class DhcpServer():
     def __init__(self,
                  gateway=None,
-                 ranges=[],
+                 sections=[],
                  default_lease_time=None,
                  max_lease_time=None,
                  dns=None):
 
         self.gateway = gateway
-        self.ranges = ranges
+        self.sections = sections
         self.default_lease_time = default_lease_time
         self.max_lease_time = max_lease_time
         self.dns = dns
@@ -80,10 +85,10 @@ class DhcpServer():
         str = "{"
         if self.gateway is not None:
             str += "'gateway': " + self.gateway.__str__() + ", "
-        if self.ranges is not None:
-            str += "'ranges': {"
-            for range in self.ranges:
-                str += range.__str__()
+        if self.sections is not None:
+            str += "'sections': {"
+            for section in self.sections:
+                str += section.__str__()
             str += "}, "
         if self.default_lease_time is not None:
             str += "'default_lease_time': " + self.default_lease_time + ", "
@@ -97,7 +102,7 @@ class DhcpServer():
     def __eq__(self, other):
         if not self.gateway.__eq__(other.gateway):
             return False
-        if not self.ranges.__eq__(other.ranges):
+        if not self.sections.__eq__(other.sections):
             return False
         if self.default_lease_time != other.default_lease_time:
             return False

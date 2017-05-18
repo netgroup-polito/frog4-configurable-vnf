@@ -1,5 +1,5 @@
 from dhcp.model.dhcp_server import Gateway
-from dhcp.model.dhcp_server import Range
+from dhcp.model.dhcp_server import Section
 from dhcp.model.dhcp_server import Dns
 from dhcp.model.dhcp_server import DhcpServer
 from dhcp.model.client import Client
@@ -32,11 +32,14 @@ class DhcpServerService():
                 dhcpd_file.write('max-lease-time ' + dhcp_server.max_lease_time + ';\n')
                 dhcpd_file.write('option subnet-mask ' + dhcp_server.gateway.address + ';\n')
                 dhcpd_file.write('option routers ' + dhcp_server.gateway.netmask + ';\n')
-                dhcpd_file.write('option domain-name-servers ' + dhcp_server.dns.domain_name_server + ';\n')
+                dhcpd_file.write('option domain-name-servers ' + dhcp_server.dns.primary_server)
+                if dhcp_server.dns.secondary_server is not None:
+                    dhcpd_file.write(', ' + dhcp_server.dns.secondary_server)
+                dhcpd_file.write(';\n')
                 dhcpd_file.write('option domain-name "' + dhcp_server.dns.domain_name + '";\n')
                 dhcpd_file.write('subnet ' + dhcp_server.gateway.address + ' netmask ' + dhcp_server.gateway.netmask + ' {\n')
-                for range in dhcp_server.ranges:
-                    dhcpd_file.write('    range ' + range.start_ip + ' ' + range.end_ip + ';\n')
+                for section in dhcp_server.sections:
+                    dhcpd_file.write('    range ' + section.start_ip + ' ' + section.end_ip + ';\n')
                 dhcpd_file.write('}')
                 dhcpd_file.truncate()
         except Exception as e:
@@ -75,10 +78,11 @@ class DhcpServerService():
 
         gateway_address = None
         gateway_netmask = None
-        ranges = []
+        sections = []
         default_lease_time = None
         max_lease_time = None
-        domain_name_server = None
+        primary_server = None
+        secondary_server = None
         domain_name = None
 
         for line in dhcpd_lines:
@@ -95,7 +99,13 @@ class DhcpServerService():
                 elif option == "subnet-mask":
                     gateway_netmask = line.split('option subnet-mask ')[1].split(';')[0]
                 elif option == "domain-name-servers":
-                    domain_name_server = line.split('option domain-name-servers ')[1].split(';')[0]
+                    servers = line.split('option domain-name-servers ')[1].split(';')[0]
+                    if ',' in servers:
+                        servers = servers.split(", ")
+                        primary_server = servers[0]
+                        secondary_server = servers[1]
+                    else:
+                        primary_server = servers
                 elif option == "domain-name":
                     domain_name = line.split('option domain-name "')[1].split('";')[0]
             elif command == "subnet":
@@ -103,12 +113,12 @@ class DhcpServerService():
             elif command == "range":
                 start_ip = line.strip().split('range ')[1].split(' ')[0]
                 end_ip = line.strip().split('range ')[1].split(' ')[1].split(';')[0]
-                range = Range(start_ip, end_ip)
-                ranges.append(range)
+                section = Section(start_ip, end_ip)
+                sections.append(section)
 
         gateway = Gateway(gateway_address, gateway_netmask)
-        dns = Dns(domain_name_server, domain_name)
-        return DhcpServer(gateway, ranges, default_lease_time, max_lease_time, dns)
+        dns = Dns(primary_server, secondary_server, domain_name)
+        return DhcpServer(gateway, sections, default_lease_time, max_lease_time, dns)
 
     def get_clients(self):
         clients = []
@@ -128,3 +138,10 @@ class DhcpServerService():
             clients.append(client)
 
         return clients
+
+    def get_client(self, mac_address):
+        clients = self.get_clients()
+        for client in clients:
+            if client.mac_address == mac_address:
+                return client
+        return None

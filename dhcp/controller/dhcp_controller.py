@@ -107,31 +107,45 @@ class DhcpController():
 
     def get_interface(self, name):
         interface = self.interfaceController.get_interface(name)
+        if interface is None:
+            raise ValueError("could not find interface: " + name)
         interface_dict = self.interfaceParser.get_interface_dict(interface)
         return interface_dict
 
     def get_interface_ipv4Configuration(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         ipv4_configuration_dict = self.interfaceParser.get_interface_ipv4Configuration(interface.ipv4_configuration)
         return ipv4_configuration_dict
 
     def get_interface_ipv4Configuration_address(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.address
 
     def get_interface_ipv4Configuration_netmask(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.netmask
 
     def get_interface_ipv4Configuration_default_gw(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.default_gw
 
     def get_interface_ipv4Configuration_mac_address(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.mac_address
 
     def reset_interface(self, name):
+        if not self.interfaceController.interface_exists(name):
+            raise ValueError("could not find interface: " + name)
         self.interfaceController.reset_interface(name)
 
 
@@ -215,10 +229,17 @@ class DhcpController():
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_domain_name_server(self, json_domain_name_server):
-        domain_name_server = self.dhcpServerParser.parse_domain_name_server(json_domain_name_server)
+    def update_dns_primary_server(self, json_primary_server):
+        primary_server = self.dhcpServerParser.parse_primary_server(json_primary_server)
         if self.dhcpServerController.exists_configuration():
-            dhcp_server_configuration = self.dhcpServerController.update_domain_name_server(domain_name_server)
+            dhcp_server_configuration = self.dhcpServerController.update_dns_primary_server(primary_server)
+            self.dhcp_server_configuration_to_export = dhcp_server_configuration
+        return
+
+    def update_dns_secondary_server(self, json_secondary_server):
+        secondary_server = self.dhcpServerParser.parse_secondary_server(json_secondary_server)
+        if self.dhcpServerController.exists_configuration():
+            dhcp_server_configuration = self.dhcpServerController.update_dns_secondary_server(secondary_server)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
@@ -230,8 +251,110 @@ class DhcpController():
         return
 
     def get_dhcp_server_configuration(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
         dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
         return self.dhcpServerParser.get_dhcp_server_configuration_dict(dhcp_server_configuration)
+
+    def get_dhcp_server_configuration_gateway(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return self.dhcpServerParser.get_dhcp_server_configuration_gateway_dict(dhcp_server_configuration.gateway)
+
+    def get_dhcp_server_configuration_gateway_address(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return dhcp_server_configuration.gateway.address
+
+    def get_dhcp_server_configuration_netmask(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return dhcp_server_configuration.gateway.netmask
+
+    def get_dhcp_server_configuration_sections(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        sections_dict = []
+        for section in sections:
+            section_dict = self.dhcpServerParser.get_dhcp_server_configuration_section_dict(section)
+            sections_dict.append(section_dict)
+        return sections_dict
+
+    def get_dhcp_server_configuration_section(self, section_start_ip):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        section_found = None
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                section_found = section
+                break
+        if section_found is not None:
+            return self.dhcpServerParser.parse_section(section_found)
+        else:
+            raise ValueError("could not find section with start_ip: " + section_start_ip)
+
+    def get_dhcp_server_configuration_section_start_ip(self, section_start_ip):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                return section.start_ip
+        raise ValueError("could not find section with start_ip: " + section_start_ip)
+
+    def get_dhcp_server_configuration_section_end_ip(self, section_start_ip):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                return section.end_ip
+        raise ValueError("could not find section with start_ip: " + section_start_ip)
+
+    def get_dhcp_server_configuration_default_lease_time(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return self.dhcp_server_configuration.default_lease_time
+
+    def get_dhcp_server_configuration_max_lease_time(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return dhcp_server_configuration.max_lease_time
+
+    def get_dhcp_server_configuration_dns(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return self.dhcpServerParser.parse_dns(dhcp_server_configuration.dns)
+
+    def get_dhcp_server_configuration_primary_dns(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return dhcp_server_configuration.dns.primary_server
+
+    def get_dhcp_server_configuration_secondary_dns(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return dhcp_server_configuration.dns.secondary_server
+
+    def get_dhcp_server_configuration_domain_name(self):
+        if not self.dhcpServerController.configuration_exists():
+            raise ValueError("could not find a dhcp server configuration")
+        dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        return dhcp_server_configuration.dns.domain_name
 
     def get_clients(self):
         clients = self.dhcpServerController.get_clients()
@@ -239,4 +362,29 @@ class DhcpController():
         for client in clients:
             clients_dict.append(self.dhcpServerParser.get_client_dict(client))
         return clients_dict
+
+    def get_client(self, mac_address):
+        client = self.dhcpServerController.get_client(mac_address)
+        if client is None:
+            raise ValueError("could not find client: " + mac_address)
+        client_dict = self.dhcpServerParser.get_client_dict(client)
+        return client_dict
+
+    def get_client_ip_address(self, mac_address):
+        client = self.dhcpServerController.get_client(mac_address)
+        if client is None:
+            raise ValueError("could not find client: " + mac_address)
+        return client.ip_address
+
+    def get_client_hostname(self, mac_address):
+        client = self.dhcpServerController.get_client(mac_address)
+        if client is None:
+            raise ValueError("could not find client: " + mac_address)
+        return client.hostaname
+
+    def get_client_valid_until(self, mac_address):
+        client = self.dhcpServerController.get_client(mac_address)
+        if client is None:
+            raise ValueError("could not find client: " + mac_address)
+        return client.valid_until
 

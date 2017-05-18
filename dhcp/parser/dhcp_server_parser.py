@@ -1,5 +1,5 @@
 from dhcp.model.dhcp_server import Gateway
-from dhcp.model.dhcp_server import Range
+from dhcp.model.dhcp_server import Section
 from dhcp.model.dhcp_server import Dns
 from dhcp.model.dhcp_server import DhcpServer
 
@@ -10,9 +10,9 @@ class DhcpServerParser():
         if 'gatewayIp' in json_dhcp_server_params:
             gateway = self.parse_gateway(json_dhcp_server_params['gatewayIp'])
 
-        ranges = []
+        sections = []
         if 'sections' in json_dhcp_server_params:
-            ranges = self.parse_sections(json_dhcp_server_params['sections'])
+            sections = self.parse_sections(json_dhcp_server_params['sections'])
 
         default_lease_time = None
         if 'defaultLeaseTime' in json_dhcp_server_params:
@@ -22,15 +22,11 @@ class DhcpServerParser():
         if 'maxLeaseTime' in json_dhcp_server_params:
             max_lease_time = self.parse_max_lease_time(json_dhcp_server_params)
 
-        domain_name_server = None
-        if 'domainNameServer' in json_dhcp_server_params:
-            domain_name_server = self.parse_domain_name_server(json_dhcp_server_params)
-        domain_name = None
-        if 'domainName' in json_dhcp_server_params:
-            domain_name = self.parse_domain_name(json_dhcp_server_params)
-        dns = Dns(domain_name_server, domain_name)
+        dns = None
+        if 'dns' in json_dhcp_server_params:
+            dns = self.parse_dns(json_dhcp_server_params['dns'])
 
-        return DhcpServer(gateway, ranges, default_lease_time, max_lease_time, dns)
+        return DhcpServer(gateway, sections, default_lease_time, max_lease_time, dns)
 
     def parse_gateway(self, json_gateway_params):
         address = None
@@ -65,13 +61,13 @@ class DhcpServerParser():
         if 'sectionEndIp' in json_section:
             end_ip = self.parse_end_ip(json_section)
 
-        return Range(start_ip, end_ip)
+        return Section(start_ip, end_ip)
 
-    def parse_start_ip(self, json_range_params):
-        return json_range_params['sectionStartIp']
+    def parse_section_start_ip(self, json_section_params):
+        return json_section_params['sectionStartIp']
 
-    def parse_end_ip(self, json_range_params):
-        return json_range_params['sectionEndIp']
+    def parse_section_end_ip(self, json_section_params):
+        return json_section_params['sectionEndIp']
 
     def parse_default_lease_time(self, json_dhcp_server_params):
         return json_dhcp_server_params['defaultLeaseTime']
@@ -80,20 +76,27 @@ class DhcpServerParser():
         return json_dhcp_server_params['maxLeaseTime']
 
     def parse_dns(self, json_dns_params):
-        domain_name_server = None
-        if 'domainNameServer' in json_dns_params:
-            domain_name_server = self.parse_domain_name_server(json_dns_params)
+        primary_server = None
+        if 'primaryServer' in json_dns_params:
+            primary_server = self.parse_primary_server(json_dns_params)
+
+        secondary_server = None
+        if 'secondaryServer' in json_dns_params:
+            secondary_server = self.parse_secondary_server(json_dns_params)
 
         domain_name = None
         if 'domainName' in json_dns_params:
             domain_name = self.parse_domain_name(json_dns_params)
 
-        return Dns(domain_name_server, domain_name)
+        return Dns(primary_server, secondary_server, domain_name)
 
-    def parse_domain_name_server(self, json_dns_params):
-        return json_dns_params['domainNameServer']
+    def parse_dns_primary_server(self, json_dns_params):
+        return json_dns_params['primaryServer']
 
-    def parse_domain_name(self, json_dns_params):
+    def parse_dns_secondary_server(self, json_dns_params):
+        return json_dns_params['secondaryServer']
+
+    def parse_dns_domain_name(self, json_dns_params):
         return json_dns_params['domainName']
 
 
@@ -102,20 +105,17 @@ class DhcpServerParser():
         dhcp_server_dict = {}
 
         gateway_dict = {}
-        if dhcp_server.gateway.address is not None:
-            gateway_dict['gatewayAddress'] = dhcp_server.gateway.address
-        if dhcp_server.gateway.netmask is not None:
-            gateway_dict['gatewayMask'] = dhcp_server.gateway.netmask
+        if dhcp_server.gateway is not None:
+            gateway_dict = self.get_dhcp_server_configuration_gateway_dict(dhcp_server.gateway)
         dhcp_server_dict['gatewayIp'] = gateway_dict
 
-        ranges_dict = []
-        range_dict = {}
-        for range in dhcp_server.ranges:
-            range_dict['sectionStartIp'] = range.start_ip
-            range_dict['sectionEndIp'] = range.end_ip
-            ranges_dict.append(range_dict)
+        sections_dict = []
+        section_dict = {}
+        for section in dhcp_server.sections:
+            section_dict = self.get_dhcp_server_configuration_section_dict(section)
+            sections_dict.append(section_dict)
         sections = {}
-        sections['section'] = ranges_dict
+        sections['section'] = sections_dict
         dhcp_server_dict['sections'] = sections
 
         if dhcp_server.default_lease_time is not None:
@@ -124,13 +124,39 @@ class DhcpServerParser():
         if dhcp_server.max_lease_time is not None:
             dhcp_server_dict['maxLeaseTime'] = dhcp_server.max_lease_time
 
-        if dhcp_server.dns.domain_name_server is not None:
-            dhcp_server_dict['domainNameServer'] = dhcp_server.dns.domain_name_server
-
-        if dhcp_server.dns.domain_name is not None:
-            dhcp_server_dict['domainName'] = dhcp_server.dns.domain_name
+        dns_dict = {}
+        if dhcp_server.dns is not None:
+            dns_dict = self.get_dhcp_server_configuration_dns_dict(dhcp_server.dns)
+        dhcp_server_dict['dns'] = dns_dict
 
         return dhcp_server_dict
+
+    def get_dhcp_server_configuration_gateway_dict(self, gateway):
+        gateway_dict = {}
+        if gateway.address is not None:
+            gateway_dict['gatewayAddress'] = gateway.address
+        if gateway.netmask is not None:
+            gateway_dict['gatewayMask'] = gateway.netmask
+        return gateway_dict
+
+    def get_dhcp_server_configuration_section_dict(self, section):
+        section_dict = {}
+        if section.start_ip is not None:
+            section_dict['sectionStartIp'] = section.start_ip
+        if section.end_ip is not None:
+            section_dict['sectionEndIp'] = section.end_ip
+        return section_dict
+
+    def get_dhcp_server_configuration_dns_dict(self, dns):
+        dns_dict = {}
+        if dns.primary_server is not None:
+            dns_dict['primaryServer'] = dns.primary_server
+        if dns.secondary_server is not None:
+            dns_dict['secondaryServer'] = dns.secondary_server
+        if dns.domain_name is not None:
+            dns_dict['domainNameServer'] = dns.domain_name
+        return dns_dict
+
 
     def get_client_dict(self, client):
 
