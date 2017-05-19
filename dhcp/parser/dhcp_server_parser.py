@@ -114,9 +114,7 @@ class DhcpServerParser():
         for section in dhcp_server.sections:
             section_dict = self.get_dhcp_server_configuration_section_dict(section)
             sections_dict.append(section_dict)
-        sections = {}
-        sections['section'] = sections_dict
-        dhcp_server_dict['sections'] = sections
+        dhcp_server_dict['sections'] = sections_dict
 
         if dhcp_server.default_lease_time is not None:
             dhcp_server_dict['defaultLeaseTime'] = dhcp_server.default_lease_time

@@ -50,9 +50,9 @@ class FloatingIpService():
 
         return floating_ip_list
 
-    def get_floating_ip(self, private_address):
+    def get_floating_ip(self, public_address):
         floating_ip_list = self.get_all_floating_ip()
         for floating_ip in floating_ip_list:
-            if floating_ip.private_address == private_address:
+            if floating_ip.public_address == public_address:
                 return floating_ip
         return None

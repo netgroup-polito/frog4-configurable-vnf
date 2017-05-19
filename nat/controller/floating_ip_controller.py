@@ -15,16 +15,16 @@ class FloatingIpController():
         if self.nf_type == "docker" or self.nf_type == "vm":
             return self.floatingIpService.get_all_floating_ip()
 
-    def get_floating_ip(self, private_address):
+    def get_floating_ip(self, public_address):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            return self.floatingIpService.get_floating_ip(private_address)
+            return self.floatingIpService.get_floating_ip(public_address)
 
-    def delete_floating_ip(self, private_address):
+    def delete_floating_ip(self, public_address):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            return self.floatingIpService.delete_floating_ip(private_address)
+            return self.floatingIpService.delete_floating_ip(public_address)
 
-    def floating_ip_exists(self, private_address):
-        if self.get_floating_ip(private_address) is None:
+    def floating_ip_exists(self, public_address):
+        if self.get_floating_ip(public_address) is None:
             return False
         else:
             return True

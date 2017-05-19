@@ -80,12 +80,6 @@ class RestNatController():
         pass
 
     def delete_floating_ip(self, private_address):
-        if self.floatingIpController.floating_ip_exists(private_address):
-            self.floatingIpController.delete_floating_ip(private_address)
-        else:
-            raise ValueError("could not find a floating_ip with private address " + private_address)
-
-    def get_static_bindings(self):
         pass
 
     def get_all_floating_ip(self):

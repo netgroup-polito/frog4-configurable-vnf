@@ -5,16 +5,15 @@
 				"gatewayAddress": "192.168.0.1",
 				"gatewayMask": "255.255.255.0"
 			},
-			"sections": {
-				"section": [{
-					"sectionStartIp": "192.168.0.50",
-					"sectionEndIp": "192.168.0.253"
+			"sections": [
+				{
+				"sectionStartIp": "192.168.0.50",
+				"sectionEndIp": "192.168.0.253"
 				},{
-					"sectionStartIp": "192.168.1.50",
-					"sectionEndIp": "192.168.1.253"
+				"sectionStartIp": "192.168.1.50",
+				"sectionEndIp": "192.168.1.253"
 				}
-				]
-			},
+			],
 			"defaultLeaseTime": "100",
 			"maxLeaseTime": "1000",
 			"dns":{
