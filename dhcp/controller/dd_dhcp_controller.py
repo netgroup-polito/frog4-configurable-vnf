@@ -28,7 +28,6 @@ class DoubleDeckerDhcpController():
         self.dhcpServerParser = DhcpServerParser()
 
 
-
         ############# Parameters to monitor #############
         #################################################
         self.interfaces_old = []
@@ -51,7 +50,6 @@ class DoubleDeckerDhcpController():
         self.interfaces_old = self.interfaceController.get_interfaces()
         self.dhcp_clients_old = self.dhcpServerController.get_clients()
         self.dhcp_server_configuration_old = self.dhcpServerController.get_dhcp_server_configuration()
-
 
         if initial_configuration is not None:
             logging.debug("Initial_configuration is not none, trying to set")

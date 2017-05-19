@@ -46,7 +46,7 @@ class FirewallController():
         for json_iface in json_interfaces:
             self.configure_interface(json_iface)
 
-        self.wan_interface = conf_interfaces['wan-interface']
+        self.set_wan_interface(json_configuration)
 
         if len(self.transparent_intefaces) >= 2:
             to_lan_interface = None
@@ -219,6 +219,9 @@ class FirewallController():
     def get_wan_interface(self):
         return self.wan_interface
 
+    def set_wan_interface(self, json_configuration):
+        self.wan_interface = json_configuration['wan-interface']
+
 
     # Bridge
     def create_bridge(self, bridge):
@@ -358,8 +361,6 @@ class FirewallController():
         else:
             raise ValueError("could not find policy: " + id)
 
-
-
     # Firewall/Blacklist
     def configure_blacklist_url(self, json_url):
         url = self.blacklistParser.parse_url(json_url)
@@ -383,7 +384,6 @@ class FirewallController():
 
     def delete_blacklist_url(self, url):
         self.blacklistController.delete_url(url)
-
 
     # Firewall/Whitelist
     def configure_whitelist_url(self, json_url):

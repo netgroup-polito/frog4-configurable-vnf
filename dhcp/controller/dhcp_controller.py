@@ -145,7 +145,7 @@ class DhcpController():
         self.interfaceController.reset_interface(name)
 
 
-    # Dhcp
+    # Dhcp Server
     def get_dhcp_status(self):
         conf_dhcp_server = {}
         conf_dhcp_server['globalIpPool'] = self.get_dhcp_server_configuration()
