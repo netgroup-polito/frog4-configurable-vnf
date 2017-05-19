@@ -47,7 +47,7 @@ class DhcpServerParser():
 
     def parse_sections(self, json_sections):
         sections = []
-        for json_section in json_sections['section']:
+        for json_section in json_sections:
             section = self.parse_section(json_section)
             sections.append(section)
         return sections
@@ -55,11 +55,11 @@ class DhcpServerParser():
     def parse_section(self, json_section):
         start_ip = None
         if 'sectionStartIp' in json_section:
-            start_ip = self.parse_start_ip(json_section)
+            start_ip = self.parse_section_start_ip(json_section)
 
         end_ip = None
         if 'sectionEndIp' in json_section:
-            end_ip = self.parse_end_ip(json_section)
+            end_ip = self.parse_section_end_ip(json_section)
 
         return Section(start_ip, end_ip)
 
@@ -78,15 +78,15 @@ class DhcpServerParser():
     def parse_dns(self, json_dns_params):
         primary_server = None
         if 'primaryServer' in json_dns_params:
-            primary_server = self.parse_primary_server(json_dns_params)
+            primary_server = self.parse_dns_primary_server(json_dns_params)
 
         secondary_server = None
         if 'secondaryServer' in json_dns_params:
-            secondary_server = self.parse_secondary_server(json_dns_params)
+            secondary_server = self.parse_dns_secondary_server(json_dns_params)
 
         domain_name = None
         if 'domainName' in json_dns_params:
-            domain_name = self.parse_domain_name(json_dns_params)
+            domain_name = self.parse_dns_domain_name(json_dns_params)
 
         return Dns(primary_server, secondary_server, domain_name)
 

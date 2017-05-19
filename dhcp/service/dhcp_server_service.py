@@ -43,7 +43,7 @@ class DhcpServerService():
                 dhcpd_file.write('}')
                 dhcpd_file.truncate()
         except Exception as e:
-            raise IOError("Unable to create file: /etc/dhcp/dhcpd.conf")
+            raise IOError("Error during the creation of file: /etc/dhcp/dhcpd.conf \n" + str(e))
 
         interfacesController = InterfaceController()
         interfaces = interfacesController.get_interfaces()
@@ -70,7 +70,7 @@ class DhcpServerService():
 
     def get_dhcp_server_configuration(self):
         try:
-            with open('/home/giuseppe/Desktop/SETdhcpd.conf') as dhcpd_file:
+            with open('/home/giuseppe/Desktop/mydhcp.conf') as dhcpd_file:
             #with open('/etc/dhcp/dhcpd.conf') as dhcpd_file:
                 dhcpd_lines = dhcpd_file.readlines()
         except Exception as e:
@@ -89,7 +89,7 @@ class DhcpServerService():
             command = line.strip().split(' ')[0]
 
             if command == "default-lease-time":
-                default_lease_time =  line.split('default-lease-time ')[1].split(';')[0]
+                default_lease_time = line.split('default-lease-time ')[1].split(';')[0]
             elif command == "max-lease-time":
                 max_lease_time = line.split('max-lease-time ')[1].split(';')[0]
             elif command == "option":
@@ -129,7 +129,7 @@ class DhcpServerService():
             #with open('dhcp_leases') as lease_file:
                 lease_lines = lease_file.readlines()[2:]
         except Exception as e:
-            raise IOError("dhcp_leases not found. Probably an error occours during the generation")
+            raise IOError("file dhcp_leases not found. Probably an error occours during the generation")
 
         for line in lease_lines:
             line = " ".join(line.split()) #removes multiples space

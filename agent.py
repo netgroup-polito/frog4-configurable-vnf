@@ -158,10 +158,13 @@ class ConfigurationAgent():
                 json_data = configuration.read()
                 initial_configuration = json.loads(json_data)
 
-        controller = self._select_controller()
-        controller.start(initial_configuration)
+        #rest_controller = self.select_rest_controller()
 
-        logging.debug("End program")
+        # start the dd controller
+        dd_controller = self._select_dd_controller()
+        thread = Thread(target=dd_controller.start(initial_configuration))
+        thread.start()
+        logging.info("DoubleDecker Successfully started")
 
     def on_reg_callback(self):
         self.is_registered_to_bus = True
@@ -176,7 +179,7 @@ class ConfigurationAgent():
             self.registered_to_cs.set()
             return
 
-    def _select_controller(self):
+    def _select_dd_controller(self):
         controller = None
         if self.vnf == "dhcp":
             return DoubleDeckerDhcpController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)

@@ -155,7 +155,7 @@ class DhcpController():
     # Dhcp Server/Configuration
     def configure_dhcp_server(self, json_dhcp_server_params):
         dhcp_server_configuration = self.dhcpServerParser.parse_dhcp_server(json_dhcp_server_params)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             current_dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
             if dhcp_server_configuration.__eq__(current_dhcp_server_configuration):
                 return
@@ -164,91 +164,91 @@ class DhcpController():
 
     def update_gateway(self, json_gateway_params):
         gateway = self.dhcpServerParser.parse_gateway(json_gateway_params)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_gateway(gateway)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_gateway_address(self, json_address):
         address = self.dhcpServerParser.parse_gateway_address(json_address)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_gateway_address(address)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_gateway_netmask(self, json_netmask):
         netmask = self.dhcpServerParser.parse_gateway_netmask(json_netmask)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_gateway_address(netmask)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def add_section(self, json_section):
         section = self.dhcpServerParser.parse_section(json_section)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.add_section(section)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_section(self, section_start_ip, json_section):
         section = self.dhcpServerParser.parse_section(json_section)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_section(section_start_ip, section)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_section_start_ip(self, section_start_ip, json_start_ip):
         start_ip = self.dhcpServerParser.parse_start_ip(json_start_ip)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.add_section_start_ip(section_start_ip, start_ip)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_section_end_ip(self, section_start_ip, json_end_ip):
         end_ip = self.dhcpServerParser.parse_end_ip(json_end_ip)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.add_section_end_ip(section_start_ip, end_ip)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_default_lease_time(self, json_default_lease_time):
         default_lease_time = self.dhcpServerParser.parse_default_lease_time(json_default_lease_time)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_default_lease_time(default_lease_time)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_max_lease_time(self, json_max_lease_time):
         max_lease_time = self.dhcpServerParser.parse_max_lease_time(json_max_lease_time)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_max_lease_time(max_lease_time)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_dns(self, json_dns_params):
         dns = self.dhcpServerParser.parse_dns(json_dns_params)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_dns(dns)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_dns_primary_server(self, json_primary_server):
         primary_server = self.dhcpServerParser.parse_primary_server(json_primary_server)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_dns_primary_server(primary_server)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_dns_secondary_server(self, json_secondary_server):
         secondary_server = self.dhcpServerParser.parse_secondary_server(json_secondary_server)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_dns_secondary_server(secondary_server)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
     def update_domain_name(self, json_domain_name):
         domain_name = self.dhcpServerParser.parse_domain_name(json_domain_name)
-        if self.dhcpServerController.exists_configuration():
+        if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_domain_name(domain_name)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
