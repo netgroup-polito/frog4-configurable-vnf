@@ -77,12 +77,14 @@ class FirewallController():
 
         json_blacklist = conf_firewall['blacklist']
         for json_url in json_blacklist:
-            #self.configure_blacklist_url(json_url)
+            url = self.blacklistParser.parse_url(json_url)
+            #self.configure_blacklist_url(url)
             pass
 
         json_whitelist = conf_firewall['whitelist']
         for json_url in json_whitelist:
-            #self.configure_whitelist_url(json_url)
+            url = self.whitelistParser.parse_url(json_url)
+            #self.configure_whitelist_url(url)
             pass
 
         logging.debug("interfaces_to_export: ")
@@ -115,11 +117,25 @@ class FirewallController():
     # Interfaces
     def get_interfaces_status(self):
         conf_interfaces = {}
-        conf_interfaces["ifEntry"] = self.get_interfaces_ifEntry()
+        conf_interfaces["ifEntry"] = self.get_interfaces()
         conf_interfaces["wan-interface"] = self.get_wan_interface()
         return conf_interfaces
 
     # Interfaces/ifEntry
+    def get_interfaces(self):
+        interfaces = self.interfaceController.get_interfaces()
+        interfaces_dict = []
+        for interface in interfaces:
+            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
+        return interfaces_dict
+
+    def get_interface(self, name):
+        interface = self.interfaceController.get_interface(name)
+        if interface is None:
+            raise ValueError("could not find interface: " + name)
+        interface_dict = self.interfaceParser.get_interface_dict(interface)
+        return interface_dict
+
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
         if interface.type == "transparent":
@@ -144,40 +160,35 @@ class FirewallController():
             else:
                 raise ValueError("could not find interface: " + name)
 
-    def update_interface_address(self, ifname, json_address):
-        address = self.interfaceParser.parse_address(json_address)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_address(ifname, address)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def update_interface_netmask(self, ifname, json_netmask):
-        netmask = self.interfaceParser.parse_netmask(json_netmask)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_netmask(ifname, netmask)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def update_interface_default_gw(self, ifname, json_default_gw):
-        default_gw = self.interfaceParser.parse_default_gw(json_default_gw)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_default_gw(ifname, default_gw)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def get_interfaces_ifEntry(self):
-        interfaces = self.interfaceController.get_interfaces()
-        interfaces_dict = []
-        for interface in interfaces:
-            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
-        return interfaces_dict
-
-    def get_interface(self, name):
-        interface = self.interfaceController.get_interface(name)
-        if interface is None:
+    def reset_interface(self, name):
+        if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface_dict = self.interfaceParser.get_interface_dict(interface)
-        return interface_dict
+        self.interfaceController.reset_interface(name)
+
+    def update_interface_ipv4Configuration(self, ifname, json_ipv4Configuration):
+        ipv4Configuration = self.interfaceParser.parse_ipv4_configuration(json_ipv4Configuration)
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_address(self, ifname, address):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_address(ifname, address)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_netmask(self, ifname, netmask):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_netmask(ifname, netmask)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_default_gw(self, ifname, default_gw):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
+        else:
+            raise ValueError("could not find interface: " + ifname)
 
     def get_interface_ipv4Configuration(self, name):
         if not self.interfaceController.interface_exists(name):
@@ -210,10 +221,6 @@ class FirewallController():
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.mac_address
 
-    def reset_interface(self, name):
-        if not self.interfaceController.interface_exists(name):
-            raise ValueError("could not find interface: " + name)
-        self.interfaceController.reset_interface(name)
 
     # Interfaces/Wan-interface
     def get_wan_interface(self):
@@ -257,31 +264,31 @@ class FirewallController():
     def update_policy(self, id, json_policy):
         pass
 
-    def update_policy_description(self, id, json_description):
+    def update_policy_description(self, id, description):
         pass
 
-    def update_policy_action(self, id, json_action):
+    def update_policy_action(self, id, action):
         pass
 
-    def update_policy_protocol(self, id, json_protocol):
+    def update_policy_protocol(self, id, protocol):
         pass
 
-    def update_policy_in_interface(self, id, json_in_interface):
+    def update_policy_in_interface(self, id, in_interface):
         pass
 
-    def update_policy_out_interface(self, id, json_out_interface):
+    def update_policy_out_interface(self, id, out_interface):
         pass
 
-    def update_policy_src_address(self, id, json_src_address):
+    def update_policy_src_address(self, id, src_address):
         pass
 
-    def update_policy_dst_address(self, id, json_dst_address):
+    def update_policy_dst_address(self, id, dst_address):
         pass
 
-    def update_policy_src_port(self, id, json_src_port):
+    def update_policy_src_port(self, id, src_port):
         pass
 
-    def update_policy_dst_port(self, id, json_dst_port):
+    def update_policy_dst_port(self, id, dst_port):
         pass
 
     def get_policies(self):
@@ -362,8 +369,7 @@ class FirewallController():
             raise ValueError("could not find policy: " + id)
 
     # Firewall/Blacklist
-    def configure_blacklist_url(self, json_url):
-        url = self.blacklistParser.parse_url(json_url)
+    def add_blacklist_url(self, url):
         blacklist = self.blacklistController.get_blacklist()
         for curr_url in blacklist:
             if curr_url.__eq__(url):
@@ -386,8 +392,7 @@ class FirewallController():
         self.blacklistController.delete_url(url)
 
     # Firewall/Whitelist
-    def configure_whitelist_url(self, json_url):
-        url = self.whitelistParser.parse_url(json_url)
+    def add_whitelist_url(self, url):
         whitelist = self.whitelistController.get_whitelist()
         for curr_url in whitelist:
             if curr_url.__eq__(url):
