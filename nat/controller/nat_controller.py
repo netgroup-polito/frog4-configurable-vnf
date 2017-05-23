@@ -34,7 +34,7 @@ class NatController():
 
         conf_nat = json_configuration["config-nat:nat"]
 
-        #self.set_ip_forward(conf_nat)
+        #self.set_ip_forward(conf_nat['wan-interface'])
 
         json_floating_ip = conf_nat['staticBindings']['floatingIP']
         for curr_json_floating_ip in json_floating_ip:
@@ -67,10 +67,24 @@ class NatController():
     # Interfaces
     def get_interfaces_status(self):
         conf_interfaces = {}
-        conf_interfaces["ifEntry"] = self.get_interfaces_ifEntry()
+        conf_interfaces["ifEntry"] = self.get_interfaces()
         return conf_interfaces
 
     # Interfaces/ifEntry
+    def get_interfaces(self):
+        interfaces = self.interfaceController.get_interfaces()
+        interfaces_dict = []
+        for interface in interfaces:
+            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
+        return interfaces_dict
+
+    def get_interface(self, name):
+        interface = self.interfaceController.get_interface(name)
+        if interface is None:
+            raise ValueError("could not find interface: " + name)
+        interface_dict = self.interfaceParser.get_interface_dict(interface)
+        return interface_dict
+
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
         if interface.type != "transparent":
@@ -92,40 +106,35 @@ class NatController():
             else:
                 raise ValueError("could not find interface: " + name)
 
-    def update_interface_address(self, ifname, json_address):
-        address = self.interfaceParser.parse_address(json_address)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_address(ifname, address)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def update_interface_netmask(self, ifname, json_netmask):
-        netmask = self.interfaceParser.parse_netmask(json_netmask)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_netmask(ifname, netmask)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def update_interface_default_gw(self, ifname, json_default_gw):
-        default_gw = self.interfaceParser.parse_default_gw(json_default_gw)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_default_gw(ifname, default_gw)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def get_interfaces_ifEntry(self):
-        interfaces = self.interfaceController.get_interfaces()
-        interfaces_dict = []
-        for interface in interfaces:
-            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
-        return interfaces_dict
-
-    def get_interface(self, name):
-        interface = self.interfaceController.get_interface(name)
-        if interface is None:
+    def reset_interface(self, name):
+        if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface_dict = self.interfaceParser.get_interface_dict(interface)
-        return interface_dict
+        self.interfaceController.reset_interface(name)
+
+    def update_interface_ipv4Configuration(self, ifname, json_ipv4Configuration):
+        ipv4Configuration = self.interfaceParser.parse_ipv4_configuration(json_ipv4Configuration)
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_address(self, ifname, address):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_address(ifname, address)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_netmask(self, ifname, netmask):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_netmask(ifname, netmask)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_default_gw(self, ifname, default_gw):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
+        else:
+            raise ValueError("could not find interface: " + ifname)
 
     def get_interface_ipv4Configuration(self, name):
         if not self.interfaceController.interface_exists(name):
@@ -158,11 +167,6 @@ class NatController():
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.mac_address
 
-    def reset_interface(self, name):
-        if not self.interfaceController.interface_exists(name):
-            raise ValueError("could not find interface: " + name)
-        self.interfaceController.reset_interface(name)
-
 
     # Nat
     def get_nat_status(self):
@@ -172,8 +176,7 @@ class NatController():
         return nat
 
     # Nat/Wan-interface
-    def set_ip_forward(self, json_nat_configurations):
-        wan_interface = json_nat_configurations['wan-interface']
+    def set_ip_forward(self, wan_interface):
         current_wan_iface = self.get_wan_interface()
         if current_wan_iface is None:
             if self.nf_type == "docker" or self.nf_type == "vm":
@@ -181,8 +184,7 @@ class NatController():
             self.wan_interface_to_export = wan_interface
             logging.debug("Nat set on wan interface: " + wan_interface)
 
-    def unset_ip_forward(self, json_nat_configurations):
-        wan_interface = json_nat_configurations['wan-interface']
+    def unset_ip_forward(self, wan_interface):
         current_wan_iface = self.get_wan_interface()
         if current_wan_iface is not None:
             if self.nf_type == "docker" or self.nf_type == "vm":
@@ -212,10 +214,10 @@ class NatController():
     def update_floating_ip(self, public_address, json_floating_ip):
         pass
 
-    def update_floating_ip_private_address(self, public_address, json_private_address):
+    def update_floating_ip_private_address(self, public_address, private_address):
         pass
 
-    def update_floating_ip_public_address(self, public_address, json_private_address):
+    def update_floating_ip_public_address(self, public_address, private_address):
         pass
 
     def delete_floating_ip(self, public_address):
