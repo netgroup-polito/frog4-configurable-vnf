@@ -9,27 +9,33 @@ class InterfaceService():
 
     # configure an interface
     def configure_interface(self, interface):
-            ipv4_configuration = interface.ipv4_configuration
-            if ipv4_configuration.configuration_type == "static" or ipv4_configuration.configuration_type == "not_defined":
-                self.configure_interface_address(interface.name, ipv4_configuration.address)
-                if ipv4_configuration.netmask is not None:
-                    self.configure_interface_netmask(interface.name, ipv4_configuration.netmask)
-                if ipv4_configuration.default_gw is not None:
-                    self.configure_interface_default_gw(interface.name, ipv4_configuration.default_gw)
-            elif ipv4_configuration.configuration_type == "dhcp":
-                if ipv4_configuration.default_gw is not None:
-                    Bash('route del default gw ' + ipv4_configuration.default_gw)
-                Bash('ifconfig ' + interface.name + ' 0')
-                Bash('if [ ! -e "/usr/sbin/dhclient" ]; then cp /sbin/dhclient /usr/sbin/dhclient; fi')
-                Bash('/usr/sbin/dhclient ' + interface.name + ' -v')
+            ifname = interface.name
+            ipv4Configuration = interface.ipv4_configuration
+            self.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
 
-    def configure_interface_address(self, ifname, address):
+    def configure_interface_ipv4Configuration(self, ifname, ipv4_configuration):
+        print("interface configured... fake! ahah")
+        return
+        if ipv4_configuration.configuration_type == "static" or ipv4_configuration.configuration_type == "not_defined":
+            self.configure_interface_address(ifname, ipv4_configuration.address)
+            if ipv4_configuration.netmask is not None:
+                self.configure_interface_netmask(ifname, ipv4_configuration.netmask)
+            if ipv4_configuration.default_gw is not None:
+                self.configure_interface_default_gw(ifname, ipv4_configuration.default_gw)
+        elif ipv4_configuration.configuration_type == "dhcp":
+            if ipv4_configuration.default_gw is not None:
+                Bash('route del default gw ' + ipv4_configuration.default_gw)
+            Bash('ifconfig ' + ifname + ' 0')
+            Bash('if [ ! -e "/usr/sbin/dhclient" ]; then cp /sbin/dhclient /usr/sbin/dhclient; fi')
+            Bash('/usr/sbin/dhclient ' + ifname + ' -v')
+
+    def configure_interface_ipv4Configuration_address(self, ifname, address):
         Bash('ifconfig ' + ifname + ' ' + address)
 
-    def configure_interface_netmask(self, ifname, netmask):
+    def configure_interface_ipv4Configuration_netmask(self, ifname, netmask):
         Bash('ifconfig ' + ifname + ' netmask ' + netmask)
 
-    def configure_interface_default_gw(self, ifname, default_gw):
+    def configure_interface_ipv4Configuration_default_gw(self, ifname, default_gw):
         Bash('route add default gw ' + default_gw + ' ' + ifname)
 
 

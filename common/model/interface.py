@@ -22,14 +22,18 @@ class Ipv4Configuration:
         return str
 
     def __eq__(self, other):
-        if self.address != other.address:
-            return False
-        if self.netmask != other.netmask:
-            return False
-        if self.mac_address != other.mac_address:
-            return False
-        if self.default_gw != other.default_gw:
-            return False
+        if self.address is not None:
+            if self.address != other.address:
+                return False
+        if self.netmask is not None:
+            if self.netmask != other.netmask:
+                return False
+        if self.mac_address is not None:
+            if self.mac_address != other.mac_address:
+                return False
+        if self.default_gw is not None:
+            if self.default_gw != other.default_gw:
+                return False
         return True
 
 class Interface:

@@ -8,12 +8,17 @@ class InterfaceController():
         self.interfaceService = InterfaceService()
         self.interfaceServiceNative = InterfaceServiceNative()
         self.nf_type = ConfigurationInstance.get_nf_type(self)
+        print(self.nf_type)
 
     def configure_interface(self, interface):
         if self.nf_type=="docker" or self.nf_type=="vm":
             self.interfaceService.configure_interface(interface)
         if self.nf_type=="native":
             self.interfaceServiceNative.configure_interface(interface)
+
+    def configure_interface_ipv4Configuration(self, ifname, ipv4Configuration):
+        if self.nf_type=="docker" or self.nf_type=="vm":
+            self.interfaceService.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
 
     def configure_interface_address(self, ifname, address):
         if self.nf_type=="docker" or self.nf_type=="vm":

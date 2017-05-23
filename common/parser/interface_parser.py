@@ -33,7 +33,6 @@ class InterfaceParser():
         return Interface(name=name, type=type, management=management, ipv4_configuration=ipv4_configuration)
 
     def parse_ipv4_configuration(self, json_ipv4_configuration):
-
         configuration_type = None
         if 'configurationType' in json_ipv4_configuration:
             configuration_type = json_ipv4_configuration['configurationType']
@@ -47,7 +46,7 @@ class InterfaceParser():
             netmask = self.parse_netmask(json_ipv4_configuration)
 
         mac_address = None
-        if 'mac-address' in json_ipv4_configuration:
+        if 'mac_address' in json_ipv4_configuration:
             mac_address = self.parse_mac_address(json_ipv4_configuration)
 
         default_gw = None
@@ -105,7 +104,7 @@ class InterfaceParser():
             ipv4_configuration_dict['netmask'] = ipv4_configuration.netmask
 
         if ipv4_configuration.mac_address is not None:
-            ipv4_configuration_dict['mac-address'] = ipv4_configuration.mac_address
+            ipv4_configuration_dict['mac_address'] = ipv4_configuration.mac_address
 
         if ipv4_configuration.default_gw is not None:
             ipv4_configuration_dict['default_gw'] = ipv4_configuration.default_gw
