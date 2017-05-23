@@ -1,7 +1,7 @@
 class ConfigurationInstance(object):
 
     vnf = None
-    nf_type = None
+    #nf_type = None
     datadisk_path = None
 
     def get_vnf(self):
@@ -10,9 +10,16 @@ class ConfigurationInstance(object):
         ConfigurationInstance.vnf = vnf
 
     def get_nf_type(self):
-        return ConfigurationInstance.nf_type
+        with open('tmpFile', 'r') as file:
+            nf_type = file.readlines()
+        file.close
+        return nf_type[0]
+        #return ConfigurationInstance.nf_type
     def set_nf_type(self, nf_type):
-        ConfigurationInstance.nf_type = nf_type
+        with open('tmpFile', 'w') as file:
+            file.write(nf_type)
+        file.close
+        #ConfigurationInstance.nf_type = nf_type
 
     def get_datadisk_path(self):
         return ConfigurationInstance.datadisk_path

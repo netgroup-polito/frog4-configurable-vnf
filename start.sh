@@ -1,14 +1,5 @@
 #!/bin/bash
 
-
-######## CONFIG ########
-#Select the agent to start
-#vnf_name="Nat"
-#vnf_name="Dhcp"
-vnf_name="Firewall"
-
-
-######## START ########
 if [ "$#" -ne 2 ] ; then
     echo "Error to start: usage start.sh <vnf_type> <datadisk_path>" ;
     exit;

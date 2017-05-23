@@ -6,6 +6,7 @@ from threading import Event
 from threading import Thread
 from utils import Bash
 from message_bus import MessageBus
+from subprocess import call, Popen
 
 from vnf_template_library.exception import TemplateValidationError
 from vnf_template_library.template import Template
@@ -136,7 +137,7 @@ class ConfigurationAgent():
         """
         self.registered_to_bus.clear()
         self.registered_to_cs.clear()
-
+        """
         logging.debug("Trying to register to the message broker...")
         self.messageBus.register_to_bus(name=self.vnf,
                                        dealer_url=self.broker_url,
@@ -151,20 +152,24 @@ class ConfigurationAgent():
                 if self.is_registered_to_cs is False:
                     self._vnf_registration()
         logging.debug("Trying to register to the configuration service...done!")
-
+        """
         initial_configuration = None
         if os.path.exists(self.initial_configuration_path):
             with open(self.initial_configuration_path) as configuration:
                 json_data = configuration.read()
                 initial_configuration = json.loads(json_data)
 
-        #rest_controller = self.select_rest_controller()
-
         # start the dd controller
         dd_controller = self._select_dd_controller()
-        thread = Thread(target=dd_controller.start(initial_configuration))
+        dd_controller.set_initial_configuration(initial_configuration)
+        rest_address = dd_controller.get_address_of_configuration_interface(self.configuration_interface)
+        thread = Thread(target=dd_controller.start, args=())
         thread.start()
         logging.info("DoubleDecker Successfully started")
+
+        rest_port = "9000"
+        logging.info("Rest Server started on: " + rest_address + ':' + rest_port)
+        call("gunicorn -b " + rest_address + ':' + rest_port + " -t 500 rest_start:app", shell=True)
 
     def on_reg_callback(self):
         self.is_registered_to_bus = True
@@ -184,10 +189,8 @@ class ConfigurationAgent():
         if self.vnf == "dhcp":
             return DoubleDeckerDhcpController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
         elif self.vnf == "firewall":
-            pass
             return DoubleDeckerFirewallController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
         elif self.vnf == "nat":
-            pass
             return DoubleDeckerNatController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
 
     def _read_metadata_file(self, metadata_path):

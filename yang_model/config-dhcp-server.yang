@@ -44,7 +44,7 @@ module config-dhcp-server {
 			        type inet:ip-address;
 			        mandatory false;
 			    }
-			    leaf mac-address{
+			    leaf mac_address{
                     description "name='MAC Address'";
                     type string;
                     mandatory false;
