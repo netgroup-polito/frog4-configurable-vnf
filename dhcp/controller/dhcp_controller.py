@@ -19,7 +19,6 @@ class DhcpController():
         self.dhcp_server_configuration_to_export = None
         self.dhcp_clients_to_export = []
 
-
     def set_configuration(self, json_configuration):
 
         conf_interfaces = json_configuration["config-dhcp-server:interfaces"]
@@ -48,10 +47,24 @@ class DhcpController():
     # Interfaces
     def get_interfaces_status(self):
         conf_interfaces = {}
-        conf_interfaces["ifEntry"] = self.get_interfaces_ifEntry()
+        conf_interfaces["ifEntry"] = self.get_interfaces()
         return conf_interfaces
 
     # Interfaces/ifEntry
+    def get_interfaces(self):
+        interfaces = self.interfaceController.get_interfaces()
+        interfaces_dict = []
+        for interface in interfaces:
+            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
+        return interfaces_dict
+
+    def get_interface(self, name):
+        interface = self.interfaceController.get_interface(name)
+        if interface is None:
+            raise ValueError("could not find interface: " + name)
+        interface_dict = self.interfaceParser.get_interface_dict(interface)
+        return interface_dict
+
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
         if interface.type != "transparent":
@@ -73,40 +86,10 @@ class DhcpController():
             else:
                 raise ValueError("could not find interface: " + name)
 
-    def update_interface_address(self, ifname, json_address):
-        address = self.interfaceParser.parse_address(json_address)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_address(ifname, address)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def update_interface_netmask(self, ifname, json_netmask):
-        netmask = self.interfaceParser.parse_netmask(json_netmask)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_netmask(ifname, netmask)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def update_interface_default_gw(self, ifname, json_default_gw):
-        default_gw = self.interfaceParser.parse_default_gw(json_default_gw)
-        if self.interfaceController.interface_exists(ifname):
-            self.interfaceController.configure_interface_default_gw(ifname, default_gw)
-        else:
-            raise ValueError("could not find interface: " + ifname)
-
-    def get_interfaces_ifEntry(self):
-        interfaces = self.interfaceController.get_interfaces()
-        interfaces_dict = []
-        for interface in interfaces:
-            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
-        return interfaces_dict
-
-    def get_interface(self, name):
-        interface = self.interfaceController.get_interface(name)
-        if interface is None:
+    def reset_interface(self, name):
+        if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface_dict = self.interfaceParser.get_interface_dict(interface)
-        return interface_dict
+        self.interfaceController.reset_interface(name)
 
     def get_interface_ipv4Configuration(self, name):
         if not self.interfaceController.interface_exists(name):
@@ -139,10 +122,31 @@ class DhcpController():
         interface = self.interfaceController.get_interface(name)
         return interface.ipv4_configuration.mac_address
 
-    def reset_interface(self, name):
-        if not self.interfaceController.interface_exists(name):
-            raise ValueError("could not find interface: " + name)
-        self.interfaceController.reset_interface(name)
+    def update_interface_ipv4Configuration(self, ifname, json_ipv4Configuration):
+        ipv4Configuration = self.interfaceParser.parse_ipv4_configuration(json_ipv4Configuration)
+        print(ipv4Configuration)
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_address(self, ifname, address):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_address(ifname, address)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_netmask(self, ifname, netmask):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_netmask(ifname, netmask)
+        else:
+            raise ValueError("could not find interface: " + ifname)
+
+    def update_interface_ipv4Configuration_default_gw(self, ifname, default_gw):
+        if self.interfaceController.interface_exists(ifname):
+            self.interfaceController.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
+        else:
+            raise ValueError("could not find interface: " + ifname)
 
 
     # Dhcp Server
@@ -169,15 +173,13 @@ class DhcpController():
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_gateway_address(self, json_address):
-        address = self.dhcpServerParser.parse_gateway_address(json_address)
+    def update_gateway_address(self, address):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_gateway_address(address)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_gateway_netmask(self, json_netmask):
-        netmask = self.dhcpServerParser.parse_gateway_netmask(json_netmask)
+    def update_gateway_netmask(self, netmask):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_gateway_address(netmask)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
@@ -197,29 +199,25 @@ class DhcpController():
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_section_start_ip(self, section_start_ip, json_start_ip):
-        start_ip = self.dhcpServerParser.parse_start_ip(json_start_ip)
+    def update_section_start_ip(self, section_start_ip, start_ip):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.add_section_start_ip(section_start_ip, start_ip)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_section_end_ip(self, section_start_ip, json_end_ip):
-        end_ip = self.dhcpServerParser.parse_end_ip(json_end_ip)
+    def update_section_end_ip(self, section_start_ip, end_ip):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.add_section_end_ip(section_start_ip, end_ip)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_default_lease_time(self, json_default_lease_time):
-        default_lease_time = self.dhcpServerParser.parse_default_lease_time(json_default_lease_time)
+    def update_default_lease_time(self, default_lease_time):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_default_lease_time(default_lease_time)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_max_lease_time(self, json_max_lease_time):
-        max_lease_time = self.dhcpServerParser.parse_max_lease_time(json_max_lease_time)
+    def update_max_lease_time(self, max_lease_time):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_max_lease_time(max_lease_time)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
@@ -232,22 +230,19 @@ class DhcpController():
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_dns_primary_server(self, json_primary_server):
-        primary_server = self.dhcpServerParser.parse_primary_server(json_primary_server)
+    def update_dns_primary_server(self, primary_server):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_dns_primary_server(primary_server)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_dns_secondary_server(self, json_secondary_server):
-        secondary_server = self.dhcpServerParser.parse_secondary_server(json_secondary_server)
+    def update_dns_secondary_server(self, secondary_server):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_dns_secondary_server(secondary_server)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
         return
 
-    def update_domain_name(self, json_domain_name):
-        domain_name = self.dhcpServerParser.parse_domain_name(json_domain_name)
+    def update_dns_domain_name(self, domain_name):
         if self.dhcpServerController.configuration_exists():
             dhcp_server_configuration = self.dhcpServerController.update_domain_name(domain_name)
             self.dhcp_server_configuration_to_export = dhcp_server_configuration
@@ -341,19 +336,19 @@ class DhcpController():
         dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
         return self.dhcpServerParser.parse_dns(dhcp_server_configuration.dns)
 
-    def get_dhcp_server_configuration_primary_dns(self):
+    def get_dhcp_server_configuration_dns_primary_server(self):
         if not self.dhcpServerController.configuration_exists():
             raise ValueError("could not find a dhcp server configuration")
         dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
         return dhcp_server_configuration.dns.primary_server
 
-    def get_dhcp_server_configuration_secondary_dns(self):
+    def get_dhcp_server_configuration_dns_secondary_server(self):
         if not self.dhcpServerController.configuration_exists():
             raise ValueError("could not find a dhcp server configuration")
         dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
         return dhcp_server_configuration.dns.secondary_server
 
-    def get_dhcp_server_configuration_domain_name(self):
+    def get_dhcp_server_configuration_dns_domain_name(self):
         if not self.dhcpServerController.configuration_exists():
             raise ValueError("could not find a dhcp server configuration")
         dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()

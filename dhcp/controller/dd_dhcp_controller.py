@@ -19,6 +19,8 @@ class DoubleDeckerDhcpController():
         self.graph_id = graph_id
         self.vnf_id = vnf_id
 
+        self.configuration_interface = None
+
         self.dhcpController = DhcpController()
 
         self.interfaceController = InterfaceController()
@@ -42,25 +44,30 @@ class DoubleDeckerDhcpController():
         self.dhcp_clients_removed = []
         ##################################################
 
-
-
-    def start(self, initial_configuration):
-        logging.debug("ddDhcpController started")
-
+    def set_initial_configuration(self, initial_configuration):
         self.interfaces_old = self.interfaceController.get_interfaces()
         self.dhcp_clients_old = self.dhcpServerController.get_clients()
         self.dhcp_server_configuration_old = self.dhcpServerController.get_dhcp_server_configuration()
+        logging.debug("Setting initial configuration...")
+        self.dhcpController.set_configuration(initial_configuration)
+        logging.debug("Setting initial configuration...done!")
+
+    def get_address_of_configuration_interface(self, configuration_interface):
+        self.configuration_interface = configuration_interface
+        return self.dhcpController.get_interface_ipv4Configuration_address(configuration_interface)
+
+    def start(self, initial_configuration=None):
+        logging.info("ddDhcpController started")
 
         if initial_configuration is not None:
-            logging.debug("Initial_configuration is not none, trying to set")
-            self.dhcpController.set_configuration(initial_configuration)
-            logging.debug("Configuration completed")
+            self.set_initial_configuration(initial_configuration)
 
         while True:
             # Export the status every 3 seconds
             time.sleep(8)
             logging.debug("I'm: ddDhcpController")
 
+            """
             self._get_new_interfaces()
             self._get_new_dhcp_server_configuration()
             self._get_new_clients()
@@ -84,9 +91,8 @@ class DoubleDeckerDhcpController():
             if len(self.dhcp_clients_removed) > 0:
                 self._publish_clients_removed()
                 self.dhcp_clients_removed = []
+            
 
-
-            """
             logging.debug("interfaces_old: ")
             for x in self.interfaces_old:
                 logging.debug(x.__str__())
@@ -96,7 +102,6 @@ class DoubleDeckerDhcpController():
             logging.debug("interfaces_to_remove: ")
             for x in self.interfaces_removed:
                 logging.debug(x.__str__())
-            """
 
             logging.debug("dhcp_server_config_old: ")
             logging.debug(self.dhcp_server_configuration_old.__str__())
@@ -112,6 +117,7 @@ class DoubleDeckerDhcpController():
             logging.debug("clients_to_remove: ")
             for x in self.dhcp_clients_removed:
                 logging.debug(x.__str__())
+            """
 
         thread.join()
 
