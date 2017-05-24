@@ -12,7 +12,7 @@ config_ns = api.namespace('dhcp/globalIpPool', 'Dhcp Server Configuration Resour
 @config_ns.route('', methods=['GET'])
 class DhcpServer_Configuration(Resource):
     @config_ns.response(200, 'Dhcp server configuration retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -26,7 +26,7 @@ class DhcpServer_Configuration(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -34,7 +34,7 @@ class DhcpServer_Configuration(Resource):
 @config_ns.route('/gatewayIp', methods=['GET','PUT'])
 class DhcpServer_Configuration_Gateway(Resource):
     @config_ns.response(200, 'Gateway parameters retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -48,14 +48,14 @@ class DhcpServer_Configuration_Gateway(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Gateway parameters", "Gateway parameters to update", "body", type="string", required=True)
     @config_ns.response(202, 'Gateway parameters correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -70,7 +70,7 @@ class DhcpServer_Configuration_Gateway(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -78,7 +78,7 @@ class DhcpServer_Configuration_Gateway(Resource):
 @config_ns.route('/gatewayIp/gatewayAddress', methods=['GET','PUT'])
 class DhcpServer_Configuration_Gateway_Address(Resource):
     @config_ns.response(200, 'Gateway address retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -92,14 +92,14 @@ class DhcpServer_Configuration_Gateway_Address(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Gateway address", "Gateway address to update", "body", type="string", required=True)
     @config_ns.response(202, 'Gateway address correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -108,13 +108,13 @@ class DhcpServer_Configuration_Gateway_Address(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_gateway_address(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -122,7 +122,7 @@ class DhcpServer_Configuration_Gateway_Address(Resource):
 @config_ns.route('/gatewayIp/gatewayMask', methods=['GET','PUT'])
 class DhcpServer_Configuration_Gateway_Netmask(Resource):
     @config_ns.response(200, 'Gateway netmask retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -136,14 +136,14 @@ class DhcpServer_Configuration_Gateway_Netmask(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Gateway netmask", "Gateway netmask to update", "body", type="string", required=True)
     @config_ns.response(202, 'Gateway netmask correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -152,13 +152,13 @@ class DhcpServer_Configuration_Gateway_Netmask(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_gateway_netmask(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -168,7 +168,7 @@ class DhcpServer_Configuration_Gateway_Netmask(Resource):
 class DhcpServer_Configuration_Section(Resource):
     @config_ns.param("Section", "Section to add", "body", type="string", required=True)
     @config_ns.response(202, 'Section correctly added.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def post(self):
@@ -183,13 +183,13 @@ class DhcpServer_Configuration_Section(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.response(200, 'Section retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -206,14 +206,14 @@ class DhcpServer_Configuration_Section(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Section", "Section to update", "body", type="string", required=True)
     @config_ns.response(202, 'Section correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -228,7 +228,7 @@ class DhcpServer_Configuration_Section(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -237,7 +237,7 @@ class DhcpServer_Configuration_Section(Resource):
 class DhcpServer_Configuration_Section_EndIP(Resource):
     @config_ns.param("Section start ip", "Section start ip to update", "body", type="string", required=True)
     @config_ns.response(202, 'Section start ip correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self, id):
@@ -246,13 +246,13 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_section_start_ip(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -260,7 +260,7 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
 @config_ns.route('/sections/<id>/sectionEndIp', methods=['GET','PUT'])
 class DhcpServer_Configuration_Section_EndIP(Resource):
     @config_ns.response(200, 'Section end ip retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -274,14 +274,14 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Section end ip", "Section end ip to update", "body", type="string", required=True)
     @config_ns.response(202, 'Section end ip correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self, id):
@@ -290,13 +290,13 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_section_end_ip(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -304,7 +304,7 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
 @config_ns.route('/dns', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns(Resource):
     @config_ns.response(200, 'Dns parameters retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -318,14 +318,14 @@ class DhcpServer_Configuration_Dns(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Dns parameters", "Dns parameters to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns parameters correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -340,7 +340,7 @@ class DhcpServer_Configuration_Dns(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -348,7 +348,7 @@ class DhcpServer_Configuration_Dns(Resource):
 @config_ns.route('/dns/primaryServer', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
     @config_ns.response(200, 'Dns primary server retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -362,14 +362,14 @@ class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Dns primary server", "Dns primary server to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns primary server correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -378,13 +378,13 @@ class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_dns_primary_server(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -392,7 +392,7 @@ class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
 @config_ns.route('/dns/secondaryServer', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
     @config_ns.response(200, 'Dns secondary server retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -406,14 +406,14 @@ class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Dns secondary server", "Dns secondary server to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns secondary server correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -422,13 +422,13 @@ class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_dns_secondary_server(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -436,7 +436,7 @@ class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
 @config_ns.route('/dns/domainName', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns_DomainName(Resource):
     @config_ns.response(200, 'Dns domain name retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -450,14 +450,14 @@ class DhcpServer_Configuration_Dns_DomainName(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Dns domain name", "Dns domain name to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns domain name correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -466,13 +466,13 @@ class DhcpServer_Configuration_Dns_DomainName(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_dns_domain_name(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -480,7 +480,7 @@ class DhcpServer_Configuration_Dns_DomainName(Resource):
 @config_ns.route('/defaultLeaseTime', methods=['GET','PUT'])
 class DhcpServer_Configuration_DefaultLeaseTime(Resource):
     @config_ns.response(200, 'Default lease time retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -494,14 +494,14 @@ class DhcpServer_Configuration_DefaultLeaseTime(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Default lease time", "Default lease time to update", "body", type="string", required=True)
     @config_ns.response(202, 'Default lease time correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -510,21 +510,21 @@ class DhcpServer_Configuration_DefaultLeaseTime(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_default_lease_time(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
-@config_ns.route('/globalIpPool/maxLeaseTime', methods=['GET','PUT'])
+@config_ns.route('/maxLeaseTime', methods=['GET','PUT'])
 class DhcpServer_Configuration_MaxLeaseTime(Resource):
     @config_ns.response(200, 'Max lease time retrieved.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -538,14 +538,14 @@ class DhcpServer_Configuration_MaxLeaseTime(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @config_ns.param("Max lease time", "Max lease time to update", "body", type="string", required=True)
     @config_ns.response(202, 'Max lease time correctly updated.')
-    @config_ns.response(204, 'Dhcp server not found.')
+    @config_ns.response(404, 'Dhcp server not found.')
     @config_ns.response(400, 'Bad request.')
     @config_ns.response(500, 'Internal Error.')
     def put(self):
@@ -554,13 +554,13 @@ class DhcpServer_Configuration_MaxLeaseTime(Resource):
         """
         try:
             dhcpController = DhcpController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             dhcpController.update_max_lease_time(json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

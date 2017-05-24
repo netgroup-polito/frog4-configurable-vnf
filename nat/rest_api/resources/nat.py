@@ -30,7 +30,7 @@ class Nat(Resource):
 @nat_ns.route('/wan-interface', methods=['GET','PUT'])
 class Nat_WanInterface(Resource):
     @nat_ns.response(200, 'Wan interface retrieved.')
-    @nat_ns.response(204, 'Wan interface not found.')
+    @nat_ns.response(404, 'Wan interface not found.')
     @nat_ns.response(500, 'Internal Error.')
     def get(self):
         """
@@ -44,7 +44,7 @@ class Nat_WanInterface(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -105,7 +105,7 @@ class Nat_FloatingIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -126,13 +126,13 @@ class Nat_FloatingIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @nat_ns.response(202, 'Floating IP deleted.')
-    @nat_ns.response(204, 'Floating IP not found.')
+    @nat_ns.response(404, 'Floating IP not found.')
     @nat_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -145,7 +145,7 @@ class Nat_FloatingIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -166,7 +166,7 @@ class Nat_FloatingIP_PrivateAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -187,7 +187,7 @@ class Nat_FloatingIP_PrivateAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -208,7 +208,7 @@ class Nat_FloatingIP_PublicAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -229,7 +229,7 @@ class Nat_FloatingIP_PublicAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

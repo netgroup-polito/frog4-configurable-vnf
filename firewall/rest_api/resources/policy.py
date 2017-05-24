@@ -31,7 +31,7 @@ class Policy(Resource):
             return Response(status=500)
 
     @policy_ns.response(200, 'Policy retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -48,7 +48,7 @@ class Policy(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -69,13 +69,13 @@ class Policy(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @policy_ns.response(202, 'Policy deleted.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -88,7 +88,7 @@ class Policy(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -96,7 +96,7 @@ class Policy(Resource):
 @policy_ns.route('/<id>/description', methods=['GET','PUT'])
 class Policy_Description(Resource):
     @policy_ns.response(200, 'Policy description parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -110,7 +110,7 @@ class Policy_Description(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -118,7 +118,7 @@ class Policy_Description(Resource):
 @policy_ns.route('/<id>/action', methods=['GET','PUT'])
 class Policy_Action(Resource):
     @policy_ns.response(200, 'Policy action parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -132,7 +132,7 @@ class Policy_Action(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -140,7 +140,7 @@ class Policy_Action(Resource):
 @policy_ns.route('/<id>/protocol', methods=['GET','PUT'])
 class Policy_Protocol(Resource):
     @policy_ns.response(200, 'Policy protocol parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -154,7 +154,7 @@ class Policy_Protocol(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -162,7 +162,7 @@ class Policy_Protocol(Resource):
 @policy_ns.route('/<id>/in-interface', methods=['GET','PUT'])
 class Policy_InInterface(Resource):
     @policy_ns.response(200, 'Policy in-interface parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -176,7 +176,7 @@ class Policy_InInterface(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -184,7 +184,7 @@ class Policy_InInterface(Resource):
 @policy_ns.route('/<id>/out-interface', methods=['GET','PUT'])
 class Policy_OutInterface(Resource):
     @policy_ns.response(200, 'Policy out-interface parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -198,7 +198,7 @@ class Policy_OutInterface(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -206,7 +206,7 @@ class Policy_OutInterface(Resource):
 @policy_ns.route('/<id>/src-address', methods=['GET','PUT'])
 class Policy_SrcAddress(Resource):
     @policy_ns.response(200, 'Policy src-address parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -220,7 +220,7 @@ class Policy_SrcAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -228,7 +228,7 @@ class Policy_SrcAddress(Resource):
 @policy_ns.route('/<id>/dst-address', methods=['GET','PUT'])
 class Policy_DstAddress(Resource):
     @policy_ns.response(200, 'Policy dst-address parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -242,7 +242,7 @@ class Policy_DstAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -250,7 +250,7 @@ class Policy_DstAddress(Resource):
 @policy_ns.route('/<id>/src-port', methods=['GET','PUT'])
 class Policy_SrcPort(Resource):
     @policy_ns.response(200, 'Policy src-port parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -264,7 +264,7 @@ class Policy_SrcPort(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -272,7 +272,7 @@ class Policy_SrcPort(Resource):
 @policy_ns.route('/<id>/dst-port', methods=['GET','PUT'])
 class Policy_DstPort(Resource):
     @policy_ns.response(200, 'Policy dst-port parameter retrieved.')
-    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(404, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -286,7 +286,7 @@ class Policy_DstPort(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

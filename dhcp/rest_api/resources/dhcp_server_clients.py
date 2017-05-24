@@ -13,7 +13,7 @@ client_ns = api.namespace('dhcp/clients', 'Dhcp Server Client Resource')
 @client_ns.route('/<id>', methods=['GET'])
 class Client(Resource):
     @client_ns.response(200, 'Client retrieved.')
-    @client_ns.response(204, 'Client not found.')
+    @client_ns.response(404, 'Client not found.')
     @client_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -30,7 +30,7 @@ class Client(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -38,7 +38,7 @@ class Client(Resource):
 @client_ns.route('/clients/<id>/ip_address', methods=['GET'])
 class Client_IpAdress(Resource):
     @client_ns.response(200, 'Client ip address retrieved.')
-    @client_ns.response(204, 'Client not found.')
+    @client_ns.response(404, 'Client not found.')
     @client_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -52,7 +52,7 @@ class Client_IpAdress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -60,7 +60,7 @@ class Client_IpAdress(Resource):
 @client_ns.route('/clients/<id>/mac_address', methods=['GET'])
 class Client_MacAdress(Resource):
     @client_ns.response(200, 'Client mac address retrieved.')
-    @client_ns.response(204, 'Client not found.')
+    @client_ns.response(404, 'Client not found.')
     @client_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -74,7 +74,7 @@ class Client_MacAdress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -82,7 +82,7 @@ class Client_MacAdress(Resource):
 @client_ns.route('/clients/<id>/hostname', methods=['GET'])
 class Client_Hostname(Resource):
     @client_ns.response(200, 'Client hostname retrieved.')
-    @client_ns.response(204, 'Client not found.')
+    @client_ns.response(404, 'Client not found.')
     @client_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -96,7 +96,7 @@ class Client_Hostname(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -104,7 +104,7 @@ class Client_Hostname(Resource):
 @client_ns.route('/clients/<id>/valid_until', methods=['GET'])
 class Client_ValidUntil(Resource):
     @client_ns.response(200, 'Client date validity retrieved.')
-    @client_ns.response(204, 'Client not found.')
+    @client_ns.response(404, 'Client not found.')
     @client_ns.response(500, 'Internal Error.')
     def get(self, id):
         """
@@ -118,7 +118,7 @@ class Client_ValidUntil(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

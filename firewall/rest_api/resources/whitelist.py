@@ -47,7 +47,7 @@ class Whitelist(Resource):
             return Response(status=500)
 
     @whitelist_ns.response(202, 'Url deleted.')
-    @whitelist_ns.response(204, 'Url not found.')
+    @whitelist_ns.response(404, 'Url not found.')
     @whitelist_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -60,7 +60,7 @@ class Whitelist(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

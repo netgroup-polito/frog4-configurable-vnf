@@ -47,7 +47,7 @@ class Blacklist(Resource):
             return Response(status=500)
 
     @blacklist_ns.response(202, 'Url deleted.')
-    @blacklist_ns.response(204, 'Url not found.')
+    @blacklist_ns.response(404, 'Url not found.')
     @blacklist_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -60,7 +60,7 @@ class Blacklist(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

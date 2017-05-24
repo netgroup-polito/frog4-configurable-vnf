@@ -47,7 +47,7 @@ class Nat_FloatingIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -68,13 +68,13 @@ class Nat_FloatingIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @floatingIP_ns.response(202, 'Floating IP deleted.')
-    @floatingIP_ns.response(204, 'Floating IP not found.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -87,7 +87,7 @@ class Nat_FloatingIP(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -108,7 +108,7 @@ class Nat_FloatingIP_PrivateAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -123,13 +123,13 @@ class Nat_FloatingIP_PrivateAddress(Resource):
         """
         try:
             natController = NatController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             natController.update_floating_ip_private_address(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -150,7 +150,7 @@ class Nat_FloatingIP_PublicAddress(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -165,13 +165,13 @@ class Nat_FloatingIP_PublicAddress(Resource):
         """
         try:
             natController = NatController()
-            json_data = json.loads(request.data.decode())
+            json_data = request.data.decode()
             natController.update_floating_ip_public_address(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)

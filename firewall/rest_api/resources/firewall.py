@@ -66,7 +66,7 @@ class Policy(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -87,13 +87,13 @@ class Policy(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
 
     @fw_ns.response(202, 'Policy deleted.')
-    @fw_ns.response(204, 'Policy not found.')
+    @fw_ns.response(404, 'Policy not found.')
     @fw_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -106,7 +106,7 @@ class Policy(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -149,7 +149,7 @@ class Blacklist(Resource):
             return Response(status=500)
 
     @fw_ns.response(202, 'Url deleted.')
-    @fw_ns.response(204, 'Url not found.')
+    @fw_ns.response(404, 'Url not found.')
     @fw_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -162,7 +162,7 @@ class Blacklist(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
@@ -205,7 +205,7 @@ class Whitelist(Resource):
             return Response(status=500)
 
     @fw_ns.response(202, 'Url deleted.')
-    @fw_ns.response(204, 'Url not found.')
+    @fw_ns.response(404, 'Url not found.')
     @fw_ns.response(500, 'Internal Error.')
     def delete(self, id):
         """
@@ -218,7 +218,7 @@ class Whitelist(Resource):
 
         except ValueError as ve:
             logging.debug(ve)
-            return Response(status=204)
+            return Response(status=404)
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
