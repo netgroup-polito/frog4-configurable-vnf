@@ -1,8 +1,8 @@
 from dhcp.controller.dhcp_controller import DhcpController
 from dhcp.controller.dhcp_server_controller import DhcpServerController
 from common.controller.interface_controller import InterfaceController
-from dhcp.parser.dhcp_server_parser import DhcpServerParser
-from common.parser.interface_parser import InterfaceParser
+
+from dhcp.dd_controller.interface_monitor import InterfaceMonitor
 
 import logging
 import time
@@ -22,19 +22,13 @@ class DoubleDeckerDhcpController():
         self.configuration_interface = None
 
         self.dhcpController = DhcpController()
-
         self.interfaceController = InterfaceController()
-        self.interfaceParser = InterfaceParser()
-
         self.dhcpServerController = DhcpServerController()
-        self.dhcpServerParser = DhcpServerParser()
 
+        self.interfaceMonitor = None
 
         ############# Parameters to monitor #############
         #################################################
-        self.interfaces_old = []
-        self.interfaces_to_export = []
-        self.interfaces_removed = []
 
         self.dhcp_server_configuration_old = None
         self.dhcp_server_configuration_to_export = None
@@ -59,26 +53,22 @@ class DoubleDeckerDhcpController():
     def start(self, initial_configuration=None):
         logging.info("ddDhcpController started")
 
+        self.interfaceMonitor = InterfaceMonitor(self, self.interfaces_old)
+
         if initial_configuration is not None:
             self.set_initial_configuration(initial_configuration)
 
         while True:
             # Export the status every 3 seconds
             time.sleep(8)
-            logging.debug("I'm: ddDhcpController")
+            logging.debug("ddDhcpController wake up")
+
+            self.interfaceMonitor.monitor()
 
             """
-            self._get_new_interfaces()
             self._get_new_dhcp_server_configuration()
             self._get_new_clients()
 
-            if len(self.interfaces_to_export) > 0:
-                self._publish_new_interfaces()
-                self.interfaces_to_export = []
-
-            if len(self.interfaces_removed) > 0:
-                self._publish_interfaces_removed()
-                self.interfaces_removed = []
 
             if self.dhcp_server_configuration_to_export is not None:
                 self._publish_new_dhcp_server_configuration()
@@ -92,7 +82,7 @@ class DoubleDeckerDhcpController():
                 self._publish_clients_removed()
                 self.dhcp_clients_removed = []
             
-
+            
             logging.debug("interfaces_old: ")
             for x in self.interfaces_old:
                 logging.debug(x.__str__())
@@ -125,17 +115,13 @@ class DoubleDeckerDhcpController():
     def on_data_callback(self, src, msg):
         logging.debug("[ddDhcpController] From: " + src + " Msg: " + msg)
 
+    def publish_on_bus(self, url, method, data):
+        self.messageBus.publish_public_topic(self.tenant_id + "." +
+                                             self.graph_id + "." +
+                                             self.vnf_id + "." +
+                                             url + '_' + method.upper(),
+                                             json.dumps(data, indent=4, sort_keys=True))
 
-
-    def _get_new_interfaces(self):
-        curr_interfaces = self.interfaceController.get_interfaces()
-        for interface in curr_interfaces:
-            if interface not in self.interfaces_old:
-                self.interfaces_to_export.append(interface)
-        for interface in self.interfaces_old:
-            if interface not in curr_interfaces:
-                self.interfaces_removed.append(interface)
-        self.interfaces_old = curr_interfaces
 
     def _get_new_dhcp_server_configuration(self):
         curr_dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
@@ -153,25 +139,11 @@ class DoubleDeckerDhcpController():
                 self.dhcp_clients_removed.append(client)
         self.dhcp_clients_old = curr_clients
 
-    def _publish_new_interfaces(self):
-        interfaces_dict = []
-        for interface in self.interfaces_to_export:
-            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
-        self.messageBus.publish_public_topic(self.tenant_id + "." +
-                                             self.graph_id + "." +
-                                             self.vnf_id + "." +
-                                             "config-dhcp-server:interfaces/ifEntry_UPDATE",
-                                             json.dumps(interfaces_dict, indent=4, sort_keys=True))
 
-    def _publish_interfaces_removed(self):
-        interfaces_dict = []
-        for interface in self.interfaces_removed:
-            interfaces_dict.append(self.interfaceParser.get_interface_dict(interface))
-        self.messageBus.publish_public_topic(self.tenant_id + "." +
-                                             self.graph_id + "." +
-                                             self.vnf_id + "." +
-                                             "config-dhcp-server:interfaces/ifEntry_DELETE",
-                                             json.dumps(interfaces_dict, indent=4, sort_keys=True))
+
+
+
+
 
     def _publish_new_dhcp_server_configuration(self):
         dhcp_server_config_dict = self.dhcpServerParser.get_dhcp_server_configuration_dict(self.dhcp_server_configuration_to_export)

@@ -8,7 +8,6 @@ class InterfaceController():
         self.interfaceService = InterfaceService()
         self.interfaceServiceNative = InterfaceServiceNative()
         self.nf_type = ConfigurationInstance.get_nf_type(self)
-        print(self.nf_type)
 
     def configure_interface(self, interface):
         if self.nf_type=="docker" or self.nf_type=="vm":

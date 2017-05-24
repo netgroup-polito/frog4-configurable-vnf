@@ -22,18 +22,14 @@ class Ipv4Configuration:
         return str
 
     def __eq__(self, other):
-        if self.address is not None:
-            if self.address != other.address:
-                return False
-        if self.netmask is not None:
-            if self.netmask != other.netmask:
-                return False
-        if self.mac_address is not None:
-            if self.mac_address != other.mac_address:
-                return False
-        if self.default_gw is not None:
-            if self.default_gw != other.default_gw:
-                return False
+        if self.address != other.address:
+            return False
+        if self.netmask != other.netmask:
+            return False
+        if self.mac_address != other.mac_address:
+            return False
+        if self.default_gw != other.default_gw:
+            return False
         return True
 
 class Interface:
@@ -59,7 +55,7 @@ class Interface:
     def __eq__(self, other):
         if self.name != other.name:
             return False
-        if not self.ipv4_configuration.__eq__(other):
+        if not self.ipv4_configuration.__eq__(other.ipv4_configuration):
             return False
         return True
 
