@@ -31,6 +31,7 @@ class Policy(Resource):
             return Response(status=500)
 
     @policy_ns.response(200, 'Policy retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
     @policy_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -84,6 +85,204 @@ class Policy(Resource):
             firewallController = FirewallController()
             firewallController.delete_policy(id)
             return Response(status=202)
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/description', methods=['GET','PUT'])
+class Policy_Description(Resource):
+    @policy_ns.response(200, 'Policy description parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy description parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_description(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/action', methods=['GET','PUT'])
+class Policy_Action(Resource):
+    @policy_ns.response(200, 'Policy action parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy action parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_action(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/protocol', methods=['GET','PUT'])
+class Policy_Protocol(Resource):
+    @policy_ns.response(200, 'Policy protocol parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy protocol parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_protocol(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/in-interface', methods=['GET','PUT'])
+class Policy_InInterface(Resource):
+    @policy_ns.response(200, 'Policy in-interface parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy in-interface parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_in_interface(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/out-interface', methods=['GET','PUT'])
+class Policy_OutInterface(Resource):
+    @policy_ns.response(200, 'Policy out-interface parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy out-interface parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_out_interface(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/src-address', methods=['GET','PUT'])
+class Policy_SrcAddress(Resource):
+    @policy_ns.response(200, 'Policy src-address parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy src-address parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_src_address(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/dst-address', methods=['GET','PUT'])
+class Policy_DstAddress(Resource):
+    @policy_ns.response(200, 'Policy dst-address parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy dst-address parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_dst_address(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/src-port', methods=['GET','PUT'])
+class Policy_SrcPort(Resource):
+    @policy_ns.response(200, 'Policy src-port parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy src-port parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_src_port(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=204)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
+@policy_ns.route('/<id>/dst-port', methods=['GET','PUT'])
+class Policy_DstPort(Resource):
+    @policy_ns.response(200, 'Policy dst-port parameter retrieved.')
+    @policy_ns.response(204, 'Policy not found.')
+    @policy_ns.response(500, 'Internal Error.')
+    def get(self, id):
+        """
+        Get the policy dst-port parameter
+        """
+        try:
+            firewallController = FirewallController()
+            json_data = json.dumps(firewallController.get_policy_dst_port(id))
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
 
         except ValueError as ve:
             logging.debug(ve)
