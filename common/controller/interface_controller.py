@@ -19,21 +19,21 @@ class InterfaceController():
         if self.nf_type=="docker" or self.nf_type=="vm":
             self.interfaceService.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
 
-    def configure_interface_address(self, ifname, address):
+    def configure_interface_ipv4Configuration_address(self, ifname, address):
         if self.nf_type=="docker" or self.nf_type=="vm":
-            self.interfaceService.configure_interface_address(ifname, address)
+            self.interfaceService.configure_interface_ipv4Configuration_address(ifname, address)
         if self.nf_type=="native":
             self.interfaceServiceNative.configure_interface_address(ifname, address)
 
-    def configure_interface_netmask(self, ifname, netmask):
+    def configure_interface_ipv4Configuration_netmask(self, ifname, netmask):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            self.interfaceService.configure_interface_netmask(ifname, netmask)
+            self.interfaceService.configure_interface_ipv4Configuration_netmask(ifname, netmask)
         if self.nf_type == "native":
             self.interfaceServiceNative.configure_interface_netmask(ifname, netmask)
 
-    def configure_interface_default_gw(self, ifname, default_gw):
+    def configure_interface_ipv4Configuration_default_gw(self, ifname, default_gw):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            self.interfaceService.configure_interface_default_gw(ifname, default_gw)
+            self.interfaceService.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
         if self.nf_type == "native":
             self.interfaceServiceNative.configure_interface_default_gw(ifname, default_gw)
 

@@ -18,10 +18,6 @@ class NatController():
         self.floatingIpController = FloatingIpController()
         self.floatingIpParser = FloatingIpParser()
 
-        self.interfaces_to_export = []
-        self.wan_interface_to_export = None
-        self.floating_ip_to_export = []
-
         self.nf_type = ConfigurationInstance.get_nf_type(self)
 
     def set_configuration(self, json_configuration):
@@ -40,18 +36,6 @@ class NatController():
         for curr_json_floating_ip in json_floating_ip:
             #self.configure_floating_ip(curr_json_floating_ip)
             pass
-
-
-        logging.debug("interfaces_to_export: ")
-        for x in self.interfaces_to_export:
-            logging.debug(x.__str__())
-
-        logging.debug("wan_interface_to_export: ")
-        logging.debug(self.wan_interface_to_export)
-
-        logging.debug("floating_ip_to_export: ")
-        for x in self.floating_ip_to_export:
-            logging.debug(x.__str__())
 
 
     def get_full_status(self):
@@ -93,7 +77,7 @@ class NatController():
                 if iface_found.__eq__(interface):
                     return
             self.interfaceController.configure_interface(interface)
-            self.interfaces_to_export.append(interface)
+
             logging.debug("Configured interface: " + interface.__str__())
 
     def update_interface(self, name, json_interface):
@@ -101,7 +85,7 @@ class NatController():
         if interface.type != "transparent":
             if self.interfaceController.interface_exists(name):
                 self.interfaceController.configure_interface(interface)
-                self.interfaces_to_export.append(interface)
+
                 logging.debug("Updated interface: " + interface.__str__())
             else:
                 raise ValueError("could not find interface: " + name)
@@ -181,7 +165,6 @@ class NatController():
         if current_wan_iface is None:
             if self.nf_type == "docker" or self.nf_type == "vm":
                 self.natService.set_ip_forward(wan_interface)
-            self.wan_interface_to_export = wan_interface
             logging.debug("Nat set on wan interface: " + wan_interface)
 
     def unset_ip_forward(self, wan_interface):
@@ -208,7 +191,6 @@ class NatController():
                 return
         wan_interface = self.get_wan_interface()
         self.floatingIpController.configure_floating_ip(floating_ip, wan_interface)
-        self.floating_ip_to_export.append(floating_ip)
         logging.debug("floating_ip set: private address " + floating_ip.private_address + " => public address" + floating_ip.public_address)
 
     def update_floating_ip(self, public_address, json_floating_ip):

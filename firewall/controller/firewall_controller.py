@@ -29,11 +29,6 @@ class FirewallController():
         self.whitelistController = WhitelistController()
         self.whitelistParser = WhitelistParser()
 
-        self.interfaces_to_export = []
-        self.policies_to_export = []
-        self.blacklist_to_export = []
-        self.whitelist_to_export = []
-
         self.transparent_intefaces = []
         self.wan_interface = None
 
@@ -87,22 +82,6 @@ class FirewallController():
             #self.configure_whitelist_url(url)
             pass
 
-        logging.debug("interfaces_to_export: ")
-        for x in self.interfaces_to_export:
-            logging.debug(x.__str__())
-
-        logging.debug("policies_to_export: ")
-        for x in self.policies_to_export:
-            logging.debug(x.__str__())
-
-        logging.debug("blacklist_to_export: ")
-        for x in self.blacklist_to_export:
-            logging.debug(x.__str__())
-
-        logging.debug("whitelist_to_export: ")
-        for x in self.whitelist_to_export:
-            logging.debug(x.__str__())
-
 
     def get_full_status(self):
 
@@ -147,7 +126,7 @@ class FirewallController():
                 if iface_found.__eq__(interface):
                     return
             self.interfaceController.configure_interface(interface)
-            self.interfaces_to_export.append(interface)
+
             logging.debug("Configured interface: " + interface.__str__())
 
     def update_interface(self, name, json_interface):
@@ -155,7 +134,7 @@ class FirewallController():
         if interface.type != "transparent":
             if self.interfaceController.interface_exists(name):
                 self.interfaceController.configure_interface(interface)
-                self.interfaces_to_export.append(interface)
+
                 logging.debug("Updated interface: " + interface.__str__())
             else:
                 raise ValueError("could not find interface: " + name)
@@ -257,7 +236,6 @@ class FirewallController():
             if pol.__str__(policy):
                 return
         id = self.policyController.add_policy(policy)
-        self.policies_to_export = policy
         logging.debug("Configured policy: " + policy.__str__())
         return id
 
@@ -375,7 +353,6 @@ class FirewallController():
             if curr_url.__eq__(url):
                 return
         self.blacklistController.configure_url(url)
-        self.blacklist_to_export.append(url)
         logging.debug("Configured blacklist url: " + url)
 
     def get_blacklist(self):
@@ -398,7 +375,6 @@ class FirewallController():
             if curr_url.__eq__(url):
                 return
         self.whitelistController.configure_url(url)
-        self.whitelist_to_export.append(url)
         logging.debug("Configured whitelist url: " + url)
 
     def get_whitelist(self):
