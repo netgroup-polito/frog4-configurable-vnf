@@ -7,7 +7,7 @@ Each configurable VNF is able to:
 * retrieve the actual status of the VNF
 * describe the actual status of the VNF and export it to interested components (e.g., the configuration service)
 
-##Datadisk
+## Datadisk
 After a VNF deployment, the Universal Node attaches a volume (datadisk) containing some information needed by the configuration agent in order to work properly. 
 The datadisk contains:
 * the public key of the message broker
