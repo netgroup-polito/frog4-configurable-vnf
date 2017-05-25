@@ -3,6 +3,7 @@ class ConfigurationInstance(object):
     vnf = None
     #nf_type = None
     datadisk_path = None
+    on_change_interval = None
 
     def get_vnf(self):
         return ConfigurationInstance.vnf
@@ -25,3 +26,8 @@ class ConfigurationInstance(object):
         return ConfigurationInstance.datadisk_path
     def set_datadisk_path(self, datadisk_path):
         ConfigurationInstance.datadisk_path = datadisk_path
+
+    def get_on_change_interval(self):
+        return ConfigurationInstance.on_change_interval
+    def set_on_change_interval(self, on_change_interval):
+        ConfigurationInstance.on_change_interval = on_change_interval
