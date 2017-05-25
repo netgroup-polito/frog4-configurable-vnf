@@ -4,6 +4,8 @@ from common.controller.interface_controller import InterfaceController
 
 from dhcp.dd_controller.interface_monitor import InterfaceMonitor
 
+from threading import Thread
+
 import logging
 import time
 import json
@@ -15,33 +17,32 @@ class DoubleDeckerDhcpController():
         self.messageBus = message_bus
         self.messageBus.set_controller(self)
 
+        self.dhcpController = DhcpController()
+        self.interfaceController = InterfaceController()
+        self.dhcpServerController = DhcpServerController()
+
         self.tenant_id = tenant_id
         self.graph_id = graph_id
         self.vnf_id = vnf_id
 
         self.configuration_interface = None
 
-        self.dhcpController = DhcpController()
-        self.interfaceController = InterfaceController()
-        self.dhcpServerController = DhcpServerController()
-
         self.interfaceMonitor = None
+        self.dhcpServerMonitor = None
+        self.dhcpClientsMonitor = None
 
-        ############# Parameters to monitor #############
-        #################################################
-
-        self.dhcp_server_configuration_old = None
-        self.dhcp_server_configuration_to_export = None
-
-        self.dhcp_clients_old = []
-        self.dhcp_clients_to_export = []
-        self.dhcp_clients_removed = []
-        ##################################################
 
     def set_initial_configuration(self, initial_configuration):
-        self.interfaces_old = self.interfaceController.get_interfaces()
-        self.dhcp_clients_old = self.dhcpServerController.get_clients()
-        self.dhcp_server_configuration_old = self.dhcpServerController.get_dhcp_server_configuration()
+
+        curr_interfaces = self.interfaceController.get_interfaces()
+        self.interfaceMonitor = InterfaceMonitor(self, curr_interfaces)
+
+        curr_dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
+        #self.dhcpServerMonitor = DhcpServerMonitor(self, curr_dhcp_server_configuration)
+
+        curr_dhcp_clients = self.dhcpServerController.get_clients()
+        #self.dhcpClientsMonitor = DhcpClientsMonitor(self, curr_dhcp_server_configuration)
+
         logging.debug("Setting initial configuration...")
         self.dhcpController.set_configuration(initial_configuration)
         logging.debug("Setting initial configuration...done!")
@@ -50,77 +51,34 @@ class DoubleDeckerDhcpController():
         self.configuration_interface = configuration_interface
         return self.dhcpController.get_interface_ipv4Configuration_address(configuration_interface)
 
-    def start(self, initial_configuration=None):
-        logging.info("ddDhcpController started")
+    def start(self):
 
-        self.interfaceMonitor = InterfaceMonitor(self, self.interfaces_old)
+        threads = []
+        threads.append(Thread(target=self.interfaceMonitor.start_monitoring, args=()))
+        #threads.append(Thread(target=self.dhcpServerMonitor.start_monitoring, args=()))
+        #threads.append(Thread(target=self.dhcpClientsMonitor.start_monitoring, args=()))
 
-        if initial_configuration is not None:
-            self.set_initial_configuration(initial_configuration)
+        # Start all threads
+        for t in threads:
+            t.start()
 
-        while True:
-            # Export the status every 3 seconds
-            time.sleep(8)
-            logging.debug("ddDhcpController wake up")
-
-            self.interfaceMonitor.monitor()
-
-            """
-            self._get_new_dhcp_server_configuration()
-            self._get_new_clients()
+        # Wait for all of them to finish
+        for t in threads:
+            t.join()
 
 
-            if self.dhcp_server_configuration_to_export is not None:
-                self._publish_new_dhcp_server_configuration()
-                self.dhcp_server_configuration_to_export = None
 
-            if len(self.dhcp_clients_to_export) > 0:
-                self._publish_new_clients()
-                self.dhcp_clients_to_export = []
-
-            if len(self.dhcp_clients_removed) > 0:
-                self._publish_clients_removed()
-                self.dhcp_clients_removed = []
-            
-            
-            logging.debug("interfaces_old: ")
-            for x in self.interfaces_old:
-                logging.debug(x.__str__())
-            logging.debug("interfaces_to_export: ")
-            for x in self.interfaces_to_export:
-                logging.debug(x.__str__())
-            logging.debug("interfaces_to_remove: ")
-            for x in self.interfaces_removed:
-                logging.debug(x.__str__())
-
-            logging.debug("dhcp_server_config_old: ")
-            logging.debug(self.dhcp_server_configuration_old.__str__())
-            logging.debug("dhcp_server_config_to_export: ")
-            logging.debug(self.dhcp_server_configuration_to_export.__str__())
-
-            logging.debug("clients_old: ")
-            for x in self.dhcp_clients_old:
-                logging.debug(x.__str__())
-            logging.debug("clients_to_export: ")
-            for x in self.dhcp_clients_to_export:
-                logging.debug(x.__str__())
-            logging.debug("clients_to_remove: ")
-            for x in self.dhcp_clients_removed:
-                logging.debug(x.__str__())
-            """
-
-        thread.join()
-
+    def publish_on_bus(self, url, method, data):
+        if method is not None:
+            msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url + '_' + method.upper()
+        else:
+            msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url
+        self.messageBus.publish_topic(msg , json.dumps(data, indent=4, sort_keys=True))
 
     def on_data_callback(self, src, msg):
         logging.debug("[ddDhcpController] From: " + src + " Msg: " + msg)
 
-    def publish_on_bus(self, url, method, data):
-        self.messageBus.publish_public_topic(self.tenant_id + "." +
-                                             self.graph_id + "." +
-                                             self.vnf_id + "." +
-                                             url + '_' + method.upper(),
-                                             json.dumps(data, indent=4, sort_keys=True))
+
 
 
     def _get_new_dhcp_server_configuration(self):
@@ -138,12 +96,6 @@ class DoubleDeckerDhcpController():
             if client not in curr_clients:
                 self.dhcp_clients_removed.append(client)
         self.dhcp_clients_old = curr_clients
-
-
-
-
-
-
 
     def _publish_new_dhcp_server_configuration(self):
         dhcp_server_config_dict = self.dhcpServerParser.get_dhcp_server_configuration_dict(self.dhcp_server_configuration_to_export)
@@ -172,7 +124,6 @@ class DoubleDeckerDhcpController():
                                              self.vnf_id + "." +
                                              "config-dhcp-server:server/clients_DELETE",
                                              json.dumps(clients_dict, indent=4, sort_keys=True))
-
 
 
 
