@@ -1,32 +1,31 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-from config_parser import ConfigParser
-from config_instance import ConfigurationInstance
-from threading import Event
-from threading import Thread
-from utils import Bash
-from message_bus import MessageBus
-from subprocess import call, Popen
-
-from vnf_template_library.exception import TemplateValidationError
-from vnf_template_library.template import Template
-from vnf_template_library.validator import ValidateTemplate
-
-from dhcp.controller.dd_dhcp_controller import DoubleDeckerDhcpController
-from firewall.controller.dd_firewall_controller import DoubleDeckerFirewallController
-from nat.controller.dd_nat_controller import DoubleDeckerNatController
-
-import sys
+import json
 import logging
 import os
 import shutil
-import json
+import sys
+from subprocess import call
+from threading import Event
+from threading import Thread
+
+from nat.controller.dd_nat_controller import DoubleDeckerNatController
+
+from config_instance import ConfigurationInstance
+from config_parser import ConfigParser
+from dhcp.dd_controller.dd_dhcp_controller import DoubleDeckerDhcpController
+from firewall.controller.dd_firewall_controller import DoubleDeckerFirewallController
+from message_bus import MessageBus
+from utils import Bash
+from vnf_template_library.exception import TemplateValidationError
+from vnf_template_library.template import Template
+from vnf_template_library.validator import ValidateTemplate
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
 class ConfigurationAgent():
 
-    def __init__(self, nf_type, datadisk_path):
+    def __init__(self, nf_type, datadisk_path, on_change_interval=None):
 
         self.configParser = ConfigParser()
         self.messageBus = MessageBus(self)
@@ -40,6 +39,10 @@ class ConfigurationAgent():
         ConfigurationInstance.set_vnf(self, self.configParser.get("settings", "vnf"))
         ConfigurationInstance.set_nf_type(self, nf_type)
         ConfigurationInstance.set_datadisk_path(self, datadisk_path)
+        if on_change_interval is not None:
+            ConfigurationInstance.set_on_change_interval(self, int(on_change_interval)/1000)
+        else:
+            ConfigurationInstance.set_on_change_interval(self, 1)
 
         self.vnf = ConfigurationInstance.get_vnf(self)
         self.nf_type = ConfigurationInstance.get_nf_type(self)
@@ -48,6 +51,7 @@ class ConfigurationAgent():
         logging.debug(self.vnf + " agent started...")
         logging.debug("nf_type: " + self.nf_type)
         logging.debug("datadisk_path: " + self.datadisk_path)
+        logging.debug("on_change_interval: " + str(ConfigurationInstance.get_on_change_interval(self)))
 
         ###################################################################
         self.tenant_id = None
@@ -128,8 +132,6 @@ class ConfigurationAgent():
 
         #print(json.dumps(status, indent=4, sort_keys=True))
 
-
-
     def start_agent(self):
         """
         Agent core method. It manages the registration both to the message broker and to the configuration service
@@ -137,7 +139,7 @@ class ConfigurationAgent():
         """
         self.registered_to_bus.clear()
         self.registered_to_cs.clear()
-        """
+
         logging.debug("Trying to register to the message broker...")
         self.messageBus.register_to_bus(name=self.vnf,
                                        dealer_url=self.broker_url,
@@ -152,7 +154,7 @@ class ConfigurationAgent():
                 if self.is_registered_to_cs is False:
                     self._vnf_registration()
         logging.debug("Trying to register to the configuration service...done!")
-        """
+
         initial_configuration = None
         if os.path.exists(self.initial_configuration_path):
             with open(self.initial_configuration_path) as configuration:
@@ -260,10 +262,24 @@ class ConfigurationAgent():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Error to start: usage agent.py <nf_type> <datadisk_path>")
+    if len(sys.argv) < 3:
+        print("Error to start: usage agent.py <nf_type> <datadisk_path> [on_change_interval(ms)]")
     else:
+        #Check nf_type
         if sys.argv[1] != "docker" and sys.argv[1] != "vm" and sys.argv[1] != "native":
             print("Error to start: <nf_type> can be 'docker' or 'native' or 'vm'")
-        else:
-            ConfigurationAgent(sys.argv[1], sys.argv[2])
+        nf_type = sys.argv[1]
+
+        # Check datadisk_path
+        if sys.argv[2].isdigit():
+            print("Error to start: <datadisk_path> can not be a number")
+        datadisk_path = sys.argv[2]
+
+        # Check on_change_interval
+        on_change_interval = None
+        if len(sys.argv)==4:
+            if not sys.argv[3].isdigit():
+                print("Error to start: [on_change_interval(ms)] must be a number")
+            on_change_interval = sys.argv[3]
+
+        ConfigurationAgent(nf_type, datadisk_path, on_change_interval)
