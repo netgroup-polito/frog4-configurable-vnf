@@ -100,16 +100,89 @@ class DhcpServerController():
         return current_dhcp_server_configuration
 
     def configuration_exists(self):
-        if self.nf_type == "docker" or self.nf_type == "vm":
-            try:
-                self.dhcpServerService.get_dhcp_server_configuration()
-                return True
-            except Exception as e:
-                return False
+        try:
+            self.dhcpServerService.get_dhcp_server_configuration()
+            return True
+        except Exception as e:
+            return False
 
     def get_dhcp_server_configuration(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
             return self.dhcpServerService.get_dhcp_server_configuration()
+
+    def get_dhcp_server_configuration_gateway(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.gateway
+
+    def get_dhcp_server_configuration_gateway_address(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.gateway.address
+
+    def get_dhcp_server_configuration_gateway_netmask(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.gateway.netmask
+
+    def get_dhcp_server_configuration_sections(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        return sections
+
+    def get_dhcp_server_configuration_section(self, section_start_ip):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        section_found = None
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                section_found = section
+                break
+        return section_found
+
+    def get_dhcp_server_configuration_section_start_ip(self, section_start_ip):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                return section.start_ip
+        return None
+
+    def get_dhcp_server_configuration_section_end_ip(self, section_start_ip):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        sections = dhcp_server_configuration.sections
+        for section in sections:
+            if section.start_ip == section_start_ip:
+                return section.end_ip
+        return None
+
+    def get_dhcp_server_configuration_default_lease_time(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return self.dhcp_server_configuration.default_lease_time
+
+    def get_dhcp_server_configuration_max_lease_time(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.max_lease_time
+
+    def get_dhcp_server_configuration_dns(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return self.dhcpServerParser.parse_dns(dhcp_server_configuration.dns)
+
+    def get_dhcp_server_configuration_dns_primary_server(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.dns.primary_server
+
+    def get_dhcp_server_configuration_dns_secondary_server(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.dns.secondary_server
+
+    def get_dhcp_server_configuration_dns_domain_name(self):
+        dhcp_server_configuration = self.get_dhcp_server_configuration()
+        return dhcp_server_configuration.dns.domain_name
+
+    def client_exists(self, mac_address):
+        client = self.get_client(mac_address)
+        if client is not None:
+            return True
+        else:
+            return False
 
     def get_clients(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
@@ -118,3 +191,15 @@ class DhcpServerController():
     def get_client(self, mac_address):
         if self.nf_type == "docker" or self.nf_type == "vm":
             return self.dhcpServerService.get_client(mac_address)
+
+    def get_client_ip_address(self, mac_address):
+        client = self.get_client(mac_address)
+        return client.ip_address
+
+    def get_client_hostname(self, mac_address):
+        client = self.get_client(mac_address)
+        return client.hostname
+
+    def get_client_valid_until(self, mac_address):
+        client = self.get_client(mac_address)
+        return client.valid_until

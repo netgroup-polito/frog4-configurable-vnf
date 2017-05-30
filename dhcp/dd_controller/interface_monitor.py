@@ -36,9 +36,9 @@ class InterfaceMonitor():
         self.elements['type'] = Element(advertise=self.ON_CHANGE)
         self.elements['management'] = Element(advertise=self.ON_CHANGE)
         self.elements['ipv4Configuration'] = Element(advertise=self.SILENT)
-        self.elements['address'] = Element(advertise=self.PERIODIC, period=3)
+        self.elements['address'] = Element(advertise=self.SILENT)
         self.elements['netmask'] = Element(advertise=self.ON_CHANGE)
-        self.elements['macAddress'] = Element(advertise=self.PERIODIC, period=5)
+        self.elements['macAddress'] = Element(advertise=self.SILENT)
         self.elements['defaultGW'] = Element(advertise=self.ON_CHANGE)
         ##################################################################
 
@@ -187,21 +187,21 @@ class InterfaceMonitor():
             if self.elements['ipv4Configuration'].advertise == self.ON_CHANGE:
                 self._publish_interface_ipv4Config(id, interface.ipv4_configuration, method)
 
-        if interface.ipv4_configuration.address is not None:
-            if self.elements['address'].advertise == self.ON_CHANGE:
-                self._publish_interface_ipv4Config_address(id, interface.ipv4_configuration.address, method)
+            if interface.ipv4_configuration.address is not None:
+                if self.elements['address'].advertise == self.ON_CHANGE:
+                    self._publish_interface_ipv4Config_address(id, interface.ipv4_configuration.address, method)
 
-        if interface.ipv4_configuration.netmask is not None:
-            if self.elements['netmask'].advertise == self.ON_CHANGE:
-                self._publish_interface_ipv4Config_netmask(id, interface.ipv4_configuration.netmask, method)
+            if interface.ipv4_configuration.netmask is not None:
+                if self.elements['netmask'].advertise == self.ON_CHANGE:
+                    self._publish_interface_ipv4Config_netmask(id, interface.ipv4_configuration.netmask, method)
 
-        if interface.ipv4_configuration.mac_address is not None:
-            if self.elements['macAddress'].advertise == self.ON_CHANGE:
-                self._publish_interface_ipv4Config_macAddress(id, interface.ipv4_configuration.mac_address, method)
+            if interface.ipv4_configuration.mac_address is not None:
+                if self.elements['macAddress'].advertise == self.ON_CHANGE:
+                    self._publish_interface_ipv4Config_macAddress(id, interface.ipv4_configuration.mac_address, method)
 
-        if interface.ipv4_configuration.default_gw is not None:
-            if self.elements['defaultGW'].advertise == self.ON_CHANGE:
-                self._publish_interface_ipv4Config_defaultGW(id, interface.ipv4_configuration.default_gw, method)
+            if interface.ipv4_configuration.default_gw is not None:
+                if self.elements['defaultGW'].advertise == self.ON_CHANGE:
+                    self._publish_interface_ipv4Config_defaultGW(id, interface.ipv4_configuration.default_gw, method)
 
     def _publish_interface_leafs_periodic(self, interface, period):
 
@@ -226,21 +226,21 @@ class InterfaceMonitor():
             if self.elements['ipv4Configuration'].advertise == self.PERIODIC and self.elements['ipv4Configuration'].period == period:
                 self._publish_interface_ipv4Config(id, interface.ipv4_configuration)
 
-        if interface.ipv4_configuration.address is not None:
-            if self.elements['address'].advertise == self.PERIODIC and self.elements['address'].period == period:
-                self._publish_interface_ipv4Config_address(id, interface.ipv4_configuration.address)
+            if interface.ipv4_configuration.address is not None:
+                if self.elements['address'].advertise == self.PERIODIC and self.elements['address'].period == period:
+                    self._publish_interface_ipv4Config_address(id, interface.ipv4_configuration.address)
 
-        if interface.ipv4_configuration.netmask is not None:
-            if self.elements['netmask'].advertise == self.PERIODIC and self.elements['netmask'].period == period:
-                self._publish_interface_ipv4Config_netmask(id, interface.ipv4_configuration.netmask)
+            if interface.ipv4_configuration.netmask is not None:
+                if self.elements['netmask'].advertise == self.PERIODIC and self.elements['netmask'].period == period:
+                    self._publish_interface_ipv4Config_netmask(id, interface.ipv4_configuration.netmask)
 
-        if interface.ipv4_configuration.mac_address is not None:
-            if self.elements['macAddress'].advertise == self.PERIODIC and self.elements['macAddress'].period == period:
-                self._publish_interface_ipv4Config_macAddress(id, interface.ipv4_configuration.mac_address)
+            if interface.ipv4_configuration.mac_address is not None:
+                if self.elements['macAddress'].advertise == self.PERIODIC and self.elements['macAddress'].period == period:
+                    self._publish_interface_ipv4Config_macAddress(id, interface.ipv4_configuration.mac_address)
 
-        if interface.ipv4_configuration.default_gw is not None:
-            if self.elements['defaultGW'].advertise == self.PERIODIC and self.elements['defaultGW'].period == period:
-                self._publish_interface_ipv4Config_defaultGW(id, interface.ipv4_configuration.default_gw)
+            if interface.ipv4_configuration.default_gw is not None:
+                if self.elements['defaultGW'].advertise == self.PERIODIC and self.elements['defaultGW'].period == period:
+                    self._publish_interface_ipv4Config_defaultGW(id, interface.ipv4_configuration.default_gw)
 
     def _timer_periodic_callback(self, period):
 
