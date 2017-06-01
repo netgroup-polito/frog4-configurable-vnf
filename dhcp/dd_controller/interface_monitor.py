@@ -2,6 +2,7 @@ from common.controller.interface_controller import InterfaceController
 from common.parser.interface_parser import InterfaceParser
 from common.model.interface import Interface
 from common.model.interface import Ipv4Configuration
+from common.constants import Constants
 
 from dhcp.dd_controller.element import Element
 from config_instance import ConfigurationInstance
@@ -15,10 +16,14 @@ class InterfaceMonitor():
 
     def __init__(self, dd_controller, curr_interfaces):
 
+        self.EVENT_ADD = Constants.EVENT_ADD
+        self.EVENT_UPDATE = Constants.EVENT_UPDATE
+        self.EVENT_DELETE = Constants.EVENT_DELETE
+
         ######################### YANG CONSTANTS #########################
-        self.SILENT = "silent"
-        self.ON_CHANGE = "on_change"
-        self.PERIODIC = "periodic"
+        self.SILENT = Constants.ADVERTISE_SILENT
+        self.ON_CHANGE = Constants.ADVERTISE_ON_CHANGE
+        self.PERIODIC = Constants.ADVERTISE_PERIODIC
 
         self.url_iface = "config-dhcp-server:interfaces/ifEntry"
         self.url_name = "/name"
@@ -35,7 +40,7 @@ class InterfaceMonitor():
         self.elements['name'] = Element(advertise=self.ON_CHANGE)
         self.elements['type'] = Element(advertise=self.ON_CHANGE)
         self.elements['management'] = Element(advertise=self.ON_CHANGE)
-        self.elements['ipv4Configuration'] = Element(advertise=self.SILENT)
+        self.elements['ipv4Configuration'] = Element(advertise=self.PERIODIC, period=5000)
         self.elements['address'] = Element(advertise=self.SILENT)
         self.elements['netmask'] = Element(advertise=self.ON_CHANGE)
         self.elements['macAddress'] = Element(advertise=self.SILENT)
@@ -45,6 +50,7 @@ class InterfaceMonitor():
         self.periods = []
         for key, element in self.elements.items():
             if element.advertise == self.PERIODIC:
+                element.period = element.period/1000
                 if element.period not in self.periods:
                     self.periods.append(element.period)
 
@@ -75,13 +81,13 @@ class InterfaceMonitor():
             print("interfaces_new: " + str(len(self.interfaces_new)))
             if len(self.interfaces_new) > 0:
                 for interface in self.interfaces_new:
-                    self._publish_interface_leafs_on_change(interface, "add")
+                    self._publish_interface_leafs_on_change(interface, "ADDED")
                 self.interfaces_new = []
 
             print("interfaces_removed: " + str(len(self.interfaces_removed)))
             if len(self.interfaces_removed) > 0:
                 for interface in self.interfaces_removed:
-                    self._publish_interface_leafs_on_change(interface, "delete")
+                    self._publish_interface_leafs_on_change(interface, "DELETED")
                 self.interfaces_removed = []
 
             print("interfaces_updated: " + str(len(self.interfaces_updated)))
@@ -91,7 +97,7 @@ class InterfaceMonitor():
                     new_interface = interface_map['new']
                     interface_diff = self._find_diff(old_interface, new_interface)
                     logging.debug(interface_diff.__str__())
-                    self._publish_interface_leafs_on_change(interface_diff, "update")
+                    self._publish_interface_leafs_on_change(interface_diff, "UPDATED")
                 self.interfaces_updated = []
 
             time.sleep(self.on_change_interval)

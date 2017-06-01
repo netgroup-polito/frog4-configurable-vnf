@@ -1,6 +1,7 @@
 from dhcp.controller.dhcp_server_controller import DhcpServerController
 from dhcp.parser.dhcp_server_parser import DhcpServerParser
 from file_monitor import FileMonitor
+from common.constants import Constants
 
 from dhcp.dd_controller.element import Element
 from config_instance import ConfigurationInstance
@@ -14,10 +15,14 @@ class DhcpServerMonitor():
 
     def __init__(self, dd_controller, curr_dhcpServer_configuration):
 
+        self.EVENT_ADD = Constants.EVENT_ADD
+        self.EVENT_UPDATE = Constants.EVENT_UPDATE
+        self.EVENT_DELETE = Constants.EVENT_DELETE
+
         ######################### YANG CONSTANTS #########################
-        self.SILENT = "silent"
-        self.ON_CHANGE = "on_change"
-        self.PERIODIC = "periodic"
+        self.SILENT = Constants.ADVERTISE_SILENT
+        self.ON_CHANGE = Constants.ADVERTISE_ON_CHANGE
+        self.PERIODIC = Constants.ADVERTISE_PERIODIC
 
         self.url_dhcpServerConfiguration = "config-dhcp-server:server/globalIpPool"
         self.url_gateway = self.url_dhcpServerConfiguration + "/gatewayIp"
@@ -53,6 +58,7 @@ class DhcpServerMonitor():
         self.periods = []
         for key, element in self.elements.items():
             if element.advertise == self.PERIODIC:
+                element.period = element.period / 1000
                 if element.period not in self.periods:
                     self.periods.append(element.period)
 
@@ -207,58 +213,58 @@ class DhcpServerMonitor():
         if old_dhcpServerConfig is None and new_dhcpServerConfig is not None:
             self._publish_dhcpServerConfig(new_dhcpServerConfig, "add")
         elif old_dhcpServerConfig is not None and new_dhcpServerConfig is None:
-            self._publish_dhcpServerConfig(old_dhcpServerConfig, "delete")
+            self._publish_dhcpServerConfig(old_dhcpServerConfig, self.EVENT_DELETE)
         else:
             if not old_dhcpServerConfig.__eq__(new_dhcpServerConfig):
-                self._publish_dhcpServerConfig(new_dhcpServerConfig, "updated")
+                self._publish_dhcpServerConfig(new_dhcpServerConfig, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_gateway(self, old_gateway, new_gateway):
         if old_gateway is None and new_gateway is not None:
-            self._publish_dhcpServerConfig_gateway(new_gateway, "add")
+            self._publish_dhcpServerConfig_gateway(new_gateway, self.EVENT_ADD)
         elif old_gateway is not None and new_gateway is None:
-            self._publish_dhcpServerConfig_gateway(old_gateway, "delete")
+            self._publish_dhcpServerConfig_gateway(old_gateway, self.EVENT_DELETE)
         else:
             if not old_gateway.__eq__(new_gateway):
-                self._publish_dhcpServerConfig_gateway(new_gateway, "updated")
+                self._publish_dhcpServerConfig_gateway(new_gateway, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_gateway_address(self, old_gateway_address, new_gateway_address):
         if old_gateway_address is None and new_gateway_address is not None:
-            self._publish_dhcpServerConfig_gateway_address(new_gateway_address, "add")
+            self._publish_dhcpServerConfig_gateway_address(new_gateway_address, self.EVENT_ADD)
         elif old_gateway_address is not None and new_gateway_address is None:
-            self._publish_dhcpServerConfig_gateway_address(old_gateway_address, "delete")
+            self._publish_dhcpServerConfig_gateway_address(old_gateway_address, self.EVENT_DELETE)
         else:
             if not old_gateway_address.__eq__(new_gateway_address):
-                self._publish_dhcpServerConfig_gateway_address(new_gateway_address, "updated")
+                self._publish_dhcpServerConfig_gateway_address(new_gateway_address, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_gateway_netmask(self, old_gateway_netmask, new_gateway_netmask):
         if old_gateway_netmask is None and new_gateway_netmask is not None:
-            self._publish_dhcpServerConfig_gateway_netmask(new_gateway_netmask, "add")
+            self._publish_dhcpServerConfig_gateway_netmask(new_gateway_netmask, self.EVENT_ADD)
         elif old_gateway_netmask is not None and new_gateway_netmask is None:
-            self._publish_dhcpServerConfig_gateway_netmask(old_gateway_netmask, "delete")
+            self._publish_dhcpServerConfig_gateway_netmask(old_gateway_netmask, self.EVENT_DELETE)
         else:
             if not old_gateway_netmask.__eq__(new_gateway_netmask):
-                self._publish_dhcpServerConfig_gateway_netmask(new_gateway_netmask, "updated")
+                self._publish_dhcpServerConfig_gateway_netmask(new_gateway_netmask, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_sections(self, old_sections, new_sections):
         if len(old_sections)==0 and len(new_sections)>0:
-            self._publish_dhcpServerConfig_sections(new_sections, "add")
+            self._publish_dhcpServerConfig_sections(new_sections, self.EVENT_ADD)
         elif len(old_sections)>0 and len(new_sections)==0:
-            self._publish_dhcpServerConfig_sections(new_sections, "delete")
+            self._publish_dhcpServerConfig_sections(new_sections, self.EVENT_DELETE)
         else:
-            self._publish_dhcpServerConfig_sections(new_sections, "updated")
+            self._publish_dhcpServerConfig_sections(new_sections, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_section(self, old_sections, new_sections):
         for old_section in old_sections:
             section = next((x for x in self.new_sections if x.start_ip == old_section.start_ip), None)
             if section is not None:
                 if not section.__eq__(old_section):
-                    self._publish_dhcpServerConfig_section(section, "updated")
+                    self._publish_dhcpServerConfig_section(section, self.EVENT_UPDATE)
             else:
-                self._publish_dhcpServerConfig_section(section, "delete")
+                self._publish_dhcpServerConfig_section(section, self.EVENT_DELETE)
         for new_section in new_sections:
             section = next((x for x in self.old_sections if x.start_ip == new_section.start_ip), None)
             if section is None:
-                self._publish_dhcpServerConfig_section(section, "add")
+                self._publish_dhcpServerConfig_section(section, self.EVENT_ADD)
 
     def _on_change_dhcpServerConfig_section_startIP(self):
         pass
@@ -268,57 +274,57 @@ class DhcpServerMonitor():
 
     def _on_change_dhcpServerConfig_dns(self, old_dns, new_dns):
         if old_dns is None and new_dns is not None:
-            self._publish_dhcpServerConfig_dns(new_dns, "add")
+            self._publish_dhcpServerConfig_dns(new_dns, self.EVENT_ADD)
         elif old_dns is not None and new_dns is None:
-            self._publish_dhcpServerConfig_dns(old_dns, "delete")
+            self._publish_dhcpServerConfig_dns(old_dns, self.EVENT_DELETE)
         else:
             if not old_dns.__eq__(new_dns):
-                self._publish_dhcpServerConfig_dns(new_dns, "updated")
+                self._publish_dhcpServerConfig_dns(new_dns, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_dns_primaryServer(self, old_primaryServer, new_primaryServer):
         if old_primaryServer is None and new_primaryServer is not None:
-            self._publish_dhcpServerConfig_dns_primaryServer(new_primaryServer, "add")
+            self._publish_dhcpServerConfig_dns_primaryServer(new_primaryServer, self.EVENT_ADD)
         elif old_primaryServer is not None and new_primaryServer is None:
-            self._publish_dhcpServerConfig_dns_primaryServer(old_primaryServer, "delete")
+            self._publish_dhcpServerConfig_dns_primaryServer(old_primaryServer, self.EVENT_DELETE)
         else:
             if not old_primaryServer.__eq__(new_primaryServer):
-                self._publish_dhcpServerConfig_dns_primaryServer(new_primaryServer, "updated")
+                self._publish_dhcpServerConfig_dns_primaryServer(new_primaryServer, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_dns_secondaryServer(self, old_secondaryServer, new_secondaryServer):
         if old_secondaryServer is None and new_secondaryServer is not None:
-            self._publish_dhcpServerConfig_dns_secondaryServer(new_secondaryServer, "add")
+            self._publish_dhcpServerConfig_dns_secondaryServer(new_secondaryServer, self.EVENT_ADD)
         elif old_secondaryServer is not None and new_secondaryServer is None:
-            self._publish_dhcpServerConfig_dns_secondaryServer(old_secondaryServer, "delete")
+            self._publish_dhcpServerConfig_dns_secondaryServer(old_secondaryServer, self.EVENT_DELETE)
         else:
             if not old_secondaryServer.__eq__(new_secondaryServer):
-                self._publish_dhcpServerConfig_dns_secondaryServer(new_secondaryServer, "updated")
+                self._publish_dhcpServerConfig_dns_secondaryServer(new_secondaryServer, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_dns_domainName(self, old_domainName, new_domainName):
         if old_domainName is None and new_domainName is not None:
-            self._publish_dhcpServerConfig_dns_domainName(new_domainName, "add")
+            self._publish_dhcpServerConfig_dns_domainName(new_domainName, self.EVENT_ADD)
         elif old_domainName is not None and new_domainName is None:
-            self._publish_dhcpServerConfig_dns_domainName(old_domainName, "delete")
+            self._publish_dhcpServerConfig_dns_domainName(old_domainName, self.EVENT_DELETE)
         else:
             if not old_domainName.__eq__(new_domainName):
-                self._publish_dhcpServerConfig_dns_domainName(new_domainName, "updated")
+                self._publish_dhcpServerConfig_dns_domainName(new_domainName, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_defaultLeaseTime(self, old_defaultLeaseTime, new_defaultLeaseTime):
         if old_defaultLeaseTime is None and new_defaultLeaseTime is not None:
-            self._publish_dhcpServerConfig_defaultLeaseTime(new_defaultLeaseTime, "add")
+            self._publish_dhcpServerConfig_defaultLeaseTime(new_defaultLeaseTime, self.EVENT_ADD)
         elif old_defaultLeaseTime is not None and new_defaultLeaseTime is None:
-            self._publish_dhcpServerConfig_defaultLeaseTime(old_defaultLeaseTime, "delete")
+            self._publish_dhcpServerConfig_defaultLeaseTime(old_defaultLeaseTime, self.EVENT_DELETE)
         else:
             if not old_defaultLeaseTime.__eq__(new_defaultLeaseTime):
-                self._publish_dhcpServerConfig_defaultLeaseTime(new_defaultLeaseTime, "updated")
+                self._publish_dhcpServerConfig_defaultLeaseTime(new_defaultLeaseTime, self.EVENT_UPDATE)
 
     def _on_change_dhcpServerConfig_maxLeaseTime(self, old_maxLeaseTime, new_maxLeaseTime):
         if old_maxLeaseTime is None and new_maxLeaseTime is not None:
-            self._publish_dhcpServerConfig_maxLeaseTime(new_maxLeaseTime, "add")
+            self._publish_dhcpServerConfig_maxLeaseTime(new_maxLeaseTime, self.EVENT_ADD)
         elif old_maxLeaseTime is not None and new_maxLeaseTime is None:
-            self._publish_dhcpServerConfig_maxLeaseTime(old_maxLeaseTime, "delete")
+            self._publish_dhcpServerConfig_maxLeaseTime(old_maxLeaseTime, self.EVENT_DELETE)
         else:
             if not old_maxLeaseTime.__eq__(new_maxLeaseTime):
-                self._publish_dhcpServerConfig_maxLeaseTime(new_maxLeaseTime, "updated")
+                self._publish_dhcpServerConfig_maxLeaseTime(new_maxLeaseTime, self.EVENT_UPDATE)
 
 
     ################### Private publish functions ###################

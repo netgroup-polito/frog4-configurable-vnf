@@ -6,9 +6,9 @@ from dhcp.dd_controller.interface_monitor import InterfaceMonitor
 from dhcp.dd_controller.dhcp_server_monitor import DhcpServerMonitor
 
 from threading import Thread
+from datetime import datetime
 
 import logging
-import time
 import json
 
 class DoubleDeckerDhcpController():
@@ -70,11 +70,15 @@ class DoubleDeckerDhcpController():
 
 
     def publish_on_bus(self, url, method, data):
+        msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url
+        body = {}
         if method is not None:
-            msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url + '_' + method.upper()
+            body['event'] = method.upper()
         else:
-            msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url
-        self.messageBus.publish_topic(msg , json.dumps(data, indent=4, sort_keys=True))
+            body['event'] = "PERIODIC"
+        body['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        body['data'] = data
+        self.messageBus.publish_topic(msg , json.dumps(body, indent=4, sort_keys=True))
 
     def on_data_callback(self, src, msg):
         logging.debug("[ddDhcpController] From: " + src + " Msg: " + msg)
