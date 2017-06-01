@@ -1,10 +1,9 @@
-from dhcp.controller.dhcp_controller import DhcpController
-from dhcp.controller.dhcp_server_controller import DhcpServerController
+from firewall.controller.firewall_controller import FirewallController
+from firewall.controller.policy_controller import PolicyController
 from common.controller.interface_controller import InterfaceController
 
-from dhcp.dd_controller.interfaces_monitor import InterfacesMonitor
-from dhcp.dd_controller.dhcp_server_monitor import DhcpServerMonitor
-from dhcp.dd_controller.dhcp_clients_monitor import DhcpClientsMonitor
+from firewall.dd_controller.interface_monitor import InterfacesMonitor
+from firewall.dd_controller.policies_monitor import PoliciesMonitor
 
 from threading import Thread
 from datetime import datetime
@@ -12,16 +11,16 @@ from datetime import datetime
 import logging
 import json
 
-class DoubleDeckerDhcpController():
+class DoubleDeckerFirewallController():
 
     def __init__(self, message_bus, tenant_id, graph_id, vnf_id):
 
         self.messageBus = message_bus
         self.messageBus.set_controller(self)
 
-        self.dhcpController = DhcpController()
+        self.firewallController = FirewallController()
         self.interfaceController = InterfaceController()
-        self.dhcpServerController = DhcpServerController()
+        self.policyController = PolicyController()
 
         self.tenant_id = tenant_id
         self.graph_id = graph_id
@@ -30,34 +29,30 @@ class DoubleDeckerDhcpController():
         self.configuration_interface = None
 
         self.interfacesMonitor = None
-        self.dhcpServerMonitor = None
-        self.dhcpClientsMonitor = None
+        self.policiesMonitor = None
 
     def set_initial_configuration(self, initial_configuration):
 
         curr_interfaces = self.interfaceController.get_interfaces()
         self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
 
-        curr_dhcp_server_configuration = self.dhcpServerController.get_dhcp_server_configuration()
-        self.dhcpServerMonitor = DhcpServerMonitor(self, curr_dhcp_server_configuration)
+        curr_policies = self.firewallController.get_policies()
+        self.policiesMonitor = PoliciesMonitor(self, curr_policies)
 
-        curr_dhcp_clients = self.dhcpServerController.get_clients()
-        self.dhcpClientsMonitor = DhcpClientsMonitor(self, curr_dhcp_clients)
 
         logging.debug("Setting initial configuration...")
-        self.dhcpController.set_configuration(initial_configuration)
+        self.firewallController.set_configuration(initial_configuration)
         logging.debug("Setting initial configuration...done!")
 
     def get_address_of_configuration_interface(self, configuration_interface):
         self.configuration_interface = configuration_interface
-        return self.dhcpController.get_interface_ipv4Configuration_address(configuration_interface)
+        return self.firewallController.get_interface_ipv4Configuration_address(configuration_interface)
 
     def start(self):
 
         threads = []
         threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
-        threads.append(Thread(target=self.dhcpServerMonitor.start_monitoring, args=()))
-        threads.append(Thread(target=self.dhcpClientsMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.policiesMonitor.start_monitoring, args=()))
 
         # Start all threads
         for t in threads:
@@ -79,10 +74,4 @@ class DoubleDeckerDhcpController():
         self.messageBus.publish_topic(msg , json.dumps(body, indent=4, sort_keys=True))
 
     def on_data_callback(self, src, msg):
-        logging.debug("[ddDhcpController] From: " + src + " Msg: " + msg)
-
-
-
-
-
-
+        logging.debug("[ddFirewallController] From: " + src + " Msg: " + msg)

@@ -12,7 +12,7 @@ import logging
 import time
 
 
-class InterfaceMonitor():
+class InterfacesMonitor():
 
     def __init__(self, dd_controller, curr_interfaces):
 
@@ -104,7 +104,6 @@ class InterfaceMonitor():
                 self.interfaces_updated = []
 
             time.sleep(self.on_change_interval)
-
 
     def _get_new_interfaces(self):
         curr_interfaces = self.interfaceController.get_interfaces()
