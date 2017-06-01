@@ -170,6 +170,9 @@ class ConfigurationAgent():
         logging.info("DoubleDecker Successfully started")
 
         rest_port = "9000"
+        topic = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/restServer"
+        data = rest_address + ":" + rest_port
+        self.messageBus.publish_topic(topic, data)
         logging.info("Rest Server started on: " + rest_address + ':' + rest_port)
         call("gunicorn -b " + rest_address + ':' + rest_port + " -t 500 rest_start:app", shell=True)
 
