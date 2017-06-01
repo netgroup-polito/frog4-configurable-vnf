@@ -4,6 +4,7 @@ from common.controller.interface_controller import InterfaceController
 
 from dhcp.dd_controller.interface_monitor import InterfaceMonitor
 from dhcp.dd_controller.dhcp_server_monitor import DhcpServerMonitor
+from dhcp.dd_controller.dhcp_clients_monitor import DhcpClientsMonitor
 
 from threading import Thread
 from datetime import datetime
@@ -42,7 +43,7 @@ class DoubleDeckerDhcpController():
         self.dhcpServerMonitor = DhcpServerMonitor(self, curr_dhcp_server_configuration)
 
         curr_dhcp_clients = self.dhcpServerController.get_clients()
-        #self.dhcpClientsMonitor = DhcpClientsMonitor(self, curr_dhcp_server_configuration)
+        self.dhcpClientsMonitor = DhcpClientsMonitor(self, curr_dhcp_clients)
 
         logging.debug("Setting initial configuration...")
         self.dhcpController.set_configuration(initial_configuration)
@@ -57,7 +58,7 @@ class DoubleDeckerDhcpController():
         threads = []
         threads.append(Thread(target=self.interfaceMonitor.start_monitoring, args=()))
         threads.append(Thread(target=self.dhcpServerMonitor.start_monitoring, args=()))
-        #threads.append(Thread(target=self.dhcpClientsMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.dhcpClientsMonitor.start_monitoring, args=()))
 
         # Start all threads
         for t in threads:

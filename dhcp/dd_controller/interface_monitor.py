@@ -41,7 +41,7 @@ class InterfaceMonitor():
         self.elements['type'] = Element(advertise=self.ON_CHANGE)
         self.elements['management'] = Element(advertise=self.ON_CHANGE)
         self.elements['ipv4Configuration'] = Element(advertise=self.PERIODIC, period=5000)
-        self.elements['address'] = Element(advertise=self.SILENT)
+        self.elements['address'] = Element(advertise=self.ON_CHANGE)
         self.elements['netmask'] = Element(advertise=self.ON_CHANGE)
         self.elements['macAddress'] = Element(advertise=self.SILENT)
         self.elements['defaultGW'] = Element(advertise=self.ON_CHANGE)
@@ -78,26 +78,29 @@ class InterfaceMonitor():
 
             self._get_new_interfaces()
 
-            print("interfaces_new: " + str(len(self.interfaces_new)))
+            #print("interfaces_new: " + str(len(self.interfaces_new)))
             if len(self.interfaces_new) > 0:
                 for interface in self.interfaces_new:
-                    self._publish_interface_leafs_on_change(interface, "ADDED")
+                    id = interface.name
+                    self._publish_interface_leafs_on_change(id, interface, self.EVENT_ADD)
                 self.interfaces_new = []
 
-            print("interfaces_removed: " + str(len(self.interfaces_removed)))
+            #print("interfaces_removed: " + str(len(self.interfaces_removed)))
             if len(self.interfaces_removed) > 0:
                 for interface in self.interfaces_removed:
-                    self._publish_interface_leafs_on_change(interface, "DELETED")
+                    id = interface.name
+                    self._publish_interface_leafs_on_change(id, interface, self.EVENT_DELETE)
                 self.interfaces_removed = []
 
-            print("interfaces_updated: " + str(len(self.interfaces_updated)))
+            #print("interfaces_updated: " + str(len(self.interfaces_updated)))
             if len(self.interfaces_updated) > 0:
                 for interface_map in self.interfaces_updated:
                     old_interface = interface_map['old']
                     new_interface = interface_map['new']
                     interface_diff = self._find_diff(old_interface, new_interface)
                     logging.debug(interface_diff.__str__())
-                    self._publish_interface_leafs_on_change(interface_diff, "UPDATED")
+                    id = new_interface.name
+                    self._publish_interface_leafs_on_change(id, interface_diff, self.EVENT_UPDATE)
                 self.interfaces_updated = []
 
             time.sleep(self.on_change_interval)
@@ -106,7 +109,7 @@ class InterfaceMonitor():
     def _get_new_interfaces(self):
         curr_interfaces = self.interfaceController.get_interfaces()
         interface_map = {}
-        # Check interfaces new or modified
+        # Check new or modified interfaces
         for interface in curr_interfaces:
             # get the old interface whose name is the same of the new interface
             old_interface = next((x for x in self.interfaces_old if x.name == interface.name), None)
@@ -122,7 +125,7 @@ class InterfaceMonitor():
             # get the old interface whose name is the same of the new interface
             interface = next((x for x in curr_interfaces if x.name == old_interface.name), None)
             if interface is None:
-                self.interfaces_removed.append(interface)
+                self.interfaces_removed.append(old_interface)
         self.interfaces_old = curr_interfaces
 
     def _find_diff(self, old_interface, new_interface):
@@ -170,9 +173,7 @@ class InterfaceMonitor():
 
         return interface
 
-    def _publish_interface_leafs_on_change(self, interface, method):
-
-        id = interface.name
+    def _publish_interface_leafs_on_change(self, id, interface, method):
 
         if self.elements['interface'].advertise == self.ON_CHANGE:
             self._publish_interface(id, interface, method)
