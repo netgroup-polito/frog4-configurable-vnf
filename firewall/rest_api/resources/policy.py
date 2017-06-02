@@ -53,14 +53,15 @@ class Policy(Resource):
             logging.debug(err)
             return Response(status=500)
 
+    """
     @policy_ns.param("Policy", "Policy to update", "body", type="string", required=True)
     @policy_ns.response(202, 'Policy correctly updated.')
     @policy_ns.response(400, 'Bad request.')
     @policy_ns.response(500, 'Internal Error.')
     def put(self, id):
-        """
-        Update a policy
-        """
+        
+        #Update a policy
+        
         try:
             firewallController = FirewallController()
             json_data = json.loads(request.data.decode())
@@ -73,6 +74,7 @@ class Policy(Resource):
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
+    """
 
     @policy_ns.response(202, 'Policy deleted.')
     @policy_ns.response(404, 'Policy not found.')

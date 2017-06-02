@@ -35,7 +35,7 @@ class MessageBus(clientSafe.ClientSafe):
         self.publish_public(topic, msg)
 
     def publish_topic(self, topic, msg):
-        logging.debug("public_topic: " + topic + " " + msg)
+        #logging.debug("public_topic: " + topic + " " + msg)
         self.publish(topic, msg)
 
     def send_message(self, dst, msg):
