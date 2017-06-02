@@ -2,9 +2,9 @@ from common.controller.interface_controller import InterfaceController
 from common.parser.interface_parser import InterfaceParser
 from common.model.interface import Interface
 from common.model.interface import Ipv4Configuration
-from common.constants import Constants
-
 from dhcp.dd_controller.element import Element
+
+from common.constants import Constants
 from config_instance import ConfigurationInstance
 from threading import Thread
 
@@ -119,7 +119,7 @@ class InterfacesMonitor():
                     interface_map['old'] = old_interface
                     interface_map['new'] = interface
                     self.interfaces_updated.append(interface_map)
-        # Check if an interfaces was removed
+        # Check if an interface was removed
         for old_interface in self.interfaces_old:
             # get the old interface whose name is the same of the new interface
             interface = next((x for x in curr_interfaces if x.name == old_interface.name), None)

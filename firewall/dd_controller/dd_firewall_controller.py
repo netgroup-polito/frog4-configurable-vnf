@@ -1,9 +1,13 @@
 from firewall.controller.firewall_controller import FirewallController
 from firewall.controller.policy_controller import PolicyController
+from firewall.controller.blacklist_controller import BlacklistController
+from firewall.controller.whitelist_controller import WhitelistController
 from common.controller.interface_controller import InterfaceController
 
-from firewall.dd_controller.interface_monitor import InterfacesMonitor
+#from firewall.dd_controller.interface_monitor import InterfacesMonitor
 from firewall.dd_controller.policies_monitor import PoliciesMonitor
+from firewall.dd_controller.blacklist_monitor import BlacklistMonitor
+from firewall.dd_controller.whitelist_monitor import WhitelistMonitor
 
 from threading import Thread
 from datetime import datetime
@@ -21,6 +25,8 @@ class DoubleDeckerFirewallController():
         self.firewallController = FirewallController()
         self.interfaceController = InterfaceController()
         self.policyController = PolicyController()
+        self.blacklistController = BlacklistController()
+        self.whitelistController = WhitelistController()
 
         self.tenant_id = tenant_id
         self.graph_id = graph_id
@@ -30,14 +36,22 @@ class DoubleDeckerFirewallController():
 
         self.interfacesMonitor = None
         self.policiesMonitor = None
+        self.blacklistMonitor = None
+        self.whitelistMonitor = None
 
     def set_initial_configuration(self, initial_configuration):
 
-        curr_interfaces = self.interfaceController.get_interfaces()
-        self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
+        #curr_interfaces = self.interfaceController.get_interfaces()
+        #self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
 
         curr_policies = self.firewallController.get_policies()
         self.policiesMonitor = PoliciesMonitor(self, curr_policies)
+
+        curr_blacklist = self.blacklistController.get_blacklist()
+        self.blacklistMonitor = BlacklistMonitor(self, curr_blacklist)
+
+        curr_whitelist = self.whitelistController.get_whitelist()
+        self.whitelistMonitor = WhitelistMonitor(self, curr_whitelist)
 
 
         logging.debug("Setting initial configuration...")
@@ -51,8 +65,10 @@ class DoubleDeckerFirewallController():
     def start(self):
 
         threads = []
-        threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
+        #threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
         threads.append(Thread(target=self.policiesMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.blacklistMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.whitelistMonitor.start_monitoring, args=()))
 
         # Start all threads
         for t in threads:
