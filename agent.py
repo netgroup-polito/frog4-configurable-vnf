@@ -9,12 +9,11 @@ from subprocess import call
 from threading import Event
 from threading import Thread
 
-from nat.controller.dd_nat_controller import DoubleDeckerNatController
-
 from config_instance import ConfigurationInstance
 from config_parser import ConfigParser
 from dhcp.dd_controller.dd_dhcp_controller import DoubleDeckerDhcpController
-from firewall.controller.dd_firewall_controller import DoubleDeckerFirewallController
+from firewall.dd_controller.dd_firewall_controller import DoubleDeckerFirewallController
+from nat.dd_controller.dd_nat_controller import DoubleDeckerNatController
 from message_bus import MessageBus
 from utils import Bash
 from vnf_template_library.exception import TemplateValidationError
@@ -105,33 +104,6 @@ class ConfigurationAgent():
         self.start_agent()
 
 
-        ###################################################################
-
-        #self.vnf_agent = None
-        #vnf_agent_class = getattr(sys.modules[__name__], self.vnf)
-        #self.vnf_agent = vnf_agent_class()
-
-        #self.firewallController = FirewallController()
-        #self.natController = NatController()
-        #self.dhcpController = DhcpController()
-
-        #json_data = open("tmp/FW_initial_configuration.json").read()
-        #json_data = open("tmp/NAT_initial_configuration.json").read()
-        #json_data = open("tmp/DHCP_initial_configuration.json").read()
-
-        #data = json.loads(json_data)
-
-        #self.firewallController.set_configuration(data)
-        #self.natController.set_configuration(data)
-        #self.dhcpController.set_configuration(data)
-
-
-        #status = self.firewallController.get_status()
-        #status = self.natController.get_status()
-        #status = self.dhcpController.get_status()
-
-        #print(json.dumps(status, indent=4, sort_keys=True))
-
     def start_agent(self):
         """
         Agent core method. It manages the registration both to the message broker and to the configuration service
@@ -148,12 +120,14 @@ class ConfigurationAgent():
         while self.is_registered_to_bus is False:  # waiting for the agent to be registered to DD broker
             self.registered_to_bus.wait()
         logging.debug("Trying to register to the message broker...done!")
+        """
         while self.is_registered_to_cs is False:  # waiting for the agent to be registered to the configuration service
             logging.debug("Trying to register to the configuration service...")
             if not self.registered_to_cs.wait(5):
                 if self.is_registered_to_cs is False:
                     self._vnf_registration()
         logging.debug("Trying to register to the configuration service...done!")
+        """
 
         initial_configuration = None
         if os.path.exists(self.initial_configuration_path):
@@ -163,10 +137,10 @@ class ConfigurationAgent():
 
         # start the dd controller
         dd_controller = self._select_dd_controller()
-        dd_controller.set_initial_configuration(initial_configuration)
+        #dd_controller.set_initial_configuration(initial_configuration)
         rest_address = dd_controller.get_address_of_configuration_interface(self.configuration_interface)
-        thread = Thread(target=dd_controller.start, args=())
-        thread.start()
+        #thread = Thread(target=dd_controller.start, args=())
+        #thread.start()
         logging.info("DoubleDecker Successfully started")
 
         rest_port = "9000"
