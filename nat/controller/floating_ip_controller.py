@@ -8,7 +8,7 @@ class FloatingIpController():
         self.nf_type = ConfigurationInstance.get_nf_type(self)
 
     def configure_floating_ip(self, floating_ip, wan_interface):
-        if self.nf_type=="docker" or self.nf_type=="vm":
+        if self.nf_type == "docker" or self.nf_type == "vm":
             self.floatingIpService.configure_floating_ip(floating_ip, wan_interface)
 
     def get_all_floating_ip(self):

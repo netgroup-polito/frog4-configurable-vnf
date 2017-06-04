@@ -66,3 +66,25 @@ class Nat_WanInterface(Resource):
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
+
+@nat_ns.route('/nat-table', methods=['GET'])
+class Nat_Table(Resource):
+    @nat_ns.response(200, 'Nat table retrieved.')
+    @nat_ns.response(404, 'Nat table not found.')
+    @nat_ns.response(500, 'Internal Error.')
+    def get(self):
+        """
+        Gets the nat table
+        """
+        try:
+            natController = NatController()
+            json_data = json.dumps(natController.get_nat_table())
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except ValueError as ve:
+            logging.debug(ve)
+            return Response(status=404)
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)

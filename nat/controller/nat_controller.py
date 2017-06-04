@@ -1,6 +1,7 @@
 from common.controller.interface_controller import InterfaceController
 from common.parser.interface_parser import InterfaceParser
 from nat.service.nat_service import NatService
+from nat.parser.nat_table_parser import NatTableParser
 from nat.controller.floating_ip_controller import FloatingIpController
 from nat.parser.floating_ip_parser import FloatingIpParser
 from config_instance import ConfigurationInstance
@@ -14,6 +15,7 @@ class NatController():
         self.interfaceParser = InterfaceParser()
 
         self.natService = NatService()
+        self.natTableParser = NatTableParser()
 
         self.floatingIpController = FloatingIpController()
         self.floatingIpParser = FloatingIpParser()
@@ -181,6 +183,17 @@ class NatController():
             except Exception as e:
                 logging.debug("Exception: " + str(e))
                 return None
+
+    # Nat/nat-table
+    def get_nat_table(self):
+        if self.nf_type == "docker" or self.nf_type == "vm":
+            nat_table = self.natService.get_nat_table()
+        else:
+            raise Exception("There is no implementation for nf_type different to docker and vm")
+        nat_table_dict = []
+        for nat_session in nat_table:
+            nat_table_dict.append(self.natTableParser.get_nat_session_dict(nat_session))
+        return nat_table_dict
 
     # Nat/StaticBindings
     def add_floating_ip(self, json_floating_ip):
