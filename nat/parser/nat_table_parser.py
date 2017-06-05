@@ -34,4 +34,7 @@ class NatTableParser():
         if nat_session.translated_port is not None:
             nat_session_dict['translated_port'] = nat_session.translated_port
 
+        if nat_session.tcp_state is not None:
+            nat_session_dict['tcp_state'] = nat_session.tcp_state
+
         return nat_session_dict

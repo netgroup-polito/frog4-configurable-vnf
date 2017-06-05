@@ -39,14 +39,16 @@ class NatService():
         for item in ct.dump_table(netifaces.AF_INET)[0]:
             nat_session = NatSession(
                 id=None,
-                protocol=item.protocol,
+                protocol=item.orig_l4proto,
                 src_address=item.orig_ipv4_src,
                 src_port=item.orig_port_src,
                 dst_address=item.orig_ipv4_dst,
                 dst_port=item.orig_port_dst,
                 translated_address=item.repl_ipv4_src,
-                translated_port=item.repl_port_src
+                translated_port=item.repl_port_src,
+                tcp_state=item.tcp_state
             )
             nat_table.append(nat_session)
+            print(nat_session.__str__())
         return nat_table
 
