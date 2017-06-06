@@ -1,0 +1,108 @@
+module config-nat { 
+	namespace "http://netgroup.ipv6.polito.it/vnf"; 
+	prefix "nat"; 
+	import ietf-inet-types { 
+		prefix inet; 
+	} 
+	description "Nat configuration";
+
+    container interfaces {
+		list ifEntry{
+		    key "name";
+		    leaf name {
+				description "name='Name'";
+				type string;
+			}
+			leaf type{
+			    description "name='Type'";
+			    type boolean;
+			    type enumeration {
+                        enum L3;
+                        enum transparent;
+    				}
+			}
+			leaf management{
+			    description "name='Management'";
+			    type boolean;
+			    mandatory false;
+			}
+			container ipv4_configuration{
+			    presence "it contains ipv4 configuration";
+			    leaf configurationType{
+			        description "name='Configuration type'";
+			        type enumeration {
+                        enum dhcp;
+                        enum static;
+    				}
+			    }
+			    leaf address{
+			        description "name='IP Address";
+			        type inet:ipv4-address;
+			        mandatory false;
+			    }
+			    leaf netmask{
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
+			    }
+			    leaf mac-address{
+                    description "name='MAC Address'";
+                    type string;
+                    mandatory false;
+			    }
+			    leaf default_gw{
+			        description "name='Default GW";
+			        type inet:ipv4-address;
+			        mandatory false;
+			    }
+			}
+			container ipv6_configuration{
+			    presence "it contains ipv6 configuration";
+			    leaf configurationType{
+			        description "name='Configuration type'";
+			        type enumeration {
+                        enum dhcp;
+                        enum static;
+    				}
+			    }
+			    leaf address{
+			        description "name='IP Address";
+			        type inet:ipv6-address;
+			        mandatory false;
+			    }
+			    leaf netmask{
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
+			    }
+			    leaf default_gw{
+			        description "name='Default GW";
+			        type inet:ipv6-address;
+			        mandatory false;
+			    }
+			}
+		}
+
+	container nat{
+        description "name='Nat";
+        leaf wan-interface {
+            description "name='WAN Interface";
+            type leafref {
+                path "/interfaces/ifEntry/name";
+            }
+        }
+    	list floatingIP {
+            description "name='Floating IP'";
+            key "public_address";
+            leaf private_address {
+                description "name='Private address'";
+                type inet:ip-address;
+            }
+            leaf public_address {
+                description "name='Public address'";
+                type inet:ip-address;
+            }
+    	}
+    }
+
+}
