@@ -14,8 +14,8 @@ class InterfaceService():
             self.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
 
     def configure_interface_ipv4Configuration(self, ifname, ipv4_configuration):
-        #print("interface configured... fake! ahah")
-        #pass
+        print("interface configured... fake! ahah")
+        pass
         if ipv4_configuration.configuration_type == "static" or ipv4_configuration.configuration_type == "not_defined":
             self.configure_interface_address(ifname, ipv4_configuration.address)
             if ipv4_configuration.netmask is not None:

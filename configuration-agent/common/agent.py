@@ -88,7 +88,7 @@ class ConfigurationAgent():
         logging.debug("configuration interface: " + self.configuration_interface)
 
         # Add rule in the routing table to contact the broker
-        self._add_broker_rule(self.broker_url, self.configuration_interface)
+        #self._add_broker_rule(self.broker_url, self.configuration_interface)
 
         self.register_agent()
 

@@ -11,11 +11,11 @@ class DhcpAgent():
 
         logging.debug("Dhcp agent started...")
 
-        #configurationAgent = ConfigurationAgent("dhcp", nf_type, datadisk_path, on_change_interval)
+        configurationAgent = ConfigurationAgent("dhcp", nf_type, datadisk_path, on_change_interval)
 
-        #configurationAgent.start_dd_controller(DoubleDeckerDhcpController)
+        configurationAgent.start_dd_controller(DoubleDeckerDhcpController)
 
-        #configurationAgent.start_rest_controller("dhcp.rest_api.dhcp_rest_start")
+        configurationAgent.start_rest_controller("dhcp.rest_api.dhcp_rest_start")
 
 
 if __name__ == "__main__":
