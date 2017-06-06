@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump
 
 RUN apt-get update && apt-get install -y \
-    python3-setuptools \
+    python3.4 \
     python3-pip \
     libffi-dev \
     git \

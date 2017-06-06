@@ -20,8 +20,9 @@ RUN mkdir -p /configuration_agent
 WORKDIR configuration_agent
 ADD ./firewall-agent/firewall firewall
 ADD ./firewall-agent/common common
-ADD ./firewall-agent/start.sh start.sh
-RUN chmod +x start.sh
-RUN chmod +x start.sh
+ADD ./firewall-agent/start_agent.sh start_agent.sh
+RUN chmod +x start_agent.sh
 
 WORKDIR /
+ADD ./nat-agent/start.sh start.sh
+RUN chmod +x start.sh

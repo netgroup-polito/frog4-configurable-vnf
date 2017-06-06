@@ -20,7 +20,9 @@ RUN mkdir -p /configuration_agent
 WORKDIR configuration_agent
 ADD ./dhcp-agent/dhcp dhcp
 ADD ./dhcp-agent/common common
-ADD ./dhcp-agent/start.sh start.sh
-RUN chmod +x start.sh
+ADD ./dhcp-agent/start_agent.sh start_agent.sh
+RUN chmod +x start_agent.sh
 
 WORKDIR /
+ADD ./nat-agent/start.sh start.sh
+RUN chmod +x start.sh

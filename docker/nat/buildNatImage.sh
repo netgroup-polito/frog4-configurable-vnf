@@ -14,8 +14,9 @@ mkdir -p $dst_dir
 # Copy the nat agent
 cp -r $src_dir/common $dst_dir/
 cp -r $src_dir/nat $dst_dir/
-cp -r $src_dir/start_nat_agent.sh $dst_dir/start.sh
+cp -r $src_dir/start_nat_agent.sh $dst_dir/start_agent.sh
+cp -r $src_dir/start.sh $dst_dir/start.sh
 
 sudo docker build -t $image_name .
 
-sudo rm -r tmp
+sudo rm -r $dst_dir

@@ -26,8 +26,8 @@ class DhcpServerService():
         }
         '''
         try:
-            with open('/home/giuseppe/Desktop/SETdhcpd.conf', 'w') as dhcpd_file:
-            #with open('/etc/dhcp/dhcpd.conf', 'w') as dhcpd_file:
+            #with open('/home/giuseppe/Desktop/SETdhcpd.conf', 'w') as dhcpd_file:
+            with open('/etc/dhcp/dhcpd.conf', 'w') as dhcpd_file:
                 dhcpd_file.write('default-lease-time ' + dhcp_server.default_lease_time + ';\n')
                 dhcpd_file.write('max-lease-time ' + dhcp_server.max_lease_time + ';\n')
                 dhcpd_file.write('option subnet-mask ' + dhcp_server.gateway.address + ';\n')
@@ -56,8 +56,8 @@ class DhcpServerService():
             k+=1
         isc_dhcp_server += '"'
         try:
-            with open('/home/giuseppe/Desktop/SETisc-dhcp-server', 'w') as isc_dhcp_server_file:
-            #with open('/etc/default/isc-dhcp-server', 'w') as isc_dhcp_server_file:
+            #with open('/home/giuseppe/Desktop/SETisc-dhcp-server', 'w') as isc_dhcp_server_file:
+            with open('/etc/default/isc-dhcp-server', 'w') as isc_dhcp_server_file:
                 isc_dhcp_server_file.write(isc_dhcp_server)
                 isc_dhcp_server_file.truncate()
         except Exception as e:
@@ -70,8 +70,8 @@ class DhcpServerService():
 
     def get_dhcp_server_configuration(self):
         try:
-            with open('/home/giuseppe/Desktop/mydhcp.conf') as dhcpd_file:
-            #with open('/etc/dhcp/dhcpd.conf') as dhcpd_file:
+            #with open('/home/giuseppe/Desktop/mydhcp.conf') as dhcpd_file:
+            with open('/etc/dhcp/dhcpd.conf') as dhcpd_file:
                 dhcpd_lines = dhcpd_file.readlines()
         except Exception as e:
             raise IOError("/etc/dhcp/dhcpd.conf not found")
@@ -123,10 +123,10 @@ class DhcpServerService():
     def get_clients(self):
         clients = []
 
-        #Bash("dhcp-lease-list --lease /var/lib/dhcp/dhcpd.leases > dhcp_leases.txt")
+        Bash("dhcp-lease-list --lease /var/lib/dhcp/dhcpd.leases > dhcp_leases.txt")
         try:
-            with open('/home/giuseppe/Desktop/mydhcp_leases.txt') as lease_file:
-            #with open('dhcp_leases') as lease_file:
+            #with open('/home/giuseppe/Desktop/mydhcp_leases.txt') as lease_file:
+            with open('dhcp_leases') as lease_file:
                 lease_lines = lease_file.readlines()[2:]
         except Exception as e:
             raise IOError("file dhcp_leases not found. Probably an error occours during the generation")
