@@ -15,7 +15,7 @@ class FirewallAgent():
 
         configurationAgent.start_dd_controller(DoubleDeckerFirewallController)
 
-        configurationAgent.start_rest_controller("firewall.rest_api.firewall_rest_start.py")
+        configurationAgent.start_rest_controller("firewall.rest_api.firewall_rest_start")
 
 
 if __name__ == "__main__":

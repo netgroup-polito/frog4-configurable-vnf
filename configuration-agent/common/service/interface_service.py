@@ -17,11 +17,11 @@ class InterfaceService():
         print("interface configured... fake! ahah")
         pass
         if ipv4_configuration.configuration_type == "static" or ipv4_configuration.configuration_type == "not_defined":
-            self.configure_interface_address(ifname, ipv4_configuration.address)
+            self.configure_interface_ipv4Configuration_address(ifname, ipv4_configuration.address)
             if ipv4_configuration.netmask is not None:
-                self.configure_interface_netmask(ifname, ipv4_configuration.netmask)
+                self.configure_interface_ipv4Configuration_netmask(ifname, ipv4_configuration.netmask)
             if ipv4_configuration.default_gw is not None:
-                self.configure_interface_default_gw(ifname, ipv4_configuration.default_gw)
+                self.configure_interface_ipv4Configuration_default_gw(ifname, ipv4_configuration.default_gw)
         elif ipv4_configuration.configuration_type == "dhcp":
             if ipv4_configuration.default_gw is not None:
                 Bash('route del default gw ' + ipv4_configuration.default_gw)

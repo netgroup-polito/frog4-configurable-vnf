@@ -32,9 +32,9 @@ class NatController():
 
         conf_nat = json_configuration["config-nat:nat"]
 
-        #self.set_ip_forward(conf_nat['wan-interface'])
+        self.set_ip_forward(conf_nat['wan-interface'])
 
-        json_floating_ip = conf_nat['staticBindings']['floatingIP']
+        json_floating_ip = conf_nat['floatingIP']
         for curr_json_floating_ip in json_floating_ip:
             #self.configure_floating_ip(curr_json_floating_ip)
             pass
