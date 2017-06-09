@@ -24,6 +24,7 @@ class ConfigurationAgent():
     def __init__(self, vnf_name, nf_type, datadisk_path, on_change_interval=None):
 
         self.messageBus = MessageBus(self)
+        self.dd_controller = None
 
         ConfigurationInstance.set_vnf(self, vnf_name)
         ConfigurationInstance.set_nf_type(self, nf_type)
@@ -75,9 +76,9 @@ class ConfigurationAgent():
         self.template = self.datadisk_path + "/template.json"
         self.metadata_file = self.datadisk_path + "/metadata.json"
         self.initial_configuration_path = self.datadisk_path + "/initial_configuration.json"
-        assert os.path.exists(self.tenant_keys_file) is True, "tenant-keys.json file not found in datadisk"
-        assert os.path.exists(self.template), "Error, VNF template not found in datadisk"
-        assert os.path.exists(self.metadata_file) is True, "metadata file not found in datadisk"
+        assert os.path.exists(self.tenant_keys_file) is True, "Error, tenant-keys.json file not found in datadisk"
+        assert os.path.exists(self.template), "Error, template.json file not found in datadisk"
+        assert os.path.exists(self.metadata_file) is True, "Error, metadata.json file not found in datadisk"
         self._read_metadata_file(self.metadata_file)
         if os.path.isdir("/etc/doubledecker") is False:
             os.makedirs("/etc/doubledecker")
@@ -88,10 +89,21 @@ class ConfigurationAgent():
         logging.debug("configuration interface: " + self.configuration_interface)
 
         # Add rule in the routing table to contact the broker
-        #self._add_broker_rule(self.broker_url, self.configuration_interface)
+        self._add_broker_rule(self.broker_url, self.configuration_interface)
 
-        self.register_agent()
+        self.initial_configuration = None
+        if os.path.exists(self.initial_configuration_path):
+            with open(self.initial_configuration_path) as configuration:
+                json_data = configuration.read()
+                self.initial_configuration = json.loads(json_data)
 
+
+    def create_dd_controller(self, ddSpecificController):
+        self.dd_controller = ddSpecificController(self.tenant_id, self.graph_id, self.vnf_id)
+
+    def set_initial_configuration(self):
+        self.dd_controller.set_initial_configuration(self.initial_configuration)
+        self.rest_address = self.dd_controller.get_address_of_configuration_interface(self.configuration_interface)
 
     def register_agent(self):
         """
@@ -116,18 +128,8 @@ class ConfigurationAgent():
                     self._vnf_registration()
         logging.debug("Trying to register to the configuration service...done!")
 
-        self.initial_configuration = None
-        if os.path.exists(self.initial_configuration_path):
-            with open(self.initial_configuration_path) as configuration:
-                json_data = configuration.read()
-                self.initial_configuration = json.loads(json_data)
-
-    def start_dd_controller(self, ddSpecificController):
-        # start the dd controller
-        dd_controller = ddSpecificController(self.messageBus, self.tenant_id, self.graph_id, self.vnf_id)
-        dd_controller.set_initial_configuration(self.initial_configuration)
-        self.rest_address = dd_controller.get_address_of_configuration_interface(self.configuration_interface)
-        thread = Thread(target=dd_controller.start, args=())
+    def start_dd_controller(self):
+        thread = Thread(target=self.dd_controller.start, args=[self.messageBus])
         thread.start()
         logging.info("DoubleDecker Successfully started")
 

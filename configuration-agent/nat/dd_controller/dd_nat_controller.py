@@ -14,10 +14,10 @@ import json
 
 class DoubleDeckerNatController():
 
-    def __init__(self, message_bus, tenant_id, graph_id, vnf_id):
+    #def __init__(self, message_bus, tenant_id, graph_id, vnf_id):
+    def __init__(self, tenant_id, graph_id, vnf_id):
 
-        self.messageBus = message_bus
-        self.messageBus.set_controller(self)
+        self.messageBus = None
 
         self.natController = NatController()
         self.interfaceController = InterfaceController()
@@ -52,7 +52,10 @@ class DoubleDeckerNatController():
         self.configuration_interface = configuration_interface
         return self.natController.get_interface_ipv4Configuration_address(configuration_interface)
 
-    def start(self):
+    def start(self, message_bus):
+
+        self.messageBus = message_bus
+        self.messageBus.set_controller(self)
 
         threads = []
         #threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))

@@ -13,7 +13,13 @@ class FirewallAgent():
 
         configurationAgent = ConfigurationAgent("firewall", nf_type, datadisk_path, on_change_interval)
 
-        configurationAgent.start_dd_controller(DoubleDeckerFirewallController)
+        configurationAgent.create_dd_controller(DoubleDeckerFirewallController)
+
+        configurationAgent.set_initial_configuration()
+
+        configurationAgent.register_agent()
+
+        configurationAgent.start_dd_controller()
 
         configurationAgent.start_rest_controller("firewall.rest_api.firewall_rest_start")
 

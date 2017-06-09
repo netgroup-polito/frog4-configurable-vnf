@@ -13,7 +13,13 @@ class NatAgent():
 
         configurationAgent = ConfigurationAgent("nat", nf_type, datadisk_path, on_change_interval)
 
-        configurationAgent.start_dd_controller(DoubleDeckerNatController)
+        configurationAgent.create_dd_controller(DoubleDeckerNatController)
+
+        configurationAgent.set_initial_configuration()
+
+        configurationAgent.register_agent()
+
+        configurationAgent.start_dd_controller()
 
         configurationAgent.start_rest_controller("nat.rest_api.nat_rest_start")
 
