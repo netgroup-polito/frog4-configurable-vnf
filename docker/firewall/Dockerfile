@@ -24,5 +24,5 @@ ADD ./firewall-agent/start_agent.sh start_agent.sh
 RUN chmod +x start_agent.sh
 
 WORKDIR /
-ADD ./nat-agent/start.sh start.sh
+ADD ./firewall-agent/start.sh start.sh
 RUN chmod +x start.sh
