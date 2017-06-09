@@ -55,6 +55,10 @@ class Interface:
     def __eq__(self, other):
         if self.name != other.name:
             return False
+        if self.ipv4_configuration is None and other.ipv4_configuration is not None:
+            return False
+        if self.ipv4_configuration is not None and other.ipv4_configuration is None:
+            return False
         if not self.ipv4_configuration.__eq__(other.ipv4_configuration):
             return False
         return True
