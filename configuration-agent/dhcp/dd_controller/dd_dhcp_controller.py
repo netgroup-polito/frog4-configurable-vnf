@@ -2,7 +2,7 @@ from dhcp.controller.dhcp_controller import DhcpController
 from dhcp.controller.dhcp_server_controller import DhcpServerController
 from common.controller.interface_controller import InterfaceController
 
-from dhcp.dd_controller.interfaces_monitor import InterfacesMonitor
+from common.dd_controller.interfaces_monitor import InterfacesMonitor
 from dhcp.dd_controller.dhcp_server_monitor import DhcpServerMonitor
 from dhcp.dd_controller.dhcp_clients_monitor import DhcpClientsMonitor
 

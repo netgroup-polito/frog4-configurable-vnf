@@ -3,7 +3,7 @@ from dhcp.parser.dhcp_server_parser import DhcpServerParser
 from common.file_monitor import FileMonitor
 from common.constants import Constants
 
-from dhcp.dd_controller.element import Element
+from common.dd_controller.element import Element
 from common.config_instance import ConfigurationInstance
 from threading import Thread
 

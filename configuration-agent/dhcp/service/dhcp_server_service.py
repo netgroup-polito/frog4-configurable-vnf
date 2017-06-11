@@ -126,7 +126,7 @@ class DhcpServerService():
         Bash("dhcp-lease-list --lease /var/lib/dhcp/dhcpd.leases > dhcp_leases.txt")
         try:
             #with open('/home/giuseppe/Desktop/mydhcp_leases.txt') as lease_file:
-            with open('dhcp_leases') as lease_file:
+            with open('dhcp_leases.txt') as lease_file:
                 lease_lines = lease_file.readlines()[2:]
         except Exception as e:
             return clients

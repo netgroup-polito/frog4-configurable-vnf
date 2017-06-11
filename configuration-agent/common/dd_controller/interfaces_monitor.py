@@ -2,8 +2,7 @@ from common.controller.interface_controller import InterfaceController
 from common.parser.interface_parser import InterfaceParser
 from common.model.interface import Interface
 from common.model.interface import Ipv4Configuration
-from dhcp.dd_controller.element import Element
-
+from common.dd_controller.element import Element
 from common.constants import Constants
 from common.config_instance import ConfigurationInstance
 from threading import Thread

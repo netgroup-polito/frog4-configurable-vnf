@@ -162,81 +162,85 @@ class DhcpController():
     def update_gateway(self, json_gateway_params):
         gateway = self.dhcpServerParser.parse_gateway(json_gateway_params)
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_gateway(gateway)
-        return
+            self.dhcpServerController.update_gateway(gateway)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
+
 
     def update_gateway_address(self, address):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_gateway_address(address)
-        return
+            self.dhcpServerController.update_gateway_address(address)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_gateway_netmask(self, netmask):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_gateway_address(netmask)
-        return
+            self.dhcpServerController.update_gateway_address(netmask)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def add_section(self, json_section):
         section = self.dhcpServerParser.parse_section(json_section)
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.add_section(section)
-            
-        return
+            self.dhcpServerController.add_section(section)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_section(self, section_start_ip, json_section):
         section = self.dhcpServerParser.parse_section(json_section)
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_section(section_start_ip, section)
-
-        return
+            self.dhcpServerController.update_section(section_start_ip, section)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_section_start_ip(self, section_start_ip, start_ip):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.add_section_start_ip(section_start_ip, start_ip)
-
-        return
+            self.dhcpServerController.add_section_start_ip(section_start_ip, start_ip)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_section_end_ip(self, section_start_ip, end_ip):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.add_section_end_ip(section_start_ip, end_ip)
-
-        return
+            self.dhcpServerController.add_section_end_ip(section_start_ip, end_ip)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_default_lease_time(self, default_lease_time):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_default_lease_time(default_lease_time)
-
-        return
+            self.dhcpServerController.update_default_lease_time(default_lease_time)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_max_lease_time(self, max_lease_time):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_max_lease_time(max_lease_time)
-
-        return
+            self.dhcpServerController.update_max_lease_time(max_lease_time)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_dns(self, json_dns_params):
         dns = self.dhcpServerParser.parse_dns(json_dns_params)
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_dns(dns)
-
-        return
+            self.dhcpServerController.update_dns(dns)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_dns_primary_server(self, primary_server):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_dns_primary_server(primary_server)
-
-        return
+            self.dhcpServerController.update_dns_primary_server(primary_server)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_dns_secondary_server(self, secondary_server):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_dns_secondary_server(secondary_server)
-
-        return
+            self.dhcpServerController.update_dns_secondary_server(secondary_server)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def update_dns_domain_name(self, domain_name):
         if self.dhcpServerController.configuration_exists():
-            dhcp_server_configuration = self.dhcpServerController.update_domain_name(domain_name)
-
-        return
+            self.dhcpServerController.update_domain_name(domain_name)
+        else:
+            raise ValueError("could not find a dhcp server configuration")
 
     def get_dhcp_server_configuration(self):
         if not self.dhcpServerController.configuration_exists():
