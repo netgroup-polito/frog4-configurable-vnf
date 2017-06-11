@@ -4,7 +4,7 @@ from firewall.controller.blacklist_controller import BlacklistController
 from firewall.controller.whitelist_controller import WhitelistController
 from common.controller.interface_controller import InterfaceController
 
-#from firewall.dd_controller.interface_monitor import InterfacesMonitor
+from common.dd_controller.interfaces_monitor import InterfacesMonitor
 from firewall.dd_controller.policies_monitor import PoliciesMonitor
 from firewall.dd_controller.blacklist_monitor import BlacklistMonitor
 from firewall.dd_controller.whitelist_monitor import WhitelistMonitor
@@ -40,8 +40,8 @@ class DoubleDeckerFirewallController():
 
     def set_initial_configuration(self, initial_configuration):
 
-        #curr_interfaces = self.interfaceController.get_interfaces()
-        #self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
+        curr_interfaces = self.interfaceController.get_interfaces()
+        self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
 
         curr_policies = self.firewallController.get_policies()
         self.policiesMonitor = PoliciesMonitor(self, curr_policies)
@@ -67,7 +67,7 @@ class DoubleDeckerFirewallController():
         self.messageBus.set_controller(self)
 
         threads = []
-        #threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
         threads.append(Thread(target=self.policiesMonitor.start_monitoring, args=()))
         threads.append(Thread(target=self.blacklistMonitor.start_monitoring, args=()))
         threads.append(Thread(target=self.whitelistMonitor.start_monitoring, args=()))

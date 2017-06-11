@@ -1,8 +1,7 @@
-from firewall.dd_controller.element import Element
-from firewall.controller.whitelist_controller import WhitelistController
-
+from common.dd_controller.element import Element
 from common.constants import Constants
 from common.config_instance import ConfigurationInstance
+from firewall.controller.whitelist_controller import WhitelistController
 from threading import Thread
 
 import logging

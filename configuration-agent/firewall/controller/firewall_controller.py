@@ -67,7 +67,7 @@ class FirewallController():
 
         json_policies = conf_firewall['policies']
         for json_policy in json_policies:
-            #self.configure_policy(json_policy)
+            #self.add_policy(json_policy)
             pass
 
         json_blacklist = conf_firewall['blacklist']
@@ -366,7 +366,10 @@ class FirewallController():
         pass
 
     def delete_blacklist_url(self, url):
-        self.blacklistController.delete_url(url)
+        if self.blacklistController.url_exists(url):
+            self.blacklistController.delete_url(url)
+        else:
+            raise ValueError("could not find url " + url + " in blacklist")
 
     # Firewall/Whitelist
     def add_whitelist_url(self, url):
@@ -388,4 +391,7 @@ class FirewallController():
         pass
 
     def delete_whitelist_url(self, url):
-        self.whitelistController.delete_url(url)
+        if self.whitelistController.url_exists(url):
+            self.whitelistController.delete_url(url)
+        else:
+            raise ValueError("could not find url " + url + " in whitelist")

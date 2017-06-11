@@ -19,6 +19,13 @@ class WhitelistController():
         if self.nf_type == "docker" or self.nf_type == "vm":
             return self.whitelistService.get_url(url)
 
+    def url_exists(url):
+        url_found = self.get_url(url)
+        if url_found is not None:
+            return True
+        else:
+            return False
+
     def delete_whitelist(self):
         pass
 

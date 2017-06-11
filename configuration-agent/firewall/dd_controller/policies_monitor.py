@@ -1,8 +1,7 @@
-from firewall.dd_controller.element import Element
 from firewall.controller.policy_controller import PolicyController
 from firewall.parser.policy_parser import PolicyParser
 from firewall.model.policy import Policy
-
+from common.dd_controller.element import Element
 from common.constants import Constants
 from common.config_instance import ConfigurationInstance
 from threading import Thread
