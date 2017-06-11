@@ -31,6 +31,7 @@ class Nat_FloatingIP(Resource):
             return Response(status=500)
 
     @floatingIP_ns.response(200, 'Floating IP retrieved.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -55,6 +56,7 @@ class Nat_FloatingIP(Resource):
     @floatingIP_ns.param("Floating IP", "Floating IP to update", "body", type="string", required=True)
     @floatingIP_ns.response(202, 'Floating IP correctly updated.')
     @floatingIP_ns.response(400, 'Bad request.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def put(self, id):
         """
@@ -95,6 +97,7 @@ class Nat_FloatingIP(Resource):
 @floatingIP_ns.route('/floatingIP/<id>/privateAddress', methods=['GET','PUT'])
 class Nat_FloatingIP_PrivateAddress(Resource):
     @floatingIP_ns.response(200, 'Floating IP private address retrieved.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -116,6 +119,7 @@ class Nat_FloatingIP_PrivateAddress(Resource):
     @floatingIP_ns.param("Floating IP private address", "Floating IP private address to update", "body", type="string", required=True)
     @floatingIP_ns.response(202, 'Floating IP private address correctly updated.')
     @floatingIP_ns.response(400, 'Bad request.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def put(self, id):
         """
@@ -137,6 +141,7 @@ class Nat_FloatingIP_PrivateAddress(Resource):
 @floatingIP_ns.route('/floatingIP/<id>/publicAddress', methods=['PUT'])
 class Nat_FloatingIP_PublicAddress(Resource):
     @floatingIP_ns.response(200, 'Floating IP public address retrieved.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def get(self, id=None):
         """
@@ -157,6 +162,7 @@ class Nat_FloatingIP_PublicAddress(Resource):
 
     @floatingIP_ns.param("Floating IP public address", "Floating IP public address to update", "body", type="string", required=True)
     @floatingIP_ns.response(202, 'Floating IP public address correctly updated.')
+    @floatingIP_ns.response(404, 'Floating IP not found.')
     @floatingIP_ns.response(400, 'Bad request.')
     @floatingIP_ns.response(500, 'Internal Error.')
     def put(self, id):

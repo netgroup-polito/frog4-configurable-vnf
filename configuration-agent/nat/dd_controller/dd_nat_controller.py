@@ -2,9 +2,9 @@ from nat.controller.nat_controller import NatController
 from nat.controller.floating_ip_controller import FloatingIpController
 from common.controller.interface_controller import InterfaceController
 
+from common.dd_controller.interfaces_monitor import InterfacesMonitor
 #from nat.dd_controller.nat_table_monitor import NatTableMonitor
 #from nat.dd_controller.floating_ip_monitor import FloatingIpMonitor
-#from nat.dd_controller.interface_monitor import InterfaceMonitor
 
 from threading import Thread
 from datetime import datetime
@@ -14,7 +14,6 @@ import json
 
 class DoubleDeckerNatController():
 
-    #def __init__(self, message_bus, tenant_id, graph_id, vnf_id):
     def __init__(self, tenant_id, graph_id, vnf_id):
 
         self.messageBus = None
@@ -35,8 +34,8 @@ class DoubleDeckerNatController():
 
     def set_initial_configuration(self, initial_configuration):
 
-        #curr_interfaces = self.interfaceController.get_interfaces()
-        #self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
+        curr_interfaces = self.interfaceController.get_interfaces()
+        self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
 
         #curr_natTable = self.natController.get_nat_table()
         #self.natTableMonitor = NatTableMonitor(self, curr_natTable)
@@ -58,7 +57,7 @@ class DoubleDeckerNatController():
         self.messageBus.set_controller(self)
 
         threads = []
-        #threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
         #threads.append(Thread(target=self.natTableMonitor.start_monitoring, args=()))
         #threads.append(Thread(target=self.floatingIpMonitor.start_monitoring, args=()))
 
