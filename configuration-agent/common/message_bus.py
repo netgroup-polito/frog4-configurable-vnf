@@ -48,7 +48,7 @@ class MessageBus(clientSafe.ClientSafe):
     def start(self):
         super().start()
 
-    def on_pub(self):
+    def on_pub(self, src, topic, msg):
         """ callback for published messages """
         pass
 
