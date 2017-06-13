@@ -43,14 +43,16 @@ class InterfaceController():
         if self.nf_type == "native":
             return self.interfaceServiceNative.get_interfaces()
 
-    def get_interface(self, name):
+    def get_interface_by_id(self, id):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            return self.interfaceService.get_interface(name)
-        if self.nf_type == "native":
-            return self.interfaceServiceNative.get_interface(name)
+            return self.interfaceService.get_interface_by_id(id)
+
+    def get_interface_by_name(self, name):
+        if self.nf_type == "docker" or self.nf_type == "vm":
+            return self.interfaceService.get_interface_by_name(name)
 
     def interface_exists(self, name):
-        if self.get_interface(name) is None:
+        if self.get_interface_by_name(name) is None:
             return False
         else:
             return True

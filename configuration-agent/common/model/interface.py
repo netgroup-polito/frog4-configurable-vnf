@@ -33,7 +33,8 @@ class Ipv4Configuration:
         return True
 
 class Interface:
-    def __init__(self, name=None, type=None, management=None, ipv4_configuration=None):
+    def __init__(self, id=id, name=None, type=None, management=None, ipv4_configuration=None):
+        self.id = id
         self.name = name
         self.type = type
         self.management = management
@@ -41,6 +42,8 @@ class Interface:
 
     def __str__(self):
         str = "{"
+        if self.id is not None:
+            str += "'id': " + self.id + ", "
         if self.name is not None:
             str += "'name': " + self.name + ", "
         if self.type is not None:

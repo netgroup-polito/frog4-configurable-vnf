@@ -12,6 +12,7 @@ from threading import Thread
 from common.config_instance import ConfigurationInstance
 from common.message_bus import MessageBus
 from common.utils import Bash
+from common.db.db_manager import dbManager
 
 from common.vnf_template_library.exception import TemplateValidationError
 from common.vnf_template_library.template import Template
@@ -41,6 +42,8 @@ class ConfigurationAgent():
         logging.debug("nf_type: " + self.nf_type)
         logging.debug("datadisk_path: " + self.datadisk_path)
         logging.debug("on_change_interval: " + str(ConfigurationInstance.get_on_change_interval(self)))
+
+        dbManager().clear_db()
 
         ###################################################################
         self.tenant_id = None
@@ -87,6 +90,7 @@ class ConfigurationAgent():
 
         self.configuration_interface = self._get_iface_from_template()
         logging.debug("configuration interface: " + self.configuration_interface)
+        ConfigurationInstance.set_iface_management(self, self.configuration_interface)
 
         # Add rule in the routing table to contact the broker
         self._add_broker_rule(self.broker_url, self.configuration_interface)

@@ -1,21 +1,22 @@
 from common.model.interface import Interface, Ipv4Configuration
 from common.utils import Bash
+from common.config_instance import ConfigurationInstance
+from common.db.db_manager import dbManager
 
 import netifaces
-
-import logging
 
 class InterfaceService():
 
     # configure an interface
     def configure_interface(self, interface):
             ifname = interface.name
+            dbManager().write_interface_id(interface.id, ifname)
             ipv4Configuration = interface.ipv4_configuration
             self.configure_interface_ipv4Configuration(ifname, ipv4Configuration)
 
     def configure_interface_ipv4Configuration(self, ifname, ipv4_configuration):
-        print("interface configured... fake! ahah")
-        pass
+        #print("interface configured... fake! ahah")
+        #pass
         if ipv4_configuration.configuration_type == "static" or ipv4_configuration.configuration_type == "not_defined":
             self.configure_interface_ipv4Configuration_address(ifname, ipv4_configuration.address)
             if ipv4_configuration.netmask is not None:
@@ -41,13 +42,23 @@ class InterfaceService():
 
     # return all current configured interfaces
     def get_interfaces(self):
+        iface_management = ConfigurationInstance.get_iface_management(self)
         interfaces = []
         net_ifaces = netifaces.interfaces()
         for net_iface in net_ifaces:
 
             name = net_iface
+
+            id = dbManager().read_interface_id(name)
+            if id == None:
+                id = "not_defined"
+
             type = "not_defined"
-            management = None
+
+            if name == iface_management:
+                management = True
+            else:
+                management = False
 
             configuration_type = "not_defined"
             ipv4_address = None
@@ -75,16 +86,25 @@ class InterfaceService():
                                                    mac_address=mac_address,
                                                    default_gw=default_gw)
 
-            interface = Interface(name=name, type=type, management=management, ipv4_configuration=ipv4_configuration)
+            interface = Interface(id=id, name=name, type=type, management=management, ipv4_configuration=ipv4_configuration)
             interfaces.append(interface)
 
         return interfaces
 
     # return a specific configured interface
-    def get_interface(self, name):
+    def get_interface_by_name(self, name):
         interfaces = self.get_interfaces()
         for interface in interfaces:
             if interface.name == name:
+                return interface
+        return None
+
+        # return a specific configured interface
+
+    def get_interface_by_id(self, id):
+        interfaces = self.get_interfaces()
+        for interface in interfaces:
+            if (interface.id).__eq__(id):
                 return interface
         return None
 

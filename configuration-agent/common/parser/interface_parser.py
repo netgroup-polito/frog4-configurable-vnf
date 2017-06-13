@@ -16,7 +16,14 @@ class InterfaceParser():
         return interfaces
 
     def parse_interface(self, json_interface):
-        name = json_interface['name']
+
+        id = None
+        if 'id' in json_interface:
+            id = json_interface['id']
+
+        name = None
+        if 'name' in json_interface:
+            name = json_interface['name']
 
         type = None
         if 'type' in json_interface:
@@ -30,7 +37,7 @@ class InterfaceParser():
         if 'ipv4_configuration' in json_interface:
             ipv4_configuration = self.parse_ipv4_configuration(json_interface['ipv4_configuration'])
 
-        return Interface(name=name, type=type, management=management, ipv4_configuration=ipv4_configuration)
+        return Interface(id=id, name=name, type=type, management=management, ipv4_configuration=ipv4_configuration)
 
     def parse_ipv4_configuration(self, json_ipv4_configuration):
         configuration_type = None
@@ -76,13 +83,18 @@ class InterfaceParser():
     def get_interface_dict(self, interface):
         interface_dict = {}
 
-        interface_dict['name'] = interface.name
+        interface_dict['id'] = "none"
+        if interface.id is not None:
+            interface_dict['id'] = interface.id
+
+        interface_dict['name'] = "none"
+        if interface.name is not None:
+            interface_dict['name'] = interface.name
 
         interface_dict['type'] = "not_defined"
         if interface.type is not None:
             interface_dict['type'] = interface.type
 
-        interface_dict['management'] = "not_defined"
         if interface.management is not None:
             interface_dict['management'] = interface.management
 

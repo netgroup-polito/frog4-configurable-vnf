@@ -25,6 +25,7 @@ class InterfacesMonitor():
         self.PERIODIC = Constants.ADVERTISE_PERIODIC
 
         self.url_iface = "config-dhcp-server:interfaces/ifEntry"
+        self.url_name = "/id"
         self.url_name = "/name"
         self.url_type = "/type"
         self.url_management = "/management"
@@ -36,6 +37,7 @@ class InterfacesMonitor():
 
         self.elements = {}
         self.elements['interface'] = Element(advertise=self.SILENT)
+        self.elements['id'] = Element(advertise=self.ON_CHANGE)
         self.elements['name'] = Element(advertise=self.ON_CHANGE)
         self.elements['type'] = Element(advertise=self.ON_CHANGE)
         self.elements['management'] = Element(advertise=self.ON_CHANGE)
@@ -164,7 +166,8 @@ class InterfacesMonitor():
                                                netmask=netmask,
                                                mac_address=mac_address,
                                                default_gw=default_gw)
-        interface = Interface(name=None,
+        interface = Interface(id=None,
+                              name=None,
                               type=type,
                               management=management,
                               ipv4_configuration=ipv4_configuration)
@@ -175,6 +178,10 @@ class InterfacesMonitor():
 
         if self.elements['interface'].advertise == self.ON_CHANGE:
             self._publish_interface(id, interface, method)
+
+        if interface.id is not None:
+            if self.elements['id'].advertise == self.ON_CHANGE:
+                self._publish_interface_id(id, interface.id, method)
 
         if interface.name is not None:
             if self.elements['name'].advertise == self.ON_CHANGE:
@@ -214,6 +221,10 @@ class InterfacesMonitor():
 
         if self.elements['interface'].advertise == self.PERIODIC and self.elements['interface'].period == period:
             self._publish_interface(id, interface)
+
+        if interface.id is not None:
+            if self.elements['id'].advertise == self.PERIODIC and self.elements['id'].period == period:
+                self._publish_interface_id(id, interface.id)
 
         if interface.name is not None:
             if self.elements['name'].advertise == self.PERIODIC and self.elements['name'].period == period:
@@ -264,6 +275,10 @@ class InterfacesMonitor():
         interface_dict = self.interfaceParser.get_interface_dict(data)
         url = self.url_iface + "/" + id
         self.ddController.publish_on_bus(url, method, interface_dict)
+
+    def _publish_interface_id(self, id, data, method=None):
+        url = self.url_iface + "/" + id + self.url_id
+        self.ddController.publish_on_bus(url, method, data)
 
     def _publish_interface_name(self, id, data, method=None):
         url = self.url_iface + "/" + id + self.url_name

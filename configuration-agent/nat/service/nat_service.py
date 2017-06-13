@@ -7,15 +7,17 @@ import pynetfilter_conntrack
 
 class NatService():
 
-    def set_ip_forward(self, wan_interface):
+    def set_ip_forward(self, public_interface_name):
+        #print("nat configured... fake! ahah")
+        #return
         Bash('echo 1 > /proc/sys/net/ipv4/ip_forward')
-        Bash('iptables -t nat -A POSTROUTING -o ' + wan_interface + ' -j MASQUERADE')
+        Bash('iptables -t nat -A POSTROUTING -o ' + public_interface_name + ' -j MASQUERADE')
 
-    def unset_ip_forward(self, wan_interface):
+    def unset_ip_forward(self, public_interface_name):
         Bash('echo 0 > /proc/sys/net/ipv4/ip_forward')
-        Bash('iptables -t nat -D POSTROUTING -o ' + wan_interface + ' -j MASQUERADE')
+        Bash('iptables -t nat -D POSTROUTING -o ' + public_interface_name + ' -j MASQUERADE')
 
-    def get_wan_interface(self):
+    def get_public_interface_name(self):
         '''
         This agent assumes to be attached to an homegateway NAT, so it assumes that only one interface is connected to the WAN and that
         it exists only one iptables MASQUERADE rule
@@ -25,13 +27,16 @@ class NatService():
         table = iptc.Table(iptc.Table.NAT)
         table.refresh()
         try:
-            wan_interface = None
+            wan_interface_name = None
             for rule in table.chains[prerouting_index].rules:
                 if rule.out_interface is not None and rule.target.standard_target == 'MASQUERADE':
-                    wan_interface = rule.out_interface
-            return wan_interface
+                    wan_interface_name = rule.out_interface
+            return wan_interface_name
         except Exception as e:
             raise Exception("Error reading nat table...\n" + str(e))
+
+    def get_private_interface_name(self):
+        pass
 
     def get_nat_table(self):
         ct = pynetfilter_conntrack.Conntrack()

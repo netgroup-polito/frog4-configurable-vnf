@@ -4,10 +4,10 @@ import logging
 from flask import request, Response
 from flask_restplus import Resource
 
-from nat.controller.nat_controller import NatController
+from nat.controller.nat_global_controller import NatGlobalController as NatController
 from nat.rest_api.api import api
 
-nat_ns = api.namespace('nat', 'Nat Global Resource')
+nat_ns = api.namespace('nat', 'Nat Resource')
 
 @nat_ns.route('', methods=['GET'])
 class Nat(Resource):
@@ -27,17 +27,17 @@ class Nat(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@nat_ns.route('/wan-interface', methods=['GET','PUT'])
-class Nat_WanInterface(Resource):
-    @nat_ns.response(200, 'Wan interface retrieved.')
+@nat_ns.route('/public-interface', methods=['GET','PUT'])
+class Nat_PublicInterface(Resource):
+    @nat_ns.response(200, 'Public interface retrieved.')
     @nat_ns.response(500, 'Internal Error.')
     def get(self):
         """
-        Gets the wan-interface
+        Gets the public-interface
         """
         try:
             natController = NatController()
-            json_data = json.dumps(natController.get_wan_interface())
+            json_data = json.dumps(natController.get_public_interface_id())
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -45,13 +45,13 @@ class Nat_WanInterface(Resource):
             logging.debug(err)
             return Response(status=500)
 
-    @nat_ns.param("Wan interface", "Wan interface to update", "body", type="string", required=True)
-    @nat_ns.response(202, 'Wan interface correctly updated.')
+    @nat_ns.param("Public interface", "Public interface to update", "body", type="string", required=True)
+    @nat_ns.response(202, 'Public interface correctly updated.')
     @nat_ns.response(400, 'Bad request.')
     @nat_ns.response(500, 'Internal Error.')
     def put(self):
         """
-        Update the wan-interface
+        Update the public-interface
         """
         try:
             natController = NatController()
@@ -62,6 +62,25 @@ class Nat_WanInterface(Resource):
         except Exception as err:
             logging.debug(err)
             return Response(status=500)
+
+@nat_ns.route('/private-interface', methods=['GET'])
+class Nat_PrivateInterface(Resource):
+    @nat_ns.response(200, 'Private interface retrieved.')
+    @nat_ns.response(500, 'Internal Error.')
+    def get(self):
+        """
+        Gets the private-interface
+        """
+        try:
+            natController = NatController()
+            json_data = json.dumps(natController.get_private_interface_id())
+            resp = Response(json_data, status=200, mimetype="application/json")
+            return resp
+
+        except Exception as err:
+            logging.debug(err)
+            return Response(status=500)
+
 
 @nat_ns.route('/nat-table', methods=['GET'])
 class Nat_Table(Resource):

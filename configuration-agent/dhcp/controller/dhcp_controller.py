@@ -55,7 +55,7 @@ class DhcpController():
         return interfaces_dict
 
     def get_interface(self, name):
-        interface = self.interfaceController.get_interface(name)
+        interface = self.interfaceController.get_interface_by_name(name)
         if interface is None:
             raise ValueError("could not find interface: " + name)
         interface_dict = self.interfaceParser.get_interface_dict(interface)
@@ -64,7 +64,7 @@ class DhcpController():
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
         if interface.type != "transparent":
-            iface_found = self.interfaceController.get_interface(interface.name)
+            iface_found = self.interfaceController.get_interface_by_name(interface.name)
             if iface_found is not None:
                 if iface_found.__eq__(interface):
                     return
@@ -88,32 +88,32 @@ class DhcpController():
     def get_interface_ipv4Configuration(self, name):
         if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface = self.interfaceController.get_interface(name)
+        interface = self.interfaceController.get_interface_by_name(name)
         ipv4_configuration_dict = self.interfaceParser.get_interface_ipv4Configuration(interface.ipv4_configuration)
         return ipv4_configuration_dict
 
     def get_interface_ipv4Configuration_address(self, name):
         if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface = self.interfaceController.get_interface(name)
+        interface = self.interfaceController.get_interface_by_name(name)
         return interface.ipv4_configuration.address
 
     def get_interface_ipv4Configuration_netmask(self, name):
         if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface = self.interfaceController.get_interface(name)
+        interface = self.interfaceController.get_interface_by_name(name)
         return interface.ipv4_configuration.netmask
 
     def get_interface_ipv4Configuration_default_gw(self, name):
         if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface = self.interfaceController.get_interface(name)
+        interface = self.interfaceController.get_interface_by_name(name)
         return interface.ipv4_configuration.default_gw
 
     def get_interface_ipv4Configuration_mac_address(self, name):
         if not self.interfaceController.interface_exists(name):
             raise ValueError("could not find interface: " + name)
-        interface = self.interfaceController.get_interface(name)
+        interface = self.interfaceController.get_interface_by_name(name)
         return interface.ipv4_configuration.mac_address
 
     def update_interface_ipv4Configuration(self, ifname, json_ipv4Configuration):

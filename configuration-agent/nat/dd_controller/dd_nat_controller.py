@@ -1,4 +1,4 @@
-from nat.controller.nat_controller import NatController
+from nat.controller.nat_global_controller import NatGlobalController as NatController
 from nat.controller.floating_ip_controller import FloatingIpController
 from common.controller.interface_controller import InterfaceController
 
