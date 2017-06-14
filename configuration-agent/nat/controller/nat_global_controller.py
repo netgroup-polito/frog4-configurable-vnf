@@ -3,6 +3,8 @@ from common.parser.interface_parser import InterfaceParser
 from nat.controller.nat_controller import NatController
 from nat.parser.nat_parser import NatParser
 from nat.parser.nat_table_parser import NatTableParser
+from common.controller.arpt_controller import ArpTableController
+from common.parser.arpt_parser import ArpTableParser
 from nat.controller.floating_ip_controller import FloatingIpController
 from nat.parser.floating_ip_parser import FloatingIpParser
 from common.config_instance import ConfigurationInstance
@@ -18,6 +20,9 @@ class NatGlobalController():
         self.natController = NatController()
         self.natParser = NatParser()
         self.natTableParser = NatTableParser()
+
+        self.arpTableController = ArpTableController()
+        self.arpTableParser = ArpTableParser()
 
         self.floatingIpController = FloatingIpController()
         self.floatingIpParser = FloatingIpParser()
@@ -163,6 +168,7 @@ class NatGlobalController():
         nat['private-interface'] = self.get_private_interface_id()
         nat['public-interface'] = self.get_public_interface_id()
         nat['nat-table'] = self.get_nat_table()
+        #nat['arp-table'] = self.get_arp_table()
         nat['floatingIP'] = self.get_all_floating_ip()
         return nat
 
@@ -201,6 +207,37 @@ class NatGlobalController():
         for nat_session in nat_table:
             nat_table_dict.append(self.natTableParser.get_nat_session_dict(nat_session))
         return nat_table_dict
+
+    # Nat/arp-table
+    def get_arp_table(self):
+        arp_table = self.arpTableController.get_arp_table()
+        arp_table_dict = []
+        for arp_entry in arp_table:
+            arp_table_dict.append(self.arpTableParser.get_arp_entry_dict(arp_entry))
+        return arp_table_dict
+
+    def add_arp_entry(self, json_arp_entry):
+        arp_entry = self.arpTableParser.parse_arp_entry(json_arp_entry)
+        self.arpTableController.add_arp_entry(arp_entry.ip_address, arp_entry.mac_address)
+        logging.debug("Added arp_entry: " + arp_entry.__str__())
+
+    def delete_arp_entry(self, ip_address):
+        if self.arpTableController.arp_entry_exists(ip_address):
+            self.arpTableController.delete_arp_entry(ip_address)
+            logging.debug("Removed arp_entry with ip_address: " + ip_address)
+        else:
+            raise ValueError("There is no entry in arp table with ip_address: " + ip_address)
+
+    def get_arp_table_mac_address(self, ip_address):
+        return self.arpTableController.get_mac_address(ip_address)
+
+    def update_arp_table_mac_address(self, ip_address, mac_address):
+        if self.arpTableController.arp_entry_exists(ip_address):
+            self.arpTableController.add_arp_entry(ip_address, mac_address)
+            logging.debug("Updated arp_entry, ip_address: " + ip_address + " mac_address: " + mac_address)
+        else:
+            raise ValueError("There is no entry in arp table with ip_address: " + ip_address)
+
 
     # Nat/StaticBindings
     def add_floating_ip(self, json_floating_ip):

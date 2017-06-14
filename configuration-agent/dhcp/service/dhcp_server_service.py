@@ -73,6 +73,7 @@ class DhcpServerService():
             #with open('/home/giuseppe/Desktop/mydhcp.conf') as dhcpd_file:
             with open('/etc/dhcp/dhcpd.conf') as dhcpd_file:
                 dhcpd_lines = dhcpd_file.readlines()
+            dhcpd_file.close()
         except Exception as e:
             raise IOError("/etc/dhcp/dhcpd.conf not found")
 
