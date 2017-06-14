@@ -192,8 +192,7 @@ class NatGlobalController():
         for interface in interfaces:
             if interface.management == False:
                 if interface.name != public_iface_name:
-                    if interface.id != "not_defined":
-                        return interface.id
+                    return interface.id
 
     # Nat/nat-table
     def get_nat_table(self):

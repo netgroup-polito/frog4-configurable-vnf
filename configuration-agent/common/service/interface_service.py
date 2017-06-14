@@ -47,6 +47,9 @@ class InterfaceService():
         net_ifaces = netifaces.interfaces()
         for net_iface in net_ifaces:
 
+            if net_iface.__eq__("lo"):
+                continue
+
             name = net_iface
 
             id = dbManager().read_interface_id(name)
