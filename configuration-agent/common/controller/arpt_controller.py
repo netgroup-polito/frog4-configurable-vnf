@@ -23,7 +23,7 @@ class ArpTableController():
         if self.nf_type == "docker" or self.nf_type == "vm":
             return self.arpTableService.get_mac_address(ip_address)
 
-    def arp_entry_exist(self, ip_address):
+    def arp_entry_exists(self, ip_address):
         if self.get_mac_address(ip_address) is not None:
             return True
         else:
