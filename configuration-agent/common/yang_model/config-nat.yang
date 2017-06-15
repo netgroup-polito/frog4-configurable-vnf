@@ -19,7 +19,6 @@ module config-nat {
 			}
 			leaf type{
 			    description "name='Type'";
-			    type boolean;
 			    type enumeration {
                         enum L3;
                         enum transparent;
@@ -102,9 +101,9 @@ module config-nat {
             }
         }
         container nat-table{
-            description "name='Nat Table'"
+            description "name='Nat Table'";
             list nat-session {
-                description "name='Nat Session'"
+                description "name='Nat Session'";
                 key "id";
                 leaf id {
                     description "name='YYY'";
@@ -155,6 +154,20 @@ module config-nat {
                     mandatory false;
                 }
             }
+        }
+        container arp-table{
+            description "name='Nat Table'";
+            list arp-entry{
+                description "name='Arp entry'";
+                key "ip_address";
+                leaf ip_address{
+                    type inet:ip-address;
+                }
+                leaf mac_address{
+                    type string;
+                }
+            }
+        }
         }
     	list floatingIP {
             description "name='Floating IP'";
