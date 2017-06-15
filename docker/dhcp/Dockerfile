@@ -1,36 +1,23 @@
-FROM      generic-configuration-agent
+FROM generic-image
 MAINTAINER Politecnico di Torino
 
-RUN apt-get update && apt-get install -y dnsmasq ssh iptraf
+RUN apt-get update && apt-get install -y \
+    isc-dhcp-server
 
-#Prepare the ssh server
+#########################################################################
+#									#
+#			Script boot					#
+#									#
+#########################################################################
 
-RUN mkdir -p /var/run/sshd && mkdir -p /root/.ssh && echo 'root:root' | chpasswd
-	
-RUN echo "UseDNS no" >> /etc/ssh/sshd_config
-RUN sed '/PermitRootLogin without-password/d' /etc/ssh/sshd_config > tmp_file && rm /etc/ssh/sshd_config && mv tmp_file /etc/ssh/sshd_config
+# Copy the agent into the docker
+RUN mkdir -p /configuration_agent
+WORKDIR configuration_agent
+ADD ./dhcp-agent/dhcp dhcp
+ADD ./dhcp-agent/common common
+ADD ./dhcp-agent/start_agent.sh start_agent.sh
+RUN chmod +x start_agent.sh
 
-RUN apt-get install -y isc-dhcp-server
-ADD sysctl.conf /etc/sysctl.conf
-
-RUN pip3 install netifaces netaddr iptools jsonschema
-
-
-#Insert template and the metadata file into the datadisk
-WORKDIR /datadisk
-ADD template.json template.json
-ADD metadata metadata
-ADD initial_configuration.json initial_configuration.json
-
-WORKDIR /configuration_agent
-RUN mkdir dhcp_server_config
-ADD dhcp_server_config dhcp_server_config
-RUN chmod +x dhcp_server_config
-
-WORKDIR / 
-ADD ./start_dhcp.sh start_dhcp.sh
-RUN chmod +x start_dhcp.sh
-ADD ./start_dhcp_agent.sh start_dhcp_agent.sh
-RUN chmod +x start_dhcp_agent.sh
-ADD ./start.sh start.sh
-RUN chmod +x ./start.sh
+WORKDIR /
+ADD ./dhcp-agent/start.sh start.sh
+RUN chmod +x start.sh
