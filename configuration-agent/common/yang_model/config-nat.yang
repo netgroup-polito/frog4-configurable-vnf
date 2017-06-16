@@ -9,6 +9,8 @@ module config-nat {
     container interfaces {
 		list ifEntry{
 		    key "name";
+		    min-elements 2;
+		    max-elements 3;
 			leaf id{
 				description "name='Id'";
 				type string;

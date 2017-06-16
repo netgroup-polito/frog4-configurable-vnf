@@ -9,13 +9,14 @@ module config-firewall {
 	container interfaces { 
 		list ifEntry{
 		    key "name";
+		    min-elements 2;
+		    max-elements 3;
 		    leaf name {
 				description "name='Name'";
 				type string;
 			}
 			leaf type{
 			    description "name='Type'";
-			    type boolean;
 			    type enumeration {
                         enum L3;
                         enum transparent;
@@ -98,9 +99,9 @@ module config-firewall {
 			leaf id {
 				type string;
 			}
-			mandatory false;
 			leaf description{
 			    type string;
+			    mandatory false;
 			}
 			leaf action {
 				type enumeration {

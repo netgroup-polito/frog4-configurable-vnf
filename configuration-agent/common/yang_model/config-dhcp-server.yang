@@ -8,13 +8,14 @@ module config-dhcp-server {
 	container interfaces {
 		list ifEntry{
 		    key "name";
+		    min-elements 1;
+		    max-elements 2;
 		    leaf name {
 				description "name='Name'";
 				type string;
 			}
 			leaf type{
 			    description "name='Type'";
-			    type boolean;
 			    type enumeration {
                         enum L3;
                         enum transparent;
@@ -83,10 +84,9 @@ module config-dhcp-server {
 		}
 	}
 
-	description "DHCP Server configuration"; 
-	container server { 
-		description "name='Server'";
-		container globalIpPool { 
+	container server {
+	description "name='DHCP Server configuration'";
+		container globalIpPool {
 		description "name='Global IP pool'";
 			container gatewayIp { 
 				description "name='Gateway IP'";
