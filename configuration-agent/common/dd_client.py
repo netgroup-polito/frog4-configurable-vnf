@@ -25,13 +25,13 @@ class MessageBus(clientSafe.ClientSafe):
         return thread
 
     def subscribe(self, topic, scope):
-        pass
+        super().subscribe(topic, scope)
 
     def unsubscribe(self):
         pass
 
     def publish_public_topic(self, topic, msg):
-        logging.debug("publish_public_topic: " + topic + " " + msg)
+        #logging.debug("publish_public_topic: " + topic + " " + msg)
         self.publish_public(topic, msg)
 
     def publish_topic(self, topic, msg):
