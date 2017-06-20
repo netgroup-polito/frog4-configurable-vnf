@@ -10,7 +10,7 @@ from threading import Event
 from threading import Thread
 
 from common.config_instance import ConfigurationInstance
-from common.message_bus import MessageBus
+from common.dd_client import DDclient
 from common.utils import Bash
 from common.db.db_manager import dbManager
 
@@ -24,7 +24,7 @@ class ConfigurationAgent():
 
     def __init__(self, vnf_name, nf_type, datadisk_path, on_change_interval=None):
 
-        self.messageBus = MessageBus(self)
+        self.messageBus = DDclient(self)
         self.dd_controller = None
 
         ConfigurationInstance.set_vnf(self, vnf_name)
@@ -118,7 +118,8 @@ class ConfigurationAgent():
         self.registered_to_cs.clear()
 
         logging.debug("Trying to register to the message broker...")
-        self.messageBus.register_to_bus(name=self.vnf,
+        dd_name = self.tenant_id+'.'+self.graph_id+'.'+self.vnf_id
+        self.messageBus.register_to_bus(name=dd_name,
                                        dealer_url=self.broker_url,
                                        customer=self.tenant_id,
                                        keyfile="/etc/doubledecker/" + self.tenant_id + "-keys.json")
@@ -142,7 +143,7 @@ class ConfigurationAgent():
         if self.is_registered_to_bus is True:
             topic = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/restServer"
             data = self.rest_address + ":" + rest_port
-            self.messageBus.publish_topic(topic, data)
+            self.messageBus.publish_public_topic(topic, data)
         logging.info("Rest Server started on: " + self.rest_address + ':' + rest_port)
         call("gunicorn -b " + self.rest_address + ':' + rest_port + " -t 500 " + rest_app + ":app", shell=True)
 
@@ -154,10 +155,9 @@ class ConfigurationAgent():
     def on_data_callback(self, src, msg):
         logging.debug("[agent] From: " + src + " Msg: " + msg)
 
-        if msg == "REGISTERED " + self.tenant_id + '.' + self.vnf_id:
+        if msg.__eq__("REGISTERED"):
             self.is_registered_to_cs = True
             self.registered_to_cs.set()
-            return
 
 
     def _read_metadata_file(self, metadata_path):
@@ -181,6 +181,7 @@ class ConfigurationAgent():
                 self.tenant_id = metadata['tenant-id']
                 self.graph_id = metadata['graph-id']
                 self.vnf_id = metadata['vnf-id']
+                ConfigurationInstance.set_triple(self, self.tenant_id+'.'+self.graph_id+'.'+self.vnf_id)
                 self.broker_url = metadata['broker-url']
 
         except Exception as e:
@@ -222,5 +223,4 @@ class ConfigurationAgent():
         msg += "tenant-id:" + self.tenant_id + "\n"
         msg += "graph-id:" + self.graph_id + "\n"
         msg += "vnf-id:" + self.vnf_id
-        logging.debug('Registering to the configuration service: ' + msg)
-        self.messageBus.publish_public_topic('public.vnf_registration', msg)
+        self.messageBus.publish_public_topic('vnf_registration', msg)

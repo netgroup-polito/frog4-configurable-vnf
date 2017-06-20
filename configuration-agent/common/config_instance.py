@@ -5,6 +5,7 @@ class ConfigurationInstance(object):
     datadisk_path = None
     on_change_interval = None
     #iface_management = None
+    #triple = None
 
     def get_vnf(self):
         return ConfigurationInstance.vnf
@@ -14,13 +15,13 @@ class ConfigurationInstance(object):
     def get_nf_type(self):
         with open('tmpFileA', 'r') as file:
             nf_type = file.readlines()
-        file.close
+        file.close()
         return nf_type[0]
         #return ConfigurationInstance.nf_type
     def set_nf_type(self, nf_type):
         with open('tmpFileA', 'w') as file:
             file.write(nf_type)
-        file.close
+        file.close()
         #ConfigurationInstance.nf_type = nf_type
 
     def get_datadisk_path(self):
@@ -36,9 +37,19 @@ class ConfigurationInstance(object):
     def get_iface_management(self):
         with open('tmpFileB', 'r') as file:
             iface_management = file.readlines()
-        file.close
+        file.close()
         return iface_management[0]
     def set_iface_management(self, iface_management):
         with open('tmpFileB', 'w') as file:
             file.write(iface_management)
-        file.close
+        file.close()
+
+    def get_triple(self):
+        with open('tmpFileC', 'r') as file:
+            triple = file.readlines()
+        file.close()
+        return triple[0]
+    def set_triple(self, triple):
+        with open('tmpFileC', 'w') as file:
+            file.write(triple)
+        file.close()

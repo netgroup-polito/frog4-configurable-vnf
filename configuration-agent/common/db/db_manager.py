@@ -19,7 +19,7 @@ class dbManager():
         try:
             with open(database, 'a') as my_db:
                 my_db.write(name+' '+id+'\n')
-            my_db.close
+            my_db.close()
         except Exception as e:
             raise IOError("Error during writing of my_db. File: " + database + " \n" + str(e))
 
@@ -27,7 +27,7 @@ class dbManager():
         try:
             with open(database, 'r') as my_db:
                 rows = my_db.readlines()
-            my_db.close
+            my_db.close()
             return rows
         except Exception as e:
             raise IOError("Error during reading of my_db. File: " + database + " \n" + str(e))

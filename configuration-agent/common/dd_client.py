@@ -3,7 +3,7 @@ from doubledecker import clientSafe
 from threading import Thread
 import logging
 
-class MessageBus(clientSafe.ClientSafe):
+class DDclient(clientSafe.ClientSafe):
 
     def __init__(self, controller):
         self.controller = controller
@@ -32,14 +32,14 @@ class MessageBus(clientSafe.ClientSafe):
 
     def publish_public_topic(self, topic, msg):
         #logging.debug("publish_public_topic: " + topic + " " + msg)
-        self.publish_public(topic, msg)
+        self.publish_public("public."+topic, msg)
 
     def publish_topic(self, topic, msg):
         #logging.debug("public_topic: " + topic + " " + msg)
         self.publish(topic, msg)
 
     def send_message(self, dst, msg):
-        pass
+        self.sendmsg(dst, msg)
 
     #####################################################
     ############## Double Decker callbacks ##############
@@ -67,4 +67,4 @@ class MessageBus(clientSafe.ClientSafe):
 
     def on_discon(self):
         """ callback at disconnection """
-        pass
+        super().on_discon()

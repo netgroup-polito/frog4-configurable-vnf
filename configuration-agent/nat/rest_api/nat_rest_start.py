@@ -1,7 +1,7 @@
 from flask import Flask
 
 from nat.rest_api.api import nat_blueprint
-from nat.rest_api.resources.global_resource import api as global_resource
+from nat.rest_api.resources.root_resource import api as root_resource
 from nat.rest_api.resources.interface import api as interface_api
 from nat.rest_api.resources.nat import api as nat_api
 #from nat.rest_api.resources.floating_ip import api as floatingIP_api
