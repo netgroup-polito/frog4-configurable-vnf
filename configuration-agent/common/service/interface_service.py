@@ -47,7 +47,7 @@ class InterfaceService():
         net_ifaces = netifaces.interfaces()
         for net_iface in net_ifaces:
 
-            if net_iface.__eq__("lo"):
+            if net_iface.__eq__("lo") or net_iface.__eq__("gre0") or net_iface.__eq__("gretap0"):
                 continue
 
             name = net_iface

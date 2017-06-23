@@ -168,7 +168,7 @@ class NatGlobalController():
         nat['private-interface'] = self.get_private_interface_id()
         nat['public-interface'] = self.get_public_interface_id()
         nat['nat-table'] = self.get_nat_table()
-        #nat['arp-table'] = self.get_arp_table()
+        nat['arp-table'] = self.get_arp_table()
         nat['floatingIP'] = self.get_all_floating_ip()
         return nat
 
@@ -202,14 +202,25 @@ class NatGlobalController():
 
     # Nat/nat-table
     def get_nat_table(self):
+        nat_table = {}
+        nat_table['nat-session'] = self.get_nat_session()
+        return nat_table
+
+    def get_nat_session(self):
         nat_table = self.natController.get_nat_table()
         nat_table_dict = []
         for nat_session in nat_table:
             nat_table_dict.append(self.natTableParser.get_nat_session_dict(nat_session))
         return nat_table_dict
 
+
     # Nat/arp-table
     def get_arp_table(self):
+        arp_table = {}
+        arp_table['arp-entry'] = self.get_arp_entry()
+        return arp_table
+
+    def get_arp_entry(self):
         arp_table = self.arpTableController.get_arp_table()
         arp_table_dict = []
         for arp_entry in arp_table:
