@@ -18,7 +18,10 @@ from common.vnf_template_library.exception import TemplateValidationError
 from common.vnf_template_library.template import Template
 from common.vnf_template_library.validator import ValidateTemplate
 
-logging.basicConfig(filename="logging_agent.log", level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S')
+# set log level
+log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
+log_date_format = '[%d-%m-%Y %H:%M:%S]'
+logging.basicConfig(filename="logging_agent.log", level=logging.DEBUG, format=log_format, datefmt=log_date_format)
 
 class ConfigurationAgent():
 
