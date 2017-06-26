@@ -8,7 +8,7 @@ module config-nat {
 
     container interfaces {
 		list ifEntry{
-		    key "name";
+		    key "id";
 		    min-elements 2;
 		    max-elements 3;
 			leaf id{
