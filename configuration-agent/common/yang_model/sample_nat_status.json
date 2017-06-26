@@ -1,0 +1,96 @@
+{
+	"config-nat:interfaces": {
+		"ifEntry": [{
+				"id": "L2Port:0",
+				"name": "eth0",
+				"type": "L3",
+				"ipv4_configuration": {
+					"netmask": "255.0.0.0",
+					"address": "10.0.0.100",
+					"mac_address": "52:54:00:3e:28:86",
+					"configurationType": "not_defined"
+				},
+				"management": true
+			},
+			{
+				"id": "L2Port:1",
+				"name": "eth1",
+				"type": "L3",
+				"ipv4_configuration": {
+					"netmask": "255.255.255.0",
+					"address": "192.168.0.1",
+					"mac_address": "de:78:fa:da:c5:d2",
+					"configurationType": "not_defined"
+				},
+				"management": false
+			},
+			{
+				"id": "L2Port:2",
+				"name": "eth2",
+				"type": "L3",
+				"ipv4_configuration": {
+					"default_gw": "130.192.225.254",
+					"netmask": "255.255.255.128",
+					"address": "130.192.225.199",
+					"mac_address": "96:a0:66:7a:55:20",
+					"configurationType": "not_defined"
+				},
+				"management": false
+			}
+		]
+	},
+	"config-nat:nat": {
+		"public-interface": "L2Port:2",
+		"private-interface": "L2Port:1",
+		"floatingIP": [],
+		"nat-table": {
+			"nat-session": [{
+					"src_address": "0.0.0.0",
+					"translated_port": "67",
+					"dst_port": "67",
+					"translated_address": "0.0.0.0",
+					"protocol": "UDP",
+					"dst_address": "255.255.255.255",
+					"tcp_state": "NONE",
+					"src_port": "68"
+				},
+				{
+					"src_address": "10.0.0.2",
+					"translated_port": "9000",
+					"dst_port": "9000",
+					"translated_address": "10.0.0.2",
+					"protocol": "TCP",
+					"dst_address": "10.0.0.100",
+					"tcp_state": "ESTABLISHED",
+					"src_port": "53538"
+				},
+				{
+					"src_address": "10.0.0.100",
+					"translated_port": "5555",
+					"dst_port": "5555",
+					"translated_address": "10.0.0.100",
+					"protocol": "TCP",
+					"dst_address": "10.0.0.2",
+					"tcp_state": "ESTABLISHED",
+					"src_port": "50214"
+				},
+				{
+					"src_address": "130.192.225.240",
+					"translated_port": "137",
+					"dst_port": "137",
+					"translated_address": "130.192.225.240",
+					"protocol": "UDP",
+					"dst_address": "130.192.225.255",
+					"tcp_state": "NONE",
+					"src_port": "137"
+				}
+			]
+		},
+		"arp-table": {
+			"arp-entry": [{
+				"mac_address": "e6:4b:79:2d:b9:d6",
+				"ip_address": "10.0.0.2"
+			}]
+		}
+	}
+}
