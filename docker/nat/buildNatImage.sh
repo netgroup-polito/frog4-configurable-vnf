@@ -17,6 +17,10 @@ cp -r $src_dir/nat $dst_dir/
 cp -r $src_dir/start_nat_agent.sh $dst_dir/start_agent.sh
 cp -r $src_dir/start.sh $dst_dir/start.sh
 
+# Extract dependencies
+tar -zxvf pynetfilter_conntrack-0.7.tar.gz
+tar -zxvf python-ipy-master.tar.gz
+
 sudo docker build -t $image_name .
 
 sudo rm -r $dst_dir
