@@ -20,6 +20,7 @@ module config-firewall {
 			    type enumeration {
                         enum L3;
                         enum transparent;
+                        enum not_defined;
     				}
 			}
 			leaf management{

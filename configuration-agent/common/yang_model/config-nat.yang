@@ -26,6 +26,7 @@ module config-nat {
 			    type enumeration {
                         enum L3;
                         enum transparent;
+                        enum not_defined;
     				}
 			}
 			leaf management{
@@ -109,11 +110,6 @@ module config-nat {
 		    description "name='Nat Table'";
 		    list nat-session {
 			description "name='Nat Session'";
-			key "id";
-			leaf id {
-			    description "name='ID'";
-			    type inet:ip-address;
-			}
 			leaf protocol {
 			    description "name='Protocol'";
 			    type enumeration {
