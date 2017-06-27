@@ -47,8 +47,8 @@ RUN pip3 install gunicorn
 RUN pip3 install flask
 RUN pip3 install flask-restplus
 
-
-# Install DoubleDecker-py Dependencies
+## Install the DoubleDecker client
+# Install dependencies
 RUN apt-get update && apt-get install -y \
 	python3-zmq \
 	python3-urwid \
