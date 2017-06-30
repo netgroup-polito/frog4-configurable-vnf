@@ -42,10 +42,23 @@ class NatGlobalController():
         self.set_ip_forward(public_interface_id)
         private_interface_id = self.natParser.parse_private_interface(conf_nat)
 
-        json_floating_ip = conf_nat['floatingIP']
-        for curr_json_floating_ip in json_floating_ip:
-            #self.configure_floating_ip(curr_json_floating_ip)
-            pass
+        if 'nat-table' in conf_nat:
+            json_nat_table = conf_nat['nat-table']
+            json_nat_sessions = self.natTableParser.parse_nat_table(json_nat_table)
+            for json_nat_session in json_nat_sessions:
+                self.add_nat_session(json_nat_session)
+
+        if 'arp-table' in conf_nat:
+            json_arp_table = conf_nat['arp-table']
+            json_arp_entries = self.arpTableParser.parse_arp_table(json_arp_table)
+            for json_arp_entry in json_arp_entries:
+                self.add_arp_entry(json_arp_entry)
+
+        if 'floatingIP' in conf_nat:
+            json_floating_ip = conf_nat['floatingIP']
+            for curr_json_floating_ip in json_floating_ip:
+                #self.configure_floating_ip(curr_json_floating_ip)
+                pass
 
 
     def get_full_status(self):
@@ -213,6 +226,11 @@ class NatGlobalController():
             nat_table_dict.append(self.natTableParser.get_nat_session_dict(nat_session))
         return nat_table_dict
 
+    def add_nat_session(self, json_nat_session):
+        # not supported
+        nat_session = self.natTableParser.parse_nat_session(json_nat_session)
+        self.natController.add_nat_session(nat_session)
+        #logging.debug("Added nat_session: " + nat_session.__str__())
 
     # Nat/arp-table
     def get_arp_table(self):

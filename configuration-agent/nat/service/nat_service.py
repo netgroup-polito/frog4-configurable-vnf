@@ -56,3 +56,6 @@ class NatService():
             nat_table.append(nat_session)
         return nat_table
 
+    def add_nat_session(self, nat_session):
+        pass
+

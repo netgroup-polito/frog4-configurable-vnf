@@ -142,7 +142,7 @@ class ConfigurationAgent():
         logging.info("DoubleDecker Successfully started")
 
     def start_rest_controller(self, rest_app):
-        rest_port = "9000"
+        rest_port = "9010"
         if self.is_registered_to_bus is True:
             topic = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/restServer"
             data = self.rest_address + ":" + rest_port

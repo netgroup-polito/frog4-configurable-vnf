@@ -2,6 +2,9 @@ from common.model.arp_entry import ArpEntry
 
 class ArpTableParser():
 
+    def parse_arp_table(self, json_arp_table):
+        return json_arp_table['arp-entry']
+
     def parse_arp_entry(self, json_arp_entry):
 
         ip_address = None
@@ -12,7 +15,8 @@ class ArpTableParser():
         if 'mac_address' in json_arp_entry:
             mac_address = json_arp_entry['mac_address']
 
-        return ArpEntry(ip_address, mac_address)
+        return ArpEntry(ip_address=ip_address,
+                        mac_address=mac_address)
 
 
     def get_arp_entry_dict(self, arp_entry):

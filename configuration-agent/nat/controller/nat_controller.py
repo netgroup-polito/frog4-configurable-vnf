@@ -30,4 +30,8 @@ class NatController():
     # Nat/nat-table
     def get_nat_table(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            return  self.natService.get_nat_table()
+            return self.natService.get_nat_table()
+
+    def add_nat_session(self, nat_session):
+        if self.nf_type == "docker" or self.nf_type == "vm":
+            return self.natService.add_nat_session(nat_session)
