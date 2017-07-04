@@ -145,7 +145,7 @@ class ConfigurationAgent():
         rest_port = "9010"
         if self.is_registered_to_bus is True:
             topic = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/restServer"
-            data = self.rest_address + ":" + rest_port
+            data = "http://"+self.rest_address + ":" + rest_port
             self.messageBus.publish_public_topic(topic, data)
         logging.info("Rest Server started on: " + self.rest_address + ':' + rest_port)
         call("gunicorn -b " + self.rest_address + ':' + rest_port + " -t 500 " + rest_app + ":app", shell=True)
