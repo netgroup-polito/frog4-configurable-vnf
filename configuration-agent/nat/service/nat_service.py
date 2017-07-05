@@ -50,7 +50,7 @@ class NatService():
                 dst_address=item.orig_ipv4_dst,
                 dst_port=item.orig_port_dst,
                 translated_address=item.repl_ipv4_dst,
-                translated_port=item.repl_port_src,
+                translated_port=item.repl_port_dst,
                 tcp_state=item.tcp_state
             )
             nat_table.append(nat_session)
