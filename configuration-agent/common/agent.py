@@ -158,7 +158,7 @@ class ConfigurationAgent():
     def on_data_callback(self, src, msg):
         logging.debug("[agent] From: " + src + " Msg: " + msg)
 
-        if msg.__eq__("REGISTERED"):
+        if "REGISTERED" in msg:
             self.is_registered_to_cs = True
             self.registered_to_cs.set()
 
