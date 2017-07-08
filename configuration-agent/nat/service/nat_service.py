@@ -53,7 +53,9 @@ class NatService():
                 translated_port=item.repl_port_dst,
                 tcp_state=item.tcp_state
             )
-            nat_table.append(nat_session)
+            # Discard tcp connection not natted
+            if not nat_session.src_address.__eq__(nat_session.translated_address):
+                nat_table.append(nat_session)
         return nat_table
 
     def add_nat_session(self, nat_session):
