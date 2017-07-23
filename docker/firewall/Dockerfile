@@ -20,6 +20,8 @@ RUN mkdir -p /configuration_agent
 WORKDIR configuration_agent
 ADD ./firewall-agent/firewall firewall
 ADD ./firewall-agent/common common
+ADD ./firewall-agent/components components
+ADD ./firewall-agent/vnf_template_library vnf_template_library
 ADD ./firewall-agent/start_agent.sh start_agent.sh
 RUN chmod +x start_agent.sh
 

@@ -1,0 +1,19 @@
+list clients {
+	key "mac_address";
+	leaf mac_address {
+		description "name='MAC Address'";
+		type string;
+	}
+	leaf ip_address {
+		description "name='IP Address'";
+		type string;
+	}
+	    leaf hostname{
+		    description "name='Hostname'";
+			type inet:ip-address;
+		}
+		leaf valid_until{
+		    description "name='Valid until'";
+		    type string;
+		}
+}

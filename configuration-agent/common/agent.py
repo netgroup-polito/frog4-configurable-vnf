@@ -14,9 +14,9 @@ from common.dd_client import DDclient
 from common.utils import Bash
 from common.db.db_manager import dbManager
 
-from common.vnf_template_library.exception import TemplateValidationError
-from common.vnf_template_library.template import Template
-from common.vnf_template_library.validator import ValidateTemplate
+from vnf_template_library.exception import TemplateValidationError
+from vnf_template_library.template import Template
+from vnf_template_library.validator import ValidateTemplate
 
 # set log level
 log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
@@ -28,7 +28,7 @@ class ConfigurationAgent():
     def __init__(self, vnf_name, nf_type, datadisk_path, on_change_interval=None):
 
         self.messageBus = DDclient(self)
-        self.dd_controller = None
+        self.monitor = None
 
         ConfigurationInstance.set_vnf(self, vnf_name)
         ConfigurationInstance.set_nf_type(self, nf_type)
@@ -96,7 +96,7 @@ class ConfigurationAgent():
         ConfigurationInstance.set_iface_management(self, self.configuration_interface)
 
         # Add rule in the routing table to contact the broker
-        self._add_broker_rule(self.broker_url, self.configuration_interface)
+        #self._add_broker_rule(self.broker_url, self.configuration_interface)
 
         self.initial_configuration = None
         if os.path.exists(self.initial_configuration_path):
@@ -104,15 +104,26 @@ class ConfigurationAgent():
                 json_data = configuration.read()
                 self.initial_configuration = json.loads(json_data)
 
+    def start_monitoring(self, monitor_class):
+        self.monitor = monitor_class(self.tenant_id, self.graph_id, self.vnf_id)
+        self.monitor.set_initial_configuration(self.initial_configuration)
+        self.address_iface_management = self.monitor.get_address_of_configuration_interface(self.configuration_interface)
+        self._register_agent()
+        thread = Thread(target=self.monitor.start, args=[self.messageBus])
+        thread.start()
+        logging.info("DoubleDecker Successfully started")
 
-    def create_dd_controller(self, ddSpecificController):
-        self.dd_controller = ddSpecificController(self.tenant_id, self.graph_id, self.vnf_id)
+    def start_rest_controller(self, rest_app):
+        rest_port = "9010"
+        rest_address = "http://" + self.address_iface_management + ":" + rest_port
+        if self.is_registered_to_bus is True:
+            topic = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/restServer"
+            data = rest_address
+            self.messageBus.publish_public_topic(topic, data)
+        logging.info("Rest Server started on: " + rest_address)
+        call("gunicorn -b " + self.address_iface_management + ':' + rest_port + " -t 500 " + rest_app + ":app", shell=True)
 
-    def set_initial_configuration(self):
-        self.dd_controller.set_initial_configuration(self.initial_configuration)
-        self.rest_address = self.dd_controller.get_address_of_configuration_interface(self.configuration_interface)
-
-    def register_agent(self):
+    def _register_agent(self):
         """
         Agent core method. It manages the registration both to the message broker and to the configuration service
         :return:
@@ -135,20 +146,6 @@ class ConfigurationAgent():
                 if self.is_registered_to_cs is False:
                     self._vnf_registration()
         logging.debug("Trying to register to the configuration service...done!")
-
-    def start_dd_controller(self):
-        thread = Thread(target=self.dd_controller.start, args=[self.messageBus])
-        thread.start()
-        logging.info("DoubleDecker Successfully started")
-
-    def start_rest_controller(self, rest_app):
-        rest_port = "9010"
-        if self.is_registered_to_bus is True:
-            topic = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/restServer"
-            data = "http://"+self.rest_address + ":" + rest_port
-            self.messageBus.publish_public_topic(topic, data)
-        logging.info("Rest Server started on: " + self.rest_address + ':' + rest_port)
-        call("gunicorn -b " + self.rest_address + ':' + rest_port + " -t 500 " + rest_app + ":app", shell=True)
 
     def on_reg_callback(self):
         self.is_registered_to_bus = True

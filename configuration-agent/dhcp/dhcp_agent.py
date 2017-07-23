@@ -1,6 +1,6 @@
 from common.agent import ConfigurationAgent
 from common.utils import check_validity_initial_params
-from dhcp.dd_controller.dd_dhcp_controller import DoubleDeckerDhcpController
+from dhcp.dhcp_monitor import DhcpMonitor
 
 import sys
 import logging
@@ -13,13 +13,7 @@ class DhcpAgent():
 
         configurationAgent = ConfigurationAgent("dhcp", nf_type, datadisk_path, on_change_interval)
 
-        configurationAgent.create_dd_controller(DoubleDeckerDhcpController)
-
-        configurationAgent.set_initial_configuration()
-
-        configurationAgent.register_agent()
-
-        configurationAgent.start_dd_controller()
+        configurationAgent.start_monitoring(DhcpMonitor)
 
         configurationAgent.start_rest_controller("dhcp.rest_api.dhcp_rest_start")
 

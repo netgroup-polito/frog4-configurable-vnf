@@ -82,6 +82,8 @@ RUN mkdir -p /configuration_agent
 WORKDIR configuration_agent
 ADD ./nat-agent/nat nat
 ADD ./nat-agent/common common
+ADD ./nat-agent/components components
+ADD ./nat-agent/vnf_template_library vnf_template_library
 ADD ./nat-agent/start_agent.sh start_agent.sh
 RUN chmod +x start_agent.sh
 

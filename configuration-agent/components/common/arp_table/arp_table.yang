@@ -1,0 +1,11 @@
+container arp-table{
+	list arp-entry{
+        key "ip_address";
+        leaf ip_address{
+            type inet:ip-address;
+        }
+        leaf mac_address{
+            type string;
+        }
+    }
+}

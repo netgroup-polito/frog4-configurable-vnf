@@ -15,6 +15,8 @@ RUN mkdir -p /configuration_agent
 WORKDIR configuration_agent
 ADD ./dhcp-agent/dhcp dhcp
 ADD ./dhcp-agent/common common
+ADD ./dhcp-agent/components components
+ADD ./dhcp-agent/vnf_template_library vnf_template_library
 ADD ./dhcp-agent/start_agent.sh start_agent.sh
 RUN chmod +x start_agent.sh
 

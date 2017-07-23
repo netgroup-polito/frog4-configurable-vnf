@@ -13,8 +13,12 @@ mkdir -p $dst_dir
 
 # Copy the nat agent
 cp -r $src_dir/common $dst_dir/
+mkdir $dst_dir/components
+cp -r $src_dir/components/common $dst_dir/components/common/
+cp -r $src_dir/components/nat $dst_dir/components/nat/
+cp -r $src_dir/vnf_template_library $dst_dir/
 cp -r $src_dir/nat $dst_dir/
-cp -r $src_dir/start_nat_agent.sh $dst_dir/start_agent.sh
+cp -r $src_dir/nat/start_nat_agent.sh $dst_dir/start_agent.sh
 cp -r $src_dir/start.sh $dst_dir/start.sh
 
 # Extract dependencies

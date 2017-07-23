@@ -1,0 +1,12 @@
+install iperf3
+https://github.com/esnet/iperf.git
+cd iperf
+./configure
+make
+sudo make install
+sudo ldconfig
+
+install iperf3-python wrapper
+git clone https://github.com/thiezn/iperf3-python
+cd iperf3-python
+sudo python3 setup.py install

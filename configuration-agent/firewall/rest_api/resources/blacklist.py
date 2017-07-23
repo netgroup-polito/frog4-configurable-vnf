@@ -1,16 +1,15 @@
+from flask import request, Response
+from flask_restplus import Resource
 import json
 import logging
 
-from flask import request, Response
-from flask_restplus import Resource
-
-from firewall.controller.firewall_controller import FirewallController
+from firewall.firewall_controller import FirewallController
 from firewall.rest_api.api import api
 
-blacklist_ns = api.namespace('firewall/blacklist', 'Blacklist Resource')
+blacklist_ns = api.namespace('firewall', 'Blacklist Resource')
 
-@blacklist_ns.route('', methods=['GET','POST'])
-@blacklist_ns.route('/<id>', methods=['DELETE'])
+@blacklist_ns.route('/blacklist', methods=['GET','POST'])
+@blacklist_ns.route('/blacklist/<id>', methods=['DELETE'])
 class Blacklist(Resource):
     @blacklist_ns.param("Url", "Url to add", "body", type="string", required=True)
     @blacklist_ns.response(202, 'Url correctly added.')

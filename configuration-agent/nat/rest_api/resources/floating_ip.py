@@ -1,16 +1,15 @@
+from flask import request, Response
+from flask_restplus import Resource
 import json
 import logging
 
-from flask import request, Response
-from flask_restplus import Resource
-
-from nat.controller.nat_controller import NatController
+from nat.nat_controller import NatController
 from nat.rest_api.api import api
 
-floatingIP_ns = api.namespace('nat/floatingIP', 'Floating IP Resource')
+floatingIP_ns = api.namespace('nat', 'Floating IP Resource')
 
-@floatingIP_ns.route('', methods=['GET','POST'])
-@floatingIP_ns.route('/<id>', methods=['GET','PUT','DELETE'])
+@floatingIP_ns.route('/floatingIP', methods=['GET','POST'])
+@floatingIP_ns.route('/floatingIP/<id>', methods=['GET','PUT','DELETE'])
 class Nat_FloatingIP(Resource):
     @floatingIP_ns.param("Floating IP", "Floating IP to add", "body", type="string", required=True)
     @floatingIP_ns.response(202, 'Floating IP correctly added.')

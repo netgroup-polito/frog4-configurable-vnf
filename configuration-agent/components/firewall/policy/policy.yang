@@ -1,0 +1,52 @@
+list policies {
+	key "id";
+	leaf id {
+	    type string;
+	}
+	leaf description{
+	    type string;
+	    mandatory false;
+	}
+	leaf action {
+		type enumeration {
+			enum drop;
+			enum reject;
+			enum accept;
+		}
+	}
+	leaf protocol {
+	    type enumeration {
+			enum tcp;
+			enum udp;
+			enum icmp;
+			enum all;
+		}
+	}
+	leaf in-interface {
+	    type leafref {
+		    path "/interfaces/ifEntry/name";
+	    }
+		mandatory false;
+	}
+	leaf out-interface {
+		type leafref {
+		 	path "/interfaces/ifEntry/name";
+	    }
+		mandatory false;
+	}
+	leaf src-address {
+		type inet:ip-address;
+	}
+	leaf dst-address {
+		type inet:ip-address;
+		mandatory false;
+	}
+	leaf src-port {
+		type string;
+		mandatory false;
+	}
+	leaf dst-port {
+	    type string;
+	    mandatory false;
+	}
+}

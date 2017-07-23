@@ -1,6 +1,6 @@
 from common.agent import ConfigurationAgent
 from common.utils import check_validity_initial_params
-from firewall.dd_controller.dd_firewall_controller import DoubleDeckerFirewallController
+from firewall.firewall_monitor import FirewallMonitor
 
 import sys
 import logging
@@ -13,13 +13,7 @@ class FirewallAgent():
 
         configurationAgent = ConfigurationAgent("firewall", nf_type, datadisk_path, on_change_interval)
 
-        configurationAgent.create_dd_controller(DoubleDeckerFirewallController)
-
-        configurationAgent.set_initial_configuration()
-
-        configurationAgent.register_agent()
-
-        configurationAgent.start_dd_controller()
+        configurationAgent.start_monitoring(FirewallMonitor)
 
         configurationAgent.start_rest_controller("firewall.rest_api.firewall_rest_start")
 

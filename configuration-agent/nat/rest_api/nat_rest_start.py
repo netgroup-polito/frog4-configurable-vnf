@@ -1,12 +1,13 @@
 from flask import Flask, request
+import logging
 
 from nat.rest_api.api import nat_blueprint
-from nat.rest_api.resources.root_resource import api as root_resource
+from nat.rest_api.resources.arp_table import api as arp_table_api
+from nat.rest_api.resources.floating_ip import api as floating_ip_api
 from nat.rest_api.resources.interface import api as interface_api
 from nat.rest_api.resources.nat import api as nat_api
-#from nat.rest_api.resources.floating_ip import api as floatingIP_api
-
-import logging
+from nat.rest_api.resources.nat_table import api as nat_table_api
+from nat.rest_api.resources.root import api as root_api
 
 logging.basicConfig(filename="logging_agent.log", level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 

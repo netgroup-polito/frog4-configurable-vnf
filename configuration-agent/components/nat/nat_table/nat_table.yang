@@ -1,0 +1,54 @@
+container nat-table{
+    description "name='Nat Table'";
+	list nat-session {
+	    description "name='Nat Session'";
+		leaf protocol {
+		    description "name='Protocol'";
+		    type enumeration {
+			enum ICMP;
+			enum TCP;
+			enum UDP;
+		    }
+		}
+		leaf src_address {
+		    description "name='Source Address'";
+		    type inet:ip-address;
+		}
+		leaf src_port {
+		    description "name='Source Port'";
+		    type string;
+		}
+		leaf dst_address {
+		    description "name='Destination address'";
+		    type inet:ip-address;
+		}
+		leaf dst_port {
+		    description "name='Destination port'";
+		    type string;
+		}
+		leaf translated_address {
+		    description "name='Translated address'";
+		    type inet:ip-address;
+		}
+		leaf translated_port {
+      	    description "name='Destination port'";
+		    type string;
+		}
+		leaf tcp_state {
+		    description "name='TCP state'";
+		    type enumeration {
+		    	enum NONE;
+			    enum SYN_SENT;
+				enum SYN_RECV;
+				enum ESTABLISHED;
+				enum FIN_WAIT;
+				enum CLOSE_WAIT;
+				enum LAST_ACK;
+				enum TIME_WAIT;
+				enum CLOSE;
+				enum LISTEN;
+			}
+			mandatory false;
+		}
+    }
+}

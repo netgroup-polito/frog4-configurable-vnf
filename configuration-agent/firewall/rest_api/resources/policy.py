@@ -1,16 +1,15 @@
+from flask import request, Response
+from flask_restplus import Resource
 import json
 import logging
 
-from flask import request, Response
-from flask_restplus import Resource
-
-from firewall.controller.firewall_controller import FirewallController
+from firewall.firewall_controller import FirewallController
 from firewall.rest_api.api import api
 
-policy_ns = api.namespace('firewall/policies', 'Policy Resource')
+policy_ns = api.namespace('firewall', 'Policy Resource')
 
-@policy_ns.route('', methods=['GET','POST'])
-@policy_ns.route('/<id>', methods=['GET','PUT','DELETE'])
+@policy_ns.route('/policies', methods=['GET','POST'])
+@policy_ns.route('/policies/<id>', methods=['GET','PUT','DELETE'])
 class Policy(Resource):
     @policy_ns.param("Policy", "Policy to add", "body", type="string", required=True)
     @policy_ns.response(202, 'Policy correctly added.')
@@ -95,7 +94,7 @@ class Policy(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/description', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/description', methods=['GET','PUT'])
 class Policy_Description(Resource):
     @policy_ns.response(200, 'Policy description parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -117,7 +116,7 @@ class Policy_Description(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/action', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/action', methods=['GET','PUT'])
 class Policy_Action(Resource):
     @policy_ns.response(200, 'Policy action parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -139,7 +138,7 @@ class Policy_Action(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/protocol', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/protocol', methods=['GET','PUT'])
 class Policy_Protocol(Resource):
     @policy_ns.response(200, 'Policy protocol parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -161,7 +160,7 @@ class Policy_Protocol(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/in-interface', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/in-interface', methods=['GET','PUT'])
 class Policy_InInterface(Resource):
     @policy_ns.response(200, 'Policy in-interface parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -183,7 +182,7 @@ class Policy_InInterface(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/out-interface', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/out-interface', methods=['GET','PUT'])
 class Policy_OutInterface(Resource):
     @policy_ns.response(200, 'Policy out-interface parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -205,7 +204,7 @@ class Policy_OutInterface(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/src-address', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/src-address', methods=['GET','PUT'])
 class Policy_SrcAddress(Resource):
     @policy_ns.response(200, 'Policy src-address parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -227,7 +226,7 @@ class Policy_SrcAddress(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/dst-address', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/dst-address', methods=['GET','PUT'])
 class Policy_DstAddress(Resource):
     @policy_ns.response(200, 'Policy dst-address parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -249,7 +248,7 @@ class Policy_DstAddress(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/src-port', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/src-port', methods=['GET','PUT'])
 class Policy_SrcPort(Resource):
     @policy_ns.response(200, 'Policy src-port parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -271,7 +270,7 @@ class Policy_SrcPort(Resource):
             logging.debug(err)
             return Response(status=500)
 
-@policy_ns.route('/<id>/dst-port', methods=['GET','PUT'])
+@policy_ns.route('/policies/<id>/dst-port', methods=['GET','PUT'])
 class Policy_DstPort(Resource):
     @policy_ns.response(200, 'Policy dst-port parameter retrieved.')
     @policy_ns.response(404, 'Policy not found.')

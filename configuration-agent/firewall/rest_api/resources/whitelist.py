@@ -1,16 +1,15 @@
+from flask import request, Response
+from flask_restplus import Resource
 import json
 import logging
 
-from flask import request, Response
-from flask_restplus import Resource
-
-from firewall.controller.firewall_controller import FirewallController
+from firewall.firewall_controller import FirewallController
 from firewall.rest_api.api import api
 
-whitelist_ns = api.namespace('firewall/whitelist', 'Whitelist Resource')
+whitelist_ns = api.namespace('firewall', 'Whitelist Resource')
 
-@whitelist_ns.route('', methods=['GET','POST'])
-@whitelist_ns.route('/<id>', methods=['DELETE'])
+@whitelist_ns.route('/whitelist', methods=['GET','POST'])
+@whitelist_ns.route('/whitelist/<id>', methods=['DELETE'])
 class Whitelist(Resource):
     @whitelist_ns.param("Url", "Url to add", "body", type="string", required=True)
     @whitelist_ns.response(202, 'Url correctly added.')

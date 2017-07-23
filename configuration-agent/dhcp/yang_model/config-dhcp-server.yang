@@ -1,0 +1,194 @@
+module config-dhcp-server { 
+	namespace "http://netgroup.ipv6.polito.it/dhcp"; 
+	prefix "dhcp";
+	import ietf-inet-types { 
+		prefix inet; 
+	}
+
+	container interfaces {
+		list ifEntry{
+		    key "name";
+		    min-elements 1;
+		    max-elements 2;
+		    advertise onchange;
+		    leaf name {
+				description "name='Name'";
+				type string;
+			}
+			leaf type{
+			    description "name='Type'";
+			    type enumeration {
+                    enum L3;
+                    enum transparent;
+                    enum not_defined;
+    			}
+    			advertise ondemand;
+			}
+			leaf management{
+			    description "name='Management'";
+			    type boolean;
+			    mandatory false;
+			    advertise ondemand;
+			}
+			container ipv4_configuration{
+			    presence "it contains ipv4 configuration";
+			    advertise onchange;
+			    leaf configurationType{
+			        description "name='Configuration type'";
+			        type enumeration {
+                        enum dhcp;
+                        enum static;
+                        enum not_defined;
+    				}
+    				advertise ondemand;
+			    }
+			    leaf address{
+			        description "name='IP Address";
+			        type inet:ipv4-address;
+			        mandatory false;
+			        advertise ondemand;
+			    }
+			    leaf netmask{
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
+			        advertise ondemand;
+			    }
+			    leaf mac_address{
+                    description "name='MAC Address'";
+                    type string;
+                    mandatory false;
+                    advertise ondemand;
+			    }
+			    leaf default_gw{
+			        description "name='Default GW";
+			        type inet:ipv4-address;
+			        mandatory false;
+			        advertise ondemand;
+			    }
+			}
+			container ipv6_configuration{
+			    presence "it contains ipv4 configuration";
+			    advertise onchange;
+			    leaf configurationType{
+			        description "name='Configuration type'";
+			        type enumeration {
+                        enum dhcp;
+                        enum static;
+                        enum not_defined;
+    				}
+    				advertise ondemand;
+			    }
+			    leaf address{
+			        description "name='IP Address";
+			        type inet:ipv6-address;
+			        mandatory false;
+			        advertise ondemand;
+			    }
+			    leaf netmask{
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
+			        advertise ondemand;
+			    }
+			    leaf default_gw{
+			        description "name='Default GW";
+			        type inet:ipv6-address;
+			        mandatory false;
+			        advertise ondemand;
+			    }
+			}
+		}
+	}
+
+	container server {
+	description "name='DHCP Server configuration'";
+			advertise onchange;
+			leaf defaultLeaseTime {
+				description "name='Default lease time', tooltip='Specifies the lease time in seconds, option code is 51.'"; 
+				type string;
+				 advertise onchange;
+			} 
+			leaf maxLeaseTime { 
+				description "name='Max lease time', tooltip='Specifies the lease time in seconds, option code is 51.'"; 
+				type string;
+				advertise onchange;
+			}
+            leaf subnet {
+                description "name='Subnet'";
+                type inet:ipv4-address;
+                advertise onchange;
+            }
+            leaf subnetMask {
+                description "name='Subnet Mask'";
+                type inet:ipv4-address;
+                advertise onchange;
+            }
+            leaf router {
+                description "name='Router'";
+                type inet:ipv4-address;
+                advertise onchange;
+            }
+            leaf dnsPrimaryServer {
+                description "name='Primary Server', tooltip='Specifies the primary server, option code is 5.'";
+                type inet:ip-address;
+                advertise onchange;
+            }
+            leaf dnsSecondaryServer {
+                description "name='Secondary Server', tooltip='Specifies the secondary server, option code is 5.'";
+                type inet:ip-address;
+                mandatory "false";
+                advertise onchange;
+            }
+            leaf dnsDomainName {
+                description "name='DNS name', tooltip='Specifies the domain name, option code is 15.'";type string;
+                type string;
+                advertise onchange;
+            }
+            list sections {
+				description "name='Pools'";
+				key "sectionStartIp";
+				advertise onchange;
+				leaf sectionStartIp {
+					description "name='Pool start IP', tooltip='IP Address'";
+					type inet:ipv4-address;
+					mandatory "true";
+					advertise onchange;
+				}
+				leaf sectionEndIp {
+					description "name='Pool end IP', tooltip='IP Address'";
+					type inet:ipv4-address;
+					mandatory "false";
+					advertise onchange;
+				}
+			}
+		}
+	}
+	container clients{
+	description "name='DHCP Clients'";
+	    advertise onchange;
+	    list clients {
+			key "mac_address";
+			leaf mac_address {
+				description "name='MAC Address'";
+				type string;
+				advertise ondemand;
+			}
+			leaf ip_address {
+				description "name='IP Address'";
+				type string;
+				advertise ondemand;
+			}
+			leaf hostname{
+			    description "name='Hostname'";
+			    type inet:ip-address;
+			    advertise ondemand;
+			}
+			leaf valid_until{
+			    description "name='Valid until'";
+			    type string;
+			    advertise ondemand;
+			}
+		}
+	}
+}

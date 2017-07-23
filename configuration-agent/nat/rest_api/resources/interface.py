@@ -1,14 +1,12 @@
+from flask import request, Response
+from flask_restplus import Resource
 import json
 import logging
 
-from flask import request, Response
-from flask_restplus import Resource
-
-from nat.controller.nat_global_controller import NatGlobalController as NatController
+from nat.nat_controller import NatController
 from nat.rest_api.api import api
 
 interface_ns = api.namespace('interfaces', 'Interface Resource')
-
 
 @interface_ns.route('', methods=['GET'])
 class Interface(Resource):

@@ -1,0 +1,7 @@
+list whitelist {
+	key "url";
+    description "name='URL', tooltip='eg: www.youtube.com'";
+    leaf url{
+	    type string;
+	}
+}
