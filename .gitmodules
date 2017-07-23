@@ -1,4 +1,3 @@
-[submodule "docker/generic-configuration-image/vnf-template-library"]
-	path = docker/generic-configuration-image/vnf-template-library
+[submodule "configuration-agent/vnf_template_library"]
+	path = configuration-agent/vnf_template_library
 	url = https://github.com/netgroup-polito/vnf-template-library.git
-	branch = yang_model_support
