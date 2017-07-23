@@ -1,0 +1,17 @@
+container traffic_shaper{
+    leaf interface_to_control {
+        type leafref {
+            path "/interfaces/ifEntry/id";
+        }
+    }
+    leaf download_limit{
+        description = "in mega bits, default unlimited"
+        type integer;
+        default = -1;
+    }
+    leaf upload_limit{
+        description = "in mega bits, default unlimited"
+        type integer;
+        default = -1;
+    }
+}

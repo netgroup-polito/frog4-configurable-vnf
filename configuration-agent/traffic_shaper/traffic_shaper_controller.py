@@ -1,15 +1,15 @@
-from components.common.iperf.iperf_controller import IperfController as IperfCoreController
-from components.common.iperf.iperf_parser import IperfParser as IperfCoreParser
+from components.common.traffic_shaper.traffic_shaper_controller import TrafficShaperController as TrafficShaperCoreController
+from components.common.traffic_shaper.traffic_shaper_parser import TrafficShaperParser as TrafficShaperCoreParser
 #from components.common.interface.interface_controller import InterfaceController
 #from components.common.interface.interface_parser import InterfaceParser
 
-class IperfController():
+class TrafficShaperController():
 
     def __init__(self):
         #self.interfaceController = InterfaceController()
         #self.interfaceParser = InterfaceParser
-        self.iperfCoreController = IperfCoreController()
-        self.iperfCoreParser = IperfCoreParser()
+        self.trafficShaperCoreController = TrafficShaperCoreController()
+        self.trafficShaperCoreParser = TrafficShaperCoreParser()
 
     """
     # Interfaces
@@ -115,11 +115,17 @@ class IperfController():
             raise ValueError("could not find interface: " + ifname)
     """
 
-    # Iperf
-    def start_iperf_client(self, json_iperf_client):
-        iperf_client = self.iperfCoreParser.parse_client_configuration(json_iperf_client)
-        return self.iperfCoreController.start_iperf_client(iperf_client)
+    # Traffic Shaper
+    def start_bandwitdh_shaping(self, json_traffic_shaper):
+        traffic_shaper = self.trafficShaperCoreParser.parse_traffic_shaper_configuration(json_traffic_shaper)
+        interface_id = self.trafficShaperCoreParser.parse_interface_to_control(json_traffic_shaper)
+        interface = self.interfaceController.get_interface_by_id(interface_id)
+        traffic_shaper.add_interface_name(interface.name)
+        traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
+        self.trafficShaperCoreController.start_bandwitdh_shaping(traffic_shaper)
 
-    def start_iperf_server(self, json_iperf_server):
-        iperf_server = self.iperfCoreParser.parse_server_configuration(json_iperf_server)
-        return self.iperfCoreController.start_iperf_server(iperf_server)
+    def stop_bandwitdh_shaping(self):
+        self.trafficShaperCoreController.start_bandwitdh_shaping(interface_name)
+
+    def get_status(self):
+        self.trafficShaperCoreController.get_status(interface_name)

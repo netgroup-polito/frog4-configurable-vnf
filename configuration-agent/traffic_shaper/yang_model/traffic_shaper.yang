@@ -1,0 +1,109 @@
+module config-traffic-shaper {
+	namespace "http://netgroup.ipv6.polito.it/iperf";
+	prefix "iperf";
+	import ietf-inet-types {
+		prefix inet;
+	}
+
+    container interfaces {
+        list ifEntry{
+            key "id";
+            min-elements 2;
+            max-elements 3;
+            leaf id{
+				description "name='ID'";
+				type string;
+			}
+            leaf name {
+                description "name='Name'";
+                type string;
+            }
+            leaf type{
+                description "name='Type'";
+                type enumeration {
+                        enum L3;
+                        enum transparent;
+                        enum not_defined;
+                    }
+            }
+            leaf management{
+                description "name='Management'";
+                type boolean;
+                mandatory false;
+            }
+            container ipv4_configuration{
+                presence "it contains ipv4 configuration";
+                leaf configurationType{
+                    description "name='Configuration type'";
+                    type enumeration {
+                        enum dhcp;
+                        enum static;
+                    }
+                }
+                leaf address{
+                    description "name='IP Address";
+                    type inet:ipv4-address;
+                    mandatory false;
+                }
+                leaf netmask{
+                    description "name='Netmask";
+                    type inet:ip-address;
+                    mandatory false;
+                }
+                leaf mac_address{
+                    description "name='MAC Address'";
+                    type string;
+                    mandatory false;
+                }
+                leaf default_gw{
+                    description "name='Default GW";
+                    type inet:ipv4-address;
+                    mandatory false;
+                }
+            }
+            container ipv6_configuration{
+                presence "it contains ipv4 configuration";
+                leaf configurationType{
+                    description "name='Configuration type'";
+                    type enumeration {
+                        enum dhcp;
+                        enum static;
+                    }
+                }
+                leaf address{
+                    description "name='IP Address";
+                    type inet:ipv6-address;
+                    mandatory false;
+                }
+                leaf netmask{
+                    description "name='Netmask";
+                    type inet:ip-address;
+                    mandatory false;
+                }
+                leaf default_gw{
+                    description "name='Default GW";
+                    type inet:ipv6-address;
+                    mandatory false;
+                }
+            }
+        }
+    }
+
+    container traffic_shaper{
+        leaf interface_to_control {
+            type leafref {
+                path "/interfaces/ifEntry/id";
+            }
+        }
+        leaf download_limit{
+            description = "in mega bits, default 0 unlimited"
+            type integer;
+            default = 0;
+        }
+        leaf upload_limit{
+            description = "in mega bits, default 0 unlimited"
+            type integer;
+            default = 0;
+        }
+    }
+}
