@@ -1,5 +1,5 @@
-from components.iperf.model.iperf_client import IperfClient
-from components.iperf.model.iperf_server import IperfServer
+from components.common.iperf.model.iperf_client import IperfClient
+from components.common.iperf.model.iperf_server import IperfServer
 #from components.common.iperf.model.stat import Stats
 
 class IperfParser():
@@ -14,14 +14,28 @@ class IperfParser():
 
     def parse_client_configuration(self, json_client_params):
 
-        server_address = json_client_params['server_address']
-        port_address = json_client_params['server_port']
-        protocol = json_client_params['protocol']
-        duration = json_client_params['duration']
-        bidirectional = json_client_params['bidirectional']
+        server_address = None
+        if 'server_address' in json_client_params:
+            server_address = json_client_params['server_address']
+
+        server_port = None
+        if 'server_port' in json_client_params:
+            server_port = json_client_params['server_port']
+
+        protocol = None
+        if 'protocol' in json_client_params:
+            protocol = json_client_params['protocol']
+
+        duration = None
+        if 'duration' in json_client_params:
+            duration = json_client_params['duration']
+
+        bidirectional = None
+        if 'bidirectional' in json_client_params:
+            bidirectional = json_client_params['bidirectional']
 
         return IperfClient(server_address,
-                           port_address,
+                           server_port,
                            protocol,
                            duration,
                            bidirectional)

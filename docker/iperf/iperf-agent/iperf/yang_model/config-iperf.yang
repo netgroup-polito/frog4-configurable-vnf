@@ -7,13 +7,9 @@ module config-iperf {
 
     container interfaces {
         list ifEntry{
-            key "id";
-            min-elements 2;
-            max-elements 3;
-            leaf id{
-				description "name='ID'";
-				type string;
-			}
+            key "name";
+            min-elements 1;
+            max-elements 2;
             leaf name {
                 description "name='Name'";
                 type string;

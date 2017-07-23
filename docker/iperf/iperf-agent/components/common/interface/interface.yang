@@ -1,0 +1,85 @@
+container interfaces {
+	description "name='Interfaces'";
+	list ifEntry{
+	    description "name='Interface'";
+	    key "id";
+	    min-elements 2;
+	    max-elements 3;
+		leaf id{
+			description "name='ID'";
+			type string;
+		}
+		leaf name {
+			description "name='Name'";
+			type string;
+		}
+		leaf type{
+		    description "name='Type'";
+		    type enumeration {
+                enum L3;
+                enum transparent;
+                enum not_defined;
+    		}
+		}
+		leaf management{
+		    description "name='Management privileges'";
+		    type boolean;
+		    mandatory false;
+		}
+		container ipv4_configuration{
+		    presence "it contains ipv4 configuration";
+		    leaf configurationType{
+		        description "name='Configuration type'";
+		        type enumeration {
+                    enum dhcp;
+                    enum static;
+    			}
+			}
+			leaf address{
+			    description "name='IP address";
+			    type inet:ipv4-address;
+			    mandatory false;
+			}
+			leaf netmask{
+			    description "name='Netmask";
+			    type inet:ip-address;
+			    mandatory false;
+			}
+			leaf mac-address{
+                description "name='MAC Address'";
+                type string;
+                mandatory false;
+			}
+			leaf default_gw{
+			    description "name='Default gateway";
+			    type inet:ipv4-address;
+			    mandatory false;
+			}
+		}
+		container ipv6_configuration{
+		    presence "it contains ipv6 configuration";
+		    leaf configurationType{
+		        description "name='Configuration type'";
+		        type enumeration {
+                    enum dhcp;
+                    enum static;
+    			}
+		    }
+			leaf address{
+			    description "name='IP address";
+			    type inet:ipv6-address;
+			    mandatory false;
+			}
+			leaf netmask{
+			    description "name='Netmask";
+			    type inet:ip-address;
+			    mandatory false;
+			}
+			leaf default_gw{
+			    description "name='Default gateway";
+			    type inet:ipv6-address;
+			    mandatory false;
+			}
+		}
+	}
+}
