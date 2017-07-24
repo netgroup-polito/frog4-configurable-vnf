@@ -3,8 +3,8 @@ from flask_restplus import Resource
 import json
 import logging
 
-from iperf.iperf_controller import IperfController
-from iperf.rest_api.api import api
+from traffic_shaper.traffic_shaper_controller import TrafficShaperController
+from traffic_shaper.rest_api.api import api
 
 interface_ns = api.namespace('interfaces', 'Interface Resource')
 
@@ -17,8 +17,8 @@ class Interface(Resource):
         Gets the status of all interfaces
         """
         try:
-            iperfController = IperfController()
-            json_data = json.dumps(iperfController.get_interfaces_status())
+            trafficShaperController = TrafficShaperController()
+            json_data = json.dumps(trafficShaperController.get_interfaces_status())
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -39,9 +39,9 @@ class Interface_ifEntry(Resource):
         Configure an interface
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
-            iperfController.configure_interface(json_data)
+            trafficShaperController.configure_interface(json_data)
             return Response(status=202)
 
         except Exception as err:
@@ -56,11 +56,11 @@ class Interface_ifEntry(Resource):
         Get the configuration of an interface
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             if id is None:
-                json_data = json.dumps(iperfController.get_interfaces())
+                json_data = json.dumps(trafficShaperController.get_interfaces())
             else:
-                json_data = json.dumps(iperfController.get_interface(id))
+                json_data = json.dumps(trafficShaperController.get_interface(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -81,9 +81,9 @@ class Interface_ifEntry(Resource):
         Update the configuration of an interface
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
-            iperfController.update_interface(id, json_data)
+            trafficShaperController.update_interface(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
@@ -101,8 +101,8 @@ class Interface_ifEntry(Resource):
         Remove the configuration of an interface 
         """
         try:
-            iperfController = IperfController()
-            iperfController.reset_interface(id)
+            trafficShaperController = TrafficShaperController()
+            trafficShaperController.reset_interface(id)
             return Response(status=202)
 
         except ValueError as ve:
@@ -123,8 +123,8 @@ class Interface_ifEntry_Ipv4Configuration(Resource):
         Get the ipv4 configuration of an interface 
         """
         try:
-            iperfController = IperfController()
-            json_data = json.dumps(iperfController.get_interface_ipv4Configuration(id))
+            trafficShaperController = TrafficShaperController()
+            json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -145,9 +145,9 @@ class Interface_ifEntry_Ipv4Configuration(Resource):
         Update the ipv4 configuration of an interface 
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
-            iperfController.update_interface_ipv4Configuration(id, json_data)
+            trafficShaperController.update_interface_ipv4Configuration(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
@@ -168,8 +168,8 @@ class Interface_ifEntry_Ipv4Configuration_Address(Resource):
         Get the ip address of an interface  
         """
         try:
-            iperfController = IperfController()
-            json_data = json.dumps(iperfController.get_interface_ipv4Configuration_address(id))
+            trafficShaperController = TrafficShaperController()
+            json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_address(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -190,9 +190,9 @@ class Interface_ifEntry_Ipv4Configuration_Address(Resource):
         Update the ip address of an interface 
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             address = request.data.decode()
-            iperfController.update_interface_ipv4Configuration_address(id, address)
+            trafficShaperController.update_interface_ipv4Configuration_address(id, address)
             return Response(status=202)
 
         except ValueError as ve:
@@ -213,8 +213,8 @@ class Interface_ifEntry_Ipv4Configuration_Netmask(Resource):
         Get the netmask of an interface  
         """
         try:
-            iperfController = IperfController()
-            json_data = json.dumps(iperfController.get_interface_ipv4Configuration_netmask(id))
+            trafficShaperController = TrafficShaperController()
+            json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_netmask(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -235,9 +235,9 @@ class Interface_ifEntry_Ipv4Configuration_Netmask(Resource):
         Update the netmask of an interface 
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             netmask = request.data.decode()
-            iperfController.update_interface_ipv4Configuration_netmask(id, netmask)
+            trafficShaperController.update_interface_ipv4Configuration_netmask(id, netmask)
             return Response(status=202)
 
         except ValueError as ve:
@@ -258,8 +258,8 @@ class Interface_ifEntry_Ipv4Configuration_DefaultGw(Resource):
         Get the mac address of an interface  
         """
         try:
-            iperfController = IperfController()
-            json_data = json.dumps(iperfController.get_interface_ipv4Configuration_mac_address(id))
+            trafficShaperController = TrafficShaperController()
+            json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_mac_address(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -281,8 +281,8 @@ class Interface_ifEntry_Ipv4Configuration_MacAddress(Resource):
         Get the default gw address of an interface  
         """
         try:
-            iperfController = IperfController()
-            json_data = json.dumps(iperfController.get_interface_ipv4Configuration_default_gw(id))
+            trafficShaperController = TrafficShaperController()
+            json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_default_gw(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
@@ -303,9 +303,9 @@ class Interface_ifEntry_Ipv4Configuration_MacAddress(Resource):
         Update the default gw of an interface  
         """
         try:
-            iperfController = IperfController()
+            trafficShaperController = TrafficShaperController()
             default_gw = request.data.decode()
-            iperfController.update_interface_ipv4Configuration_default_gw(id, default_gw)
+            trafficShaperController.update_interface_ipv4Configuration_default_gw(id, default_gw)
             return Response(status=202)
 
         except ValueError as ve:

@@ -19,3 +19,17 @@ class TrafficShaperParser():
 
         return TrafficShaper(download_limit=download_limit,
                              upload_limit=upload_limit)
+
+    def get_traffic_shaper_dict(self, traffic_shaper):
+
+        traffic_shaper_dict = {}
+
+        traffic_shaper_dict['interface_to_controler'] = traffic_shaper.interface_name
+
+        if traffic_shaper.download_limit is not None:
+            traffic_shaper_dict['download_limit'] = traffic_shaper.download_limit
+
+        if traffic_shaper.upload_limit is not None:
+            traffic_shaper_dict['upload_limit'] = traffic_shaper.upload_limit
+
+        return traffic_shaper_dict

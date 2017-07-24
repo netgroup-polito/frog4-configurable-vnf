@@ -1,0 +1,5 @@
+{
+  "interface_to_control": "eth0",
+  "download_limit": 1000,
+  "upload_limit": 10
+}

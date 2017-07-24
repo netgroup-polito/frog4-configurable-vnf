@@ -92,18 +92,18 @@ module config-traffic-shaper {
     container traffic_shaper{
         leaf interface_to_control {
             type leafref {
-                path "/interfaces/ifEntry/id";
+                path "/interfaces/ifEntry/name";
             }
         }
         leaf download_limit{
-            description = "in mega bits, default 0 unlimited"
+            description = "in mega bits, default unlimited"
             type integer;
-            default = 0;
+            mandatory false;
         }
         leaf upload_limit{
-            description = "in mega bits, default 0 unlimited"
+            description = "in mega bits, default unlimited"
             type integer;
-            default = 0;
+            mandatory false;
         }
     }
 }

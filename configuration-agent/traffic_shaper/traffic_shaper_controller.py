@@ -2,6 +2,13 @@ from components.common.traffic_shaper.traffic_shaper_controller import TrafficSh
 from components.common.traffic_shaper.traffic_shaper_parser import TrafficShaperParser as TrafficShaperCoreParser
 #from components.common.interface.interface_controller import InterfaceController
 #from components.common.interface.interface_parser import InterfaceParser
+import logging
+
+# set log level
+log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
+log_date_format = '[%d-%m-%Y %H:%M:%S]'
+logging.basicConfig(level=logging.DEBUG, format=log_format, datefmt=log_date_format)
+
 
 class TrafficShaperController():
 
@@ -117,15 +124,43 @@ class TrafficShaperController():
 
     # Traffic Shaper
     def start_bandwitdh_shaping(self, json_traffic_shaper):
+        logging.debug(json_traffic_shaper)
         traffic_shaper = self.trafficShaperCoreParser.parse_traffic_shaper_configuration(json_traffic_shaper)
+        logging.debug(traffic_shaper.__str__())
         interface_id = self.trafficShaperCoreParser.parse_interface_to_control(json_traffic_shaper)
-        interface = self.interfaceController.get_interface_by_id(interface_id)
-        traffic_shaper.add_interface_name(interface.name)
-        traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
+        #interface = self.interfaceController.get_interface_by_id(interface_id)
+        #traffic_shaper.add_interface_name(interface.name)
+        #traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
+        traffic_shaper.add_interface_name(json_traffic_shaper['interface_to_control'])
+        logging.debug(traffic_shaper.__str__())
         self.trafficShaperCoreController.start_bandwitdh_shaping(traffic_shaper)
 
-    def stop_bandwitdh_shaping(self):
-        self.trafficShaperCoreController.start_bandwitdh_shaping(interface_name)
 
-    def get_status(self):
-        self.trafficShaperCoreController.get_status(interface_name)
+    def stop_bandwitdh_shaping(self, interface_name):
+        if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):
+            self.trafficShaperCoreController.stop_bandwitdh_shaping(interface_name)
+        else:
+            raise ValueError("could not find traffic shaper for interface: " + interface_name)
+
+    def update_bandwitdh_shaping_download_limit(self, interface_name, download_limit):
+        if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):
+            self.trafficShaperCoreController.update_bandwidth_shaping_download_limit(interface_name, download_limit)
+        else:
+            raise ValueError("could not find traffic shaper for interface: " + interface_name)
+
+    def update_bandwitdh_shaping_upload_limit(self, interface_name, upload_limit):
+        if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):
+            self.trafficShaperCoreController.update_bandwidth_shaping_upload_limit(interface_name, upload_limit)
+        else:
+            raise ValueError("could not find traffic shaper for interface: " + interface_name)
+
+    def get_all_traffic_shapers(self):
+        return self.trafficShaperCoreController.get_all_traffic_shapers()
+
+    def get_traffic_shaper(self, interface_name):
+        if interface_name is not None:
+            if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):
+                traffic_shaper = self.trafficShaperCoreController.get_traffic_shaper(interface_name)
+                return self.trafficShaperCoreParser.get_traffic_shaper_dict(traffic_shaper)
+            else:
+                raise ValueError("could not find traffic shaper for interface: " + interface_name)

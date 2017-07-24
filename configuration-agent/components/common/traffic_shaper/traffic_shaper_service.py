@@ -11,20 +11,26 @@ class TrafficShaperService():
 
         iface_name = TrafficShaper.interface_name
         iface_addr = TrafficShaper.interface_address
-        dwld = TrafficShaper.download_limit
-        upld = TrafficShaper.upload_limit
+
+        dwld = None
+        if TrafficShaper.download_limit is not None:
+            dwld = TrafficShaper.download_limit
+
+        upld = None
+        if TrafficShaper.upload_limit is not None:
+            upld = TrafficShaper.upload_limit
 
         # Filter options for limiting the intended interface.
         U32 = "tc filter add dev "+iface_name+" protocol ip parent 1:0 prio 1 u32"
 
         Bash("tc qdisc add dev "+iface_name+" root handle 1: htb default 30")
-        if dwld != -1:
+        if dwld is not None:
            Bash("class add dev "+iface_name+" parent 1: classid 1:1 htb rate "+dwld)
-        if upld != -1:
+        if upld is not None:
             Bash("class add dev " + iface_name + " parent 1: classid 1:2 htb rate " + upld)
-        if dwld != -1:
+        if dwld is not None:
             Bash(U32+" match ip dst "+iface_addr+"/32 flowid 1:1")
-        if upld != -1:
+        if upld is not None:
             Bash(U32+" match ip dst "+iface_addr+"/32 flowid 1:2")
 
         # The first line creates the root qdisc, and the next two lines
