@@ -10,6 +10,7 @@ module config-dhcp-server {
 		    key "name";
 		    min-elements 1;
 		    max-elements 2;
+		    atomic true;
 		    advertise onchange;
 		    leaf name {
 				description "name='Name'";
@@ -22,17 +23,14 @@ module config-dhcp-server {
                     enum transparent;
                     enum not_defined;
     			}
-    			advertise ondemand;
 			}
 			leaf management{
 			    description "name='Management'";
 			    type boolean;
 			    mandatory false;
-			    advertise ondemand;
 			}
 			container ipv4_configuration{
 			    presence "it contains ipv4 configuration";
-			    advertise onchange;
 			    leaf configurationType{
 			        description "name='Configuration type'";
 			        type enumeration {
@@ -40,31 +38,26 @@ module config-dhcp-server {
                         enum static;
                         enum not_defined;
     				}
-    				advertise ondemand;
 			    }
 			    leaf address{
 			        description "name='IP Address";
 			        type inet:ipv4-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf netmask{
 			        description "name='Netmask";
 			        type inet:ip-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf mac_address{
                     description "name='MAC Address'";
-                    type string;
+                    type inet:mac-address;
                     mandatory false;
-                    advertise ondemand;
 			    }
 			    leaf default_gw{
 			        description "name='Default GW";
 			        type inet:ipv4-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			}
 			container ipv6_configuration{
@@ -142,7 +135,7 @@ module config-dhcp-server {
             }
             leaf dnsDomainName {
                 description "name='DNS name', tooltip='Specifies the domain name, option code is 15.'";type string;
-                type string;
+                type inet:domain-name;
                 advertise onchange;
             }
             list sections {
@@ -166,28 +159,25 @@ module config-dhcp-server {
 	}
 	container clients{
 	description "name='DHCP Clients'";
+	    atomic true;
 	    advertise onchange;
 	    list clients {
 			key "mac_address";
 			leaf mac_address {
 				description "name='MAC Address'";
-				type string;
-				advertise ondemand;
+				type inet:mac-address;
 			}
 			leaf ip_address {
 				description "name='IP Address'";
-				type string;
-				advertise ondemand;
+				type inet:ipv4-address;
 			}
 			leaf hostname{
 			    description "name='Hostname'";
-			    type inet:ip-address;
-			    advertise ondemand;
-			}
-			leaf valid_until{
-			    description "name='Valid until'";
 			    type string;
-			    advertise ondemand;
+			}
+			leaf lease_time{
+			    description "name='Lease Time'";
+			    type string;
 			}
 		}
 	}

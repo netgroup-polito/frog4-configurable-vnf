@@ -13,35 +13,31 @@ module config-nat {
 		    key "id";
 		    min-elements 2;
 		    max-elements 3;
+		    atomic true;
 		    advertise onchange;
 			leaf id{
 				description "name='ID'";
 				type string;
-				advertise ondemand;
-			}		    
+			}
 			leaf name {
 				description "name='Name'";
 				type string;
-				advertise ondemand;
 			}
 			leaf type{
 			    description "name='Type'";
 			    type enumeration {
-                        enum L3;
-                        enum transparent;
-                        enum not_defined;
+                    enum L3;
+                    enum transparent;
+                    enum not_defined;
     			}
-    			advertise ondemand;
 			}
 			leaf management{
 			    description "name='Management privileges'";
 			    type boolean;
 			    mandatory false;
-			    advertise ondemand;
 			}
 			container ipv4_configuration{
 			    presence "it contains ipv4 configuration";
-			    advertise onchange;
 			    leaf configurationType{
 			        description "name='Configuration type'";
 			        type enumeration {
@@ -49,36 +45,30 @@ module config-nat {
                         enum static;
                         enum not_defined;
     				}
-    				advertise ondemand;
 			    }
 			    leaf address{
 			        description "name='IP address";
 			        type inet:ipv4-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf netmask{
 			        description "name='Netmask";
 			        type inet:ip-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
-			    leaf mac-address{
+			    leaf mac_address{
                     description "name='MAC Address'";
-                    type string;
+                    type inet:mac-address;
                     mandatory false;
-                    advertise ondemand;
 			    }
 			    leaf default_gw{
 			        description "name='Default gateway";
 			        type inet:ipv4-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			}
 			container ipv6_configuration{
 			    presence "it contains ipv6 configuration";
-			    advertise onchange;
 			    leaf configurationType{
 			        description "name='Configuration type'";
 			        type enumeration {
@@ -86,25 +76,21 @@ module config-nat {
                         enum static;
                         enum not_defined;
     				}
-    				advertise ondemand;
 			    }
 			    leaf address{
 			        description "name='IP address";
 			        type inet:ipv6-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf netmask{
 			        description "name='Netmask";
 			        type inet:ip-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf default_gw{
 			        description "name='Default gateway";
 			        type inet:ipv6-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			}
 		}
@@ -149,7 +135,7 @@ module config-nat {
                 }
                 leaf src_port {
                     description "name='Source Port'";
-                    type string;
+                    type inet:port-number;
                     advertise ondemand;
                 }
                 leaf dst_address {
@@ -159,7 +145,7 @@ module config-nat {
                 }
                 leaf dst_port {
                     description "name='Destination port'";
-                    type string;
+                    type inet:port-number;
                     advertise ondemand;
                 }
                 leaf translated_address {
@@ -169,7 +155,7 @@ module config-nat {
                 }
                 leaf translated_port {
                         description "name='Destination port'";
-                    type string;
+                    type inet:port-number;
                     advertise ondemand;
                 }
                 leaf tcp_state {
@@ -193,6 +179,8 @@ module config-nat {
 		}
 		container arp-table{
 		    description "name='ARP table'";
+		    atomic true;
+		    advertise onchange;
 		    list arp-entry{
                 description "name='ARP entry'";
                 key "ip_address";
@@ -202,7 +190,7 @@ module config-nat {
                 }
                 leaf mac_address{
                     description "name='MAC address'";
-                    type string;
+                    type inet:mac-address;
                 }
 		    }
 		}
@@ -210,6 +198,8 @@ module config-nat {
 		list floatingIP {
 		    description "name='Floating IP'";
 		    key "public_address";
+		    atomic true;
+		    advertise onchange;
 		    leaf private_address {
                 description "name='Private address'";
                 type inet:ip-address;

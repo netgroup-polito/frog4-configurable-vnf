@@ -11,11 +11,11 @@ module config-firewall {
 		    key "name";
 		    min-elements 2;
 		    max-elements 3;
+		    atomic true;
 		    advertise onchange;
 		    leaf name {
 				description "name='Name'";
 				type string;
-				advertise ondemand;
 			}
 			leaf type{
 			    description "name='Type'";
@@ -24,13 +24,11 @@ module config-firewall {
                     enum transparent;
                     enum not_defined;
     			}
-    			advertise ondemand;
 			}
 			leaf management{
 			    description "name='Management'";
 			    type boolean;
 			    mandatory false;
-			    advertise ondemand;
 			}
 			container ipv4_configuration{
 			    presence "it contains ipv4 configuration";
@@ -42,36 +40,30 @@ module config-firewall {
                         enum static;
                         enum not_defined;
     				}
-    				advertise ondemand;
 			    }
 			    leaf address{
 			        description "name='IP Address";
 			        type inet:ipv4-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf netmask{
 			        description "name='Netmask";
 			        type inet:ip-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
-			    leaf mac-address{
+			    leaf mac_address{
                     description "name='MAC Address'";
-                    type string;
+                    type inet:mac-address;
                     mandatory false;
-                    advertise ondemand;
 			    }
 			    leaf default_gw{
 			        description "name='Default GW";
 			        type inet:ipv4-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			}
 			container ipv6_configuration{
 			    presence "it contains ipv4 configuration";
-			    advertise onchange;
 			    leaf configurationType{
 			        description "name='Configuration type'";
 			        type enumeration {
@@ -79,25 +71,21 @@ module config-firewall {
                         enum static;
                         enum not_defined;
     				}
-    				advertise ondemand;
 			    }
 			    leaf address{
 			        description "name='IP Address";
 			        type inet:ipv6-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf netmask{
 			        description "name='Netmask";
 			        type inet:ip-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			    leaf default_gw{
 			        description "name='Default GW";
 			        type inet:ipv6-address;
 			        mandatory false;
-			        advertise ondemand;
 			    }
 			}
 		}
@@ -114,17 +102,15 @@ module config-firewall {
 	container firewall {
 		description "name='Firewall";
 		list policies {
-			advertise periodic;
-			period 1000;
+			atomic true;
+			advertise onchange;
 			key "id";
 			leaf id {
 				type string;
-				advertise ondemand;
 			}
 			leaf description{
 			    type string;
 			    mandatory false;
-			    advertise ondemand;
 			}
 			leaf action {
 				type enumeration {
@@ -132,7 +118,6 @@ module config-firewall {
 					enum reject;
 					enum accept;
 				}
-				advertise ondemand;
 			}
 			leaf protocol {
 				type enumeration {
@@ -141,60 +126,49 @@ module config-firewall {
 					enum icmp;
 					enum all;
 				}
-				advertise ondemand;
 			}
 			leaf in-interface {
 				type leafref {
 				 	path "/interfaces/ifEntry/name";
 				}
 				mandatory false;
-				advertise ondemand;
 			}
 			leaf out-interface {
 				type leafref {
 				 	path "/interfaces/ifEntry/name";
 				}
 				mandatory false;
-				advertise ondemand;
 			}
 			leaf src-address {
 				type inet:ip-address;
-				advertise ondemand;
 			}
 			leaf dst-address {
 				type inet:ip-address;
 				mandatory false;
-				advertise ondemand;
 			}
 			leaf src-port {
-				type string;
+				type inet:port-number;
 				mandatory false;
-				advertise ondemand;
 			}
 			leaf dst-port {
-				type string;
+				type inet:port-number;
 				mandatory false;
-				advertise ondemand;
 			}
 		}
 		list blacklist {
 		    key "url";
 		    description "name='URL', tooltip='eg: www.youtube.com'";
-		    advertise periodic;
-			period 1000;
+		    advertise onchange;
 		    leaf url{
 		        type string;
-		        advertise ondemand;
 		    }
 		}
 		list whitelist {
 		    key "url";
 		    description "name='URL', tooltip='eg: www.youtube.com'";
-		    advertise periodic;
-			period 1000;
+		    advertise onchange;
 		    leaf url{
 		        type string;
-		        advertise ondemand;
 		    }
 		}
 	}
