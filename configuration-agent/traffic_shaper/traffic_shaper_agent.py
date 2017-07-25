@@ -1,6 +1,8 @@
+from common.agent import ConfigurationAgent
 from common.utils import check_validity_initial_params
+from traffic_shaper.traffic_shaper_monitor import TrafficShaperMonitor
+
 import sys
-from subprocess import call
 import logging
 
 class TrafficShaperAgent():
@@ -9,11 +11,11 @@ class TrafficShaperAgent():
 
         logging.debug("Traffic Shaper agent started...")
 
-        rest_address = "127.0.0.1"
-        rest_port = "9010"
-        rest_endpoint = "http://" + rest_address + ":" + rest_port
-        logging.info("Rest Server started on: " + rest_endpoint)
-        call("gunicorn -b " + rest_address + ':' + rest_port + " -t 500 traffic_shaper.rest_api.traffic_shaper_rest_start:app", shell=True)
+        configurationAgent = ConfigurationAgent("traffic_shaper", nf_type, datadisk_path, on_change_interval)
+
+        configurationAgent.start_monitoring(TrafficShaperMonitor)
+
+        configurationAgent.start_rest_controller("traffic_shaper.rest_api.traffic_shaper_rest_start")
 
 
 if __name__ == "__main__":

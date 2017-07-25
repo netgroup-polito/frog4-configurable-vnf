@@ -1,7 +1,8 @@
 from components.common.traffic_shaper.traffic_shaper_controller import TrafficShaperController as TrafficShaperCoreController
 from components.common.traffic_shaper.traffic_shaper_parser import TrafficShaperParser as TrafficShaperCoreParser
-#from components.common.interface.interface_controller import InterfaceController
-#from components.common.interface.interface_parser import InterfaceParser
+from components.common.interface.interface_controller import InterfaceController
+from components.common.interface.interface_parser import InterfaceParser
+from traffic_shaper.traffic_shaper_parser import TrafficShaperParser
 import logging
 
 # set log level
@@ -13,12 +14,32 @@ logging.basicConfig(level=logging.DEBUG, format=log_format, datefmt=log_date_for
 class TrafficShaperController():
 
     def __init__(self):
-        #self.interfaceController = InterfaceController()
-        #self.interfaceParser = InterfaceParser
+        self.trafficShaperParser = TrafficShaperParser()
+
+        self.interfaceController = InterfaceController()
+        self.interfaceParser = InterfaceParser
+
         self.trafficShaperCoreController = TrafficShaperCoreController()
         self.trafficShaperCoreParser = TrafficShaperCoreParser()
 
-    """
+    def set_configuration(self, json_configuration):
+
+        json_interfaces = self.trafficShaperParser.parse_interfaces(json_configuration)
+        for json_iface in json_interfaces:
+            self.configure_interface(json_iface)
+
+        json_traffic_shaper = self.trafficShaperParser.parse_traffic_shaper_configuration(json_configuration)
+        self.start_bandwitdh_shaping(json_traffic_shaper)
+
+    def get_full_status(self):
+
+        status = {}
+
+        status["config-traffic-shaper:interfaces"] = self.get_interfaces_status()
+        status["config-traffic-shaper:traffic_shaper"] = self.get_all_traffic_shapers()
+
+        return status
+
     # Interfaces
     def get_interfaces_status(self):
         conf_interfaces = {}
@@ -120,7 +141,6 @@ class TrafficShaperController():
             self.interfaceController.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
         else:
             raise ValueError("could not find interface: " + ifname)
-    """
 
     # Traffic Shaper
     def start_bandwitdh_shaping(self, json_traffic_shaper):
@@ -128,13 +148,10 @@ class TrafficShaperController():
         traffic_shaper = self.trafficShaperCoreParser.parse_traffic_shaper_configuration(json_traffic_shaper)
         logging.debug(traffic_shaper.__str__())
         interface_id = self.trafficShaperCoreParser.parse_interface_to_control(json_traffic_shaper)
-        #interface = self.interfaceController.get_interface_by_id(interface_id)
-        #traffic_shaper.add_interface_name(interface.name)
-        #traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
-        traffic_shaper.add_interface_name(json_traffic_shaper['interface_to_control'])
-        logging.debug(traffic_shaper.__str__())
+        interface = self.interfaceController.get_interface_by_id(interface_id)
+        traffic_shaper.add_interface_name(interface.name)
+        traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
         self.trafficShaperCoreController.start_bandwitdh_shaping(traffic_shaper)
-
 
     def stop_bandwitdh_shaping(self, interface_name):
         if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):
@@ -155,7 +172,11 @@ class TrafficShaperController():
             raise ValueError("could not find traffic shaper for interface: " + interface_name)
 
     def get_all_traffic_shapers(self):
-        return self.trafficShaperCoreController.get_all_traffic_shapers()
+        traffic_shapers_dict = []
+        traffic_shaper_list = self.trafficShaperCoreController.get_all_traffic_shapers()
+        for traffic_shaper in traffic_shaper_list:
+            traffic_shapers_dict.append(self.trafficShaperCoreParser.get_traffic_shaper_dict(traffic_shaper))
+        return traffic_shapers_dict
 
     def get_traffic_shaper(self, interface_name):
         if interface_name is not None:
