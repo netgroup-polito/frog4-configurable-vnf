@@ -73,4 +73,4 @@ class NatMonitor():
         self.messageBus.publish_topic(msg , json.dumps(body, indent=4, sort_keys=True))
 
     def on_data_callback(self, src, msg):
-        logging.debug("[FirewallMonitor] From: " + src + " Msg: " + msg)
+        logging.debug("[NatMonitor] From: " + src + " Msg: " + msg)

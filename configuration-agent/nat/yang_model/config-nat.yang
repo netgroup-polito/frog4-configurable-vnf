@@ -114,11 +114,10 @@ module config-nat {
 		}
 		container nat-table{
 		    description "name='Nat Table'";
-		    advertise periodic;
-		    period 1000;
 		    list nat-session {
 			    description "name='Nat Session'";
                 advertise onchange;
+                atomic true;
                 leaf protocol {
                     description "name='Protocol'";
                     type enumeration {
@@ -126,37 +125,30 @@ module config-nat {
                     enum TCP;
                     enum UDP;
                     }
-                    advertise ondemand;
                 }
                 leaf src_address {
                     description "name='Source Address'";
                     type inet:ip-address;
-                    advertise ondemand;
                 }
                 leaf src_port {
                     description "name='Source Port'";
                     type inet:port-number;
-                    advertise ondemand;
                 }
                 leaf dst_address {
                     description "name='Destination address'";
                     type inet:ip-address;
-                    advertise ondemand;
                 }
                 leaf dst_port {
                     description "name='Destination port'";
                     type inet:port-number;
-                    advertise ondemand;
                 }
                 leaf translated_address {
                     description "name='Translated address'";
                     type inet:ip-address;
-                    advertise ondemand;
                 }
                 leaf translated_port {
                         description "name='Destination port'";
                     type inet:port-number;
-                    advertise ondemand;
                 }
                 leaf tcp_state {
                     description "name='TCP state'";
@@ -173,7 +165,6 @@ module config-nat {
                     enum LISTEN;
                     }
                     mandatory false;
-                    advertise ondemand;
                 }
 		    }
 		}
