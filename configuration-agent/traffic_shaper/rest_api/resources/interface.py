@@ -7,6 +7,7 @@ from traffic_shaper.traffic_shaper_controller import TrafficShaperController
 from traffic_shaper.rest_api.api import api
 
 interface_ns = api.namespace('interfaces', 'Interface Resource')
+trafficShaperController = TrafficShaperController()
 
 @interface_ns.route('', methods=['GET'])
 class Interface(Resource):
@@ -17,14 +18,12 @@ class Interface(Resource):
         Gets the status of all interfaces
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.dumps(trafficShaperController.get_interfaces_status())
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry', methods=['GET', 'POST'])
@@ -39,14 +38,12 @@ class Interface_ifEntry(Resource):
         Configure an interface
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
             trafficShaperController.configure_interface(json_data)
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.response(200, 'Interface retrieved.')
     @interface_ns.response(404, 'Interface not found.')
@@ -56,7 +53,6 @@ class Interface_ifEntry(Resource):
         Get the configuration of an interface
         """
         try:
-            trafficShaperController = TrafficShaperController()
             if id is None:
                 json_data = json.dumps(trafficShaperController.get_interfaces())
             else:
@@ -65,11 +61,9 @@ class Interface_ifEntry(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Interface", "Interface to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Interface correctly updated.')
@@ -81,17 +75,14 @@ class Interface_ifEntry(Resource):
         Update the configuration of an interface
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
             trafficShaperController.update_interface(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.response(202, 'Interface deleted.')
     @interface_ns.response(404, 'Interface not found.')
@@ -101,16 +92,13 @@ class Interface_ifEntry(Resource):
         Remove the configuration of an interface 
         """
         try:
-            trafficShaperController = TrafficShaperController()
             trafficShaperController.reset_interface(id)
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration', methods=['GET','PUT'])
@@ -123,17 +111,14 @@ class Interface_ifEntry_Ipv4Configuration(Resource):
         Get the ipv4 configuration of an interface 
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Ipv4 Configuration", "Ipv4 configuration to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Ipv4 configuration correctly updated.')
@@ -145,17 +130,14 @@ class Interface_ifEntry_Ipv4Configuration(Resource):
         Update the ipv4 configuration of an interface 
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
             trafficShaperController.update_interface_ipv4Configuration(id, json_data)
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/address', methods=['GET','PUT'])
@@ -168,17 +150,14 @@ class Interface_ifEntry_Ipv4Configuration_Address(Resource):
         Get the ip address of an interface  
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_address(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Ip Address", "Ip address to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Ip address correctly updated.')
@@ -190,17 +169,14 @@ class Interface_ifEntry_Ipv4Configuration_Address(Resource):
         Update the ip address of an interface 
         """
         try:
-            trafficShaperController = TrafficShaperController()
             address = request.data.decode()
             trafficShaperController.update_interface_ipv4Configuration_address(id, address)
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/netmask', methods=['GET','PUT'])
@@ -213,17 +189,14 @@ class Interface_ifEntry_Ipv4Configuration_Netmask(Resource):
         Get the netmask of an interface  
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_netmask(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Netmask", "Netmask to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Netmask correctly updated.')
@@ -235,17 +208,14 @@ class Interface_ifEntry_Ipv4Configuration_Netmask(Resource):
         Update the netmask of an interface 
         """
         try:
-            trafficShaperController = TrafficShaperController()
             netmask = request.data.decode()
             trafficShaperController.update_interface_ipv4Configuration_netmask(id, netmask)
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/mac_address', methods=['GET'])
@@ -258,17 +228,14 @@ class Interface_ifEntry_Ipv4Configuration_DefaultGw(Resource):
         Get the mac address of an interface  
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_mac_address(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/default_gw', methods=['GET','PUT'])
@@ -281,17 +248,14 @@ class Interface_ifEntry_Ipv4Configuration_MacAddress(Resource):
         Get the default gw address of an interface  
         """
         try:
-            trafficShaperController = TrafficShaperController()
             json_data = json.dumps(trafficShaperController.get_interface_ipv4Configuration_default_gw(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Default GW", "Default GW to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Default GW correctly updated.')
@@ -303,14 +267,11 @@ class Interface_ifEntry_Ipv4Configuration_MacAddress(Resource):
         Update the default gw of an interface  
         """
         try:
-            trafficShaperController = TrafficShaperController()
             default_gw = request.data.decode()
             trafficShaperController.update_interface_ipv4Configuration_default_gw(id, default_gw)
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

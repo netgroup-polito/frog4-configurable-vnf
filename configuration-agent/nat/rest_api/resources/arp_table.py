@@ -26,8 +26,7 @@ class Arp_Table(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @arp_table_ns.response(200, 'Arp table retrieved.')
     @arp_table_ns.response(500, 'Internal Error.')
@@ -42,8 +41,7 @@ class Arp_Table(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @arp_table_ns.response(202, 'Arp entry deleted.')
     @arp_table_ns.response(404, 'Arp entry not found.')
@@ -58,11 +56,9 @@ class Arp_Table(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @arp_table_ns.route('/arp-table/<id>/mac_address', methods=['GET','PUT'])
 class Arp_Table_MacAddress(Resource):
@@ -79,8 +75,7 @@ class Arp_Table_MacAddress(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @arp_table_ns.param("Mac address", "Mac address to update", "body", type="string", required=True)
     @arp_table_ns.response(202, 'Mac address correctly updated.')
@@ -98,8 +93,6 @@ class Arp_Table_MacAddress(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

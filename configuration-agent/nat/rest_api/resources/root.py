@@ -23,8 +23,7 @@ class Nat(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @nat_root_ns.param("Nat Configuration", "Nat Configuration to update", "body", type="string", required=True)
     @nat_root_ns.response(202, 'Nat configuration updated.')
@@ -41,5 +40,4 @@ class Nat(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

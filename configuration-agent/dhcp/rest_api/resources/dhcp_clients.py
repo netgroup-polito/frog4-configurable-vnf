@@ -28,11 +28,9 @@ class Client(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @client_ns.route('/clients/<id>/ip_address', methods=['GET'])
 class Client_IpAdress(Resource):
@@ -50,11 +48,9 @@ class Client_IpAdress(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @client_ns.route('/clients/<id>/mac_address', methods=['GET'])
 class Client_MacAdress(Resource):
@@ -72,11 +68,9 @@ class Client_MacAdress(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @client_ns.route('/clients/<id>/hostname', methods=['GET'])
 class Client_Hostname(Resource):
@@ -94,11 +88,9 @@ class Client_Hostname(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @client_ns.route('/clients/<id>/valid_until', methods=['GET'])
 class Client_ValidUntil(Resource):
@@ -116,8 +108,6 @@ class Client_ValidUntil(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

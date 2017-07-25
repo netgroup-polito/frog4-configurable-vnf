@@ -23,8 +23,7 @@ class DhcpServer(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @dhcp_ns.param("Dhcp Configuration", "Dhcp Configuration to update", "body", type="string", required=True)
     @dhcp_ns.response(202, 'Nat configuration updated.')
@@ -41,7 +40,6 @@ class DhcpServer(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 

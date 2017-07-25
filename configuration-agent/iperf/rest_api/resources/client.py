@@ -26,6 +26,5 @@ class IperfClient_Configuration(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 

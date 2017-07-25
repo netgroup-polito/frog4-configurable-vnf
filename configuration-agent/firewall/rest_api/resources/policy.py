@@ -26,8 +26,7 @@ class Policy(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @policy_ns.response(200, 'Policy retrieved.')
     @policy_ns.response(404, 'Policy not found.')
@@ -46,11 +45,9 @@ class Policy(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     """
     @policy_ns.param("Policy", "Policy to update", "body", type="string", required=True)
@@ -68,11 +65,9 @@ class Policy(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
     """
 
     @policy_ns.response(202, 'Policy deleted.')
@@ -88,11 +83,9 @@ class Policy(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/description', methods=['GET','PUT'])
 class Policy_Description(Resource):
@@ -110,11 +103,9 @@ class Policy_Description(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/action', methods=['GET','PUT'])
 class Policy_Action(Resource):
@@ -132,11 +123,9 @@ class Policy_Action(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/protocol', methods=['GET','PUT'])
 class Policy_Protocol(Resource):
@@ -154,11 +143,9 @@ class Policy_Protocol(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/in-interface', methods=['GET','PUT'])
 class Policy_InInterface(Resource):
@@ -176,11 +163,9 @@ class Policy_InInterface(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/out-interface', methods=['GET','PUT'])
 class Policy_OutInterface(Resource):
@@ -198,11 +183,9 @@ class Policy_OutInterface(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/src-address', methods=['GET','PUT'])
 class Policy_SrcAddress(Resource):
@@ -220,11 +203,9 @@ class Policy_SrcAddress(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/dst-address', methods=['GET','PUT'])
 class Policy_DstAddress(Resource):
@@ -242,11 +223,9 @@ class Policy_DstAddress(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/src-port', methods=['GET','PUT'])
 class Policy_SrcPort(Resource):
@@ -264,11 +243,9 @@ class Policy_SrcPort(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @policy_ns.route('/policies/<id>/dst-port', methods=['GET','PUT'])
 class Policy_DstPort(Resource):
@@ -286,8 +263,6 @@ class Policy_DstPort(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

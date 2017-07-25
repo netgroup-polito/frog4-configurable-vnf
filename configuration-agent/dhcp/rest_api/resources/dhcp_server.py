@@ -24,11 +24,9 @@ class DhcpServer_Configuration(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/defaultLeaseTime', methods=['GET','PUT'])
 class DhcpServer_Configuration_DefaultLeaseTime(Resource):
@@ -46,11 +44,9 @@ class DhcpServer_Configuration_DefaultLeaseTime(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Default lease time", "Default lease time to update", "body", type="string", required=True)
     @config_ns.response(202, 'Default lease time correctly updated.')
@@ -68,11 +64,9 @@ class DhcpServer_Configuration_DefaultLeaseTime(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/maxLeaseTime', methods=['GET','PUT'])
 class DhcpServer_Configuration_MaxLeaseTime(Resource):
@@ -90,11 +84,9 @@ class DhcpServer_Configuration_MaxLeaseTime(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Max lease time", "Max lease time to update", "body", type="string", required=True)
     @config_ns.response(202, 'Max lease time correctly updated.')
@@ -112,11 +104,9 @@ class DhcpServer_Configuration_MaxLeaseTime(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/subnet', methods=['GET','PUT'])
 class DhcpServer_Configuration_Subnet(Resource):
@@ -134,11 +124,9 @@ class DhcpServer_Configuration_Subnet(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Subnet", "Subnet to update", "body", type="string", required=True)
     @config_ns.response(202, 'Subnet correctly updated.')
@@ -156,11 +144,9 @@ class DhcpServer_Configuration_Subnet(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/subnetMask', methods=['GET','PUT'])
 class DhcpServer_Configuration_SubnetMask(Resource):
@@ -178,11 +164,9 @@ class DhcpServer_Configuration_SubnetMask(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Subnet mask", "Subnet mask to update", "body", type="string", required=True)
     @config_ns.response(202, 'Subnet mask correctly updated.')
@@ -200,11 +184,9 @@ class DhcpServer_Configuration_SubnetMask(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/router', methods=['GET','PUT'])
 class DhcpServer_Configuration_Router(Resource):
@@ -222,11 +204,9 @@ class DhcpServer_Configuration_Router(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Router", "Router to update", "body", type="string", required=True)
     @config_ns.response(202, 'Router correctly updated.')
@@ -244,11 +224,9 @@ class DhcpServer_Configuration_Router(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/dnsPrimaryServer', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
@@ -266,11 +244,9 @@ class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Dns primary server", "Dns primary server to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns primary server correctly updated.')
@@ -288,11 +264,9 @@ class DhcpServer_Configuration_Dns_PrimaryServer(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/dnsSecondaryServer', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
@@ -310,11 +284,9 @@ class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Dns secondary server", "Dns secondary server to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns secondary server correctly updated.')
@@ -332,11 +304,9 @@ class DhcpServer_Configuration_Dns_SecondaryServer(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/dnsDomainName', methods=['GET','PUT'])
 class DhcpServer_Configuration_Dns_DomainName(Resource):
@@ -354,11 +324,9 @@ class DhcpServer_Configuration_Dns_DomainName(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Dns domain name", "Dns domain name to update", "body", type="string", required=True)
     @config_ns.response(202, 'Dns domain name correctly updated.')
@@ -376,11 +344,9 @@ class DhcpServer_Configuration_Dns_DomainName(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/sections', methods=['GET','POST'])
 @config_ns.route('/server/sections<id>', methods=['GET','PUT'])
@@ -401,11 +367,9 @@ class DhcpServer_Configuration_Section(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.response(200, 'Section retrieved.')
     @config_ns.response(404, 'Dhcp server not found.')
@@ -424,11 +388,9 @@ class DhcpServer_Configuration_Section(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Section", "Section to update", "body", type="string", required=True)
     @config_ns.response(202, 'Section correctly updated.')
@@ -446,11 +408,9 @@ class DhcpServer_Configuration_Section(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/sections/<id>/sectionStartIp', methods=['PUT'])
 class DhcpServer_Configuration_Section_EndIP(Resource):
@@ -470,11 +430,9 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @config_ns.route('/server/sections/<id>/sectionEndIp', methods=['GET','PUT'])
 class DhcpServer_Configuration_Section_EndIP(Resource):
@@ -492,11 +450,9 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @config_ns.param("Section end ip", "Section end ip to update", "body", type="string", required=True)
     @config_ns.response(202, 'Section end ip correctly updated.')
@@ -514,8 +470,6 @@ class DhcpServer_Configuration_Section_EndIP(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

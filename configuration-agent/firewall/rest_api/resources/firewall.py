@@ -23,8 +23,7 @@ class Firewall(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @fw_ns.param("Firewall Configuration", "Firewall Configuration to update", "body", type="string", required=True)
     @fw_ns.response(202, 'Nat configuration updated.')
@@ -41,5 +40,4 @@ class Firewall(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

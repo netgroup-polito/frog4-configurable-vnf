@@ -23,8 +23,7 @@ class Nat(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @nat_ns.param("Nat Configuration", "Nat Configuration to update", "body", type="string", required=True)
     @nat_ns.response(202, 'Nat configuration updated.')
@@ -41,8 +40,7 @@ class Nat(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @nat_ns.route('/public-interface', methods=['GET','PUT'])
 class Nat_PublicInterface(Resource):
@@ -59,8 +57,7 @@ class Nat_PublicInterface(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @nat_ns.param("Public interface", "Public interface to update", "body", type="string", required=True)
     @nat_ns.response(202, 'Public interface correctly updated.')
@@ -77,8 +74,7 @@ class Nat_PublicInterface(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 @nat_ns.route('/private-interface', methods=['GET'])
 class Nat_PrivateInterface(Resource):
@@ -95,5 +91,4 @@ class Nat_PrivateInterface(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

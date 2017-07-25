@@ -21,7 +21,6 @@ class TrafficShaper_Configuration(Resource):
         Start bandwitdh shaping
         """
         try:
-            #trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
             resp_data = trafficShaperController.start_bandwitdh_shaping(json_data)
             resp = Response(resp_data, status=200, mimetype="application/text")
@@ -40,7 +39,6 @@ class TrafficShaper_Configuration(Resource):
         Update bandwitdh shaping configuration
         """
         try:
-            #trafficShaperController = TrafficShaperController()
             json_data = json.loads(request.data.decode())
             trafficShaperController.start_bandwitdh_shaping(json_data)
             return Response(status=200)
@@ -61,7 +59,6 @@ class TrafficShaper_Configuration(Resource):
         Stop bandwitdh shaping
         """
         try:
-            #trafficShaperController = TrafficShaperController()
             trafficShaperController.stop_bandwitdh_shaping(if_name)
             return Response(status=200)
 
@@ -79,7 +76,6 @@ class TrafficShaper_Configuration(Resource):
         Get the a traffic shapher status
         """
         try:
-            #trafficShaperController = TrafficShaperController()
             if if_name is not None:
                 json_data = json.dumps(trafficShaperController.get_traffic_shaper(if_name))
             else:

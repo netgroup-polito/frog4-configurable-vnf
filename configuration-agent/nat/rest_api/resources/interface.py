@@ -23,8 +23,7 @@ class Interface(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry', methods=['GET', 'POST'])
@@ -45,8 +44,7 @@ class Interface_ifEntry(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.response(200, 'Interface retrieved.')
     @interface_ns.response(404, 'Interface not found.')
@@ -65,11 +63,9 @@ class Interface_ifEntry(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Interface", "Interface to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Interface correctly updated.')
@@ -87,11 +83,9 @@ class Interface_ifEntry(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.response(202, 'Interface deleted.')
     @interface_ns.response(404, 'Interface not found.')
@@ -106,11 +100,9 @@ class Interface_ifEntry(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration', methods=['GET','PUT'])
@@ -129,11 +121,9 @@ class Interface_ifEntry_Ipv4Configuration(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Ipv4 Configuration", "Ipv4 configuration to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Ipv4 configuration correctly updated.')
@@ -151,11 +141,9 @@ class Interface_ifEntry_Ipv4Configuration(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/address', methods=['GET','PUT'])
@@ -174,11 +162,9 @@ class Interface_ifEntry_Ipv4Configuration_Address(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Ip Address", "Ip address to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Ip address correctly updated.')
@@ -196,11 +182,9 @@ class Interface_ifEntry_Ipv4Configuration_Address(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/netmask', methods=['GET','PUT'])
@@ -219,11 +203,9 @@ class Interface_ifEntry_Ipv4Configuration_Netmask(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Netmask", "Netmask to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Netmask correctly updated.')
@@ -241,11 +223,9 @@ class Interface_ifEntry_Ipv4Configuration_Netmask(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/mac_address', methods=['GET'])
@@ -264,11 +244,9 @@ class Interface_ifEntry_Ipv4Configuration_DefaultGw(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
 
 @interface_ns.route('/ifEntry/<id>/ipv4_configuration/default_gw', methods=['GET','PUT'])
@@ -287,11 +265,9 @@ class Interface_ifEntry_Ipv4Configuration_MacAddress(Resource):
             return resp
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @interface_ns.param("Default GW", "Default GW to update", "body", type="string", required=True)
     @interface_ns.response(202, 'Default GW correctly updated.')
@@ -309,8 +285,6 @@ class Interface_ifEntry_Ipv4Configuration_MacAddress(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")

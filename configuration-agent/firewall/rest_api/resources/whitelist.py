@@ -26,8 +26,7 @@ class Whitelist(Resource):
             return Response(status=202)
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @whitelist_ns.response(200, 'Url retrieved.')
     @whitelist_ns.response(500, 'Internal Error.')
@@ -42,8 +41,7 @@ class Whitelist(Resource):
             return resp
 
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @whitelist_ns.response(202, 'Url deleted.')
     @whitelist_ns.response(404, 'Url not found.')
@@ -58,8 +56,6 @@ class Whitelist(Resource):
             return Response(status=202)
 
         except ValueError as ve:
-            logging.debug(ve)
-            return Response(status=404)
+            return Response(json.dumps(str(ve)), status=404, mimetype="application/json")
         except Exception as err:
-            logging.debug(err)
-            return Response(status=500)
+            return Response(json.dumps(str(err)), status=500, mimetype="application/json")
