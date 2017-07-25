@@ -4,6 +4,9 @@ from components.common.iperf.model.iperf_server import IperfServer
 
 class IperfParser():
 
+    def parse_server(self, json_configuration):
+        return json_configuration['server']
+
     def parse_server_configuration(self, json_server_params):
 
         address = json_server_params['address']
@@ -11,6 +14,9 @@ class IperfParser():
 
         return IperfServer(address, port)
 
+
+    def parse_client(self, json_configuration):
+        return json_configuration['client']
 
     def parse_client_configuration(self, json_client_params):
 

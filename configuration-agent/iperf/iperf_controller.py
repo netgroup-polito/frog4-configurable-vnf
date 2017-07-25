@@ -1,17 +1,43 @@
 from components.common.iperf.iperf_controller import IperfController as IperfCoreController
 from components.common.iperf.iperf_parser import IperfParser as IperfCoreParser
-#from components.common.interface.interface_controller import InterfaceController
-#from components.common.interface.interface_parser import InterfaceParser
+from components.common.interface.interface_controller import InterfaceController
+from components.common.interface.interface_parser import InterfaceParser
+from iperf.iperf_parser import IperfParser
+import logging
+
+# set log level
+log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
+log_date_format = '[%d-%m-%Y %H:%M:%S]'
+logging.basicConfig(level=logging.DEBUG, format=log_format, datefmt=log_date_format)
+
 
 class IperfController():
 
     def __init__(self):
-        #self.interfaceController = InterfaceController()
-        #self.interfaceParser = InterfaceParser
+        self.iperfParser = IperfParser()
+
+        self.interfaceController = InterfaceController()
+        self.interfaceParser = InterfaceParser
+
         self.iperfCoreController = IperfCoreController()
         self.iperfCoreParser = IperfCoreParser()
 
-    """
+    def set_configuration(self, json_configuration):
+
+        json_interfaces = self.iperfParser.parse_interfaces(json_configuration)
+        for json_iface in json_interfaces:
+            self.configure_interface(json_iface)
+
+        json_conf_iperf = self.iperfParser.parse_iperf_configuration(json_configuration)
+
+        if 'server' in json_conf_iperf:
+            json_server_params = self.iperfCoreParser.parse_server(json_conf_iperf)
+            self.start_iperf_server(json_server_params)
+
+        if 'client' in json_conf_iperf:
+            json_client_params = self.iperfCoreParser.parse_client(json_conf_iperf)
+            self.start_iperf_client(json_client_params)
+
     # Interfaces
     def get_interfaces_status(self):
         conf_interfaces = {}
@@ -113,7 +139,6 @@ class IperfController():
             self.interfaceController.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
         else:
             raise ValueError("could not find interface: " + ifname)
-    """
 
     # Iperf
     def start_iperf_client(self, json_iperf_client):

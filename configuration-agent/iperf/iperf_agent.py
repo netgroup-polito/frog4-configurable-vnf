@@ -1,4 +1,7 @@
+from common.agent import ConfigurationAgent
 from common.utils import check_validity_initial_params
+from iperf.iperf_monitor import IperfMonitor
+
 import sys
 from subprocess import call
 import logging
@@ -9,11 +12,11 @@ class IperfAgent():
 
         logging.debug("Iperf agent started...")
 
-        rest_address = "127.0.0.1"
-        rest_port = "9010"
-        rest_endpoint = "http://" + rest_address + ":" + rest_port
-        logging.info("Rest Server started on: " + rest_endpoint)
-        call("gunicorn -b " + rest_address + ':' + rest_port + " -t 500 iperf.rest_api.iperf_rest_start:app", shell=True)
+        configurationAgent = ConfigurationAgent("iperf", nf_type, datadisk_path, on_change_interval)
+
+        configurationAgent.start_monitoring(IperfMonitor)
+
+        configurationAgent.start_rest_controller("iperf.rest_api.iperf_rest_start")
 
 
 if __name__ == "__main__":

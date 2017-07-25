@@ -1,5 +1,5 @@
 install iperf3
-https://github.com/esnet/iperf.git
+git clone https://github.com/esnet/iperf.git
 cd iperf
 ./configure
 make
