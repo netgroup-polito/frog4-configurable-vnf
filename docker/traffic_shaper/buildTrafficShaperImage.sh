@@ -20,9 +20,6 @@ cp -r $src_dir/traffic_shaper $dst_dir/
 cp -r $src_dir/traffic_shaper/start_traffic_shaper_agent.sh $dst_dir/start_agent.sh
 cp -r $src_dir/start.sh $dst_dir/start.sh
 
-cd traffic-shaper-agent
-./start_agent.sh docker /datadisk
+sudo docker build -t $image_name .
 
-#sudo docker build -t $image_name .
-
-#sudo rm -r $dst_dir
+sudo rm -r $dst_dir

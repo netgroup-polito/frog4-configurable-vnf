@@ -20,9 +20,6 @@ cp -r $src_dir/iperf $dst_dir/
 cp -r $src_dir/iperf/start_iperf_agent.sh $dst_dir/start_agent.sh
 cp -r $src_dir/start.sh $dst_dir/start.sh
 
-cd iperf-agent
-./start_agent.sh docker /datadisk
+sudo docker build -t $image_name .
 
-#sudo docker build -t $image_name .
-
-#sudo rm -r $dst_dir
+sudo rm -r $dst_dir

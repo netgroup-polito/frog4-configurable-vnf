@@ -3,6 +3,9 @@ import logging
 
 class TrafficShaperService():
 
+    def enable_forwarding(self):
+        Bash('echo 1 > /proc/sys/net/ipv4/ip_forward')
+
     def start_bandwitdh_shaping(self, TrafficShaper):
 
         # We'll use Hierarchical Token Bucket (HTB) to shape bandwidth.

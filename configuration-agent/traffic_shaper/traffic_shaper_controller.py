@@ -24,19 +24,26 @@ class TrafficShaperController():
 
     def set_configuration(self, json_configuration):
 
-        json_interfaces = self.trafficShaperParser.parse_interfaces(json_configuration)
+        json_interfaces = self.interfaceParser.parse_interfaces(json_configuration)
         for json_iface in json_interfaces:
             self.configure_interface(json_iface)
 
+        self.enable_ip_forwarding()
+
         json_traffic_shaper = self.trafficShaperParser.parse_traffic_shaper_configuration(json_configuration)
-        self.start_bandwitdh_shaping(json_traffic_shaper)
+        if 'configuration' in json_traffic_shaper:
+            json_traffic_shaper_configuration = self.trafficShaperCoreParser.parse_configuration(json_traffic_shaper)
+            self.start_bandwitdh_shaping(json_traffic_shaper_configuration)
 
     def get_full_status(self):
 
         status = {}
 
         status["config-traffic-shaper:interfaces"] = self.get_interfaces_status()
-        status["config-traffic-shaper:traffic_shaper"] = self.get_all_traffic_shapers()
+
+        configuration = {}
+        configuration['configuration'] = self.get_all_traffic_shapers()
+        status["config-traffic-shaper:traffic_shaper"] = configuration
 
         return status
 
@@ -141,6 +148,10 @@ class TrafficShaperController():
             self.interfaceController.configure_interface_ipv4Configuration_default_gw(ifname, default_gw)
         else:
             raise ValueError("could not find interface: " + ifname)
+
+    def enable_ip_forwarding(self):
+        self.trafficShaperCoreController.enable_ip_forwarding()
+        logging.debug("ip_forwarding enabled")
 
     # Traffic Shaper
     def start_bandwitdh_shaping(self, json_traffic_shaper):

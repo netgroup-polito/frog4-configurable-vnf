@@ -2,6 +2,9 @@ from components.common.traffic_shaper.traffic_shaper_model import TrafficShaper
 
 class TrafficShaperParser():
 
+    def parse_configuration(self, json_configuration):
+        return json_configuration['configuration']
+
     def parse_interface_to_control(self, json_configuration):
 
         interface_id = json_configuration['interface_to_control']
@@ -24,7 +27,7 @@ class TrafficShaperParser():
 
         traffic_shaper_dict = {}
 
-        traffic_shaper_dict['interface_to_controler'] = traffic_shaper.interface_name
+        traffic_shaper_dict['interface_to_control'] = traffic_shaper.interface_name
 
         if traffic_shaper.download_limit is not None:
             traffic_shaper_dict['download_limit'] = traffic_shaper.download_limit
