@@ -17,7 +17,7 @@ class IperfController():
         self.iperfParser = IperfParser()
 
         self.interfaceController = InterfaceController()
-        self.interfaceParser = InterfaceParser
+        self.interfaceParser = InterfaceParser()
 
         self.iperfCoreController = IperfCoreController()
         self.iperfCoreParser = IperfCoreParser()

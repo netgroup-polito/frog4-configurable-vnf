@@ -26,8 +26,8 @@ class TrafficShaper:
         if self.interface_address is not None:
             string += "'interface_address': " + self.interface_address + ", "
         if self.download_limit is not None:
-            string += "'download_limit': " + str(self.download_limit) + ", "
+            string += "'download_limit': " + str(self.download_limit) + " mbit, "
         if self.upload_limit is not None:
-            string += "'upload_limit': " + str(self.upload_limit)
+            string += "'upload_limit': " + str(self.upload_limit) + " mbit"
         string += "}"
         return string

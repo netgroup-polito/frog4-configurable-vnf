@@ -4,6 +4,7 @@ from components.common.interface.interface_controller import InterfaceController
 from components.common.interface.interface_parser import InterfaceParser
 from traffic_shaper.traffic_shaper_parser import TrafficShaperParser
 import logging
+import pprint
 
 # set log level
 log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
@@ -17,14 +18,14 @@ class TrafficShaperController():
         self.trafficShaperParser = TrafficShaperParser()
 
         self.interfaceController = InterfaceController()
-        self.interfaceParser = InterfaceParser
+        self.interfaceParser = InterfaceParser()
 
         self.trafficShaperCoreController = TrafficShaperCoreController()
         self.trafficShaperCoreParser = TrafficShaperCoreParser()
 
     def set_configuration(self, json_configuration):
 
-        json_interfaces = self.interfaceParser.parse_interfaces(json_configuration)
+        json_interfaces = self.trafficShaperParser.parse_interfaces(json_configuration)
         for json_iface in json_interfaces:
             self.configure_interface(json_iface)
 
@@ -156,13 +157,14 @@ class TrafficShaperController():
     # Traffic Shaper
     def start_bandwitdh_shaping(self, json_traffic_shaper):
         logging.debug(json_traffic_shaper)
-        traffic_shaper = self.trafficShaperCoreParser.parse_traffic_shaper_configuration(json_traffic_shaper)
-        logging.debug(traffic_shaper.__str__())
-        interface_id = self.trafficShaperCoreParser.parse_interface_to_control(json_traffic_shaper)
-        interface = self.interfaceController.get_interface_by_id(interface_id)
-        traffic_shaper.add_interface_name(interface.name)
-        traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
-        self.trafficShaperCoreController.start_bandwitdh_shaping(traffic_shaper)
+        for json_interface_to_shape in json_traffic_shaper:
+            traffic_shaper = self.trafficShaperCoreParser.parse_traffic_shaper_configuration(json_interface_to_shape)
+            logging.debug(traffic_shaper.__str__())
+            interface_name = self.trafficShaperCoreParser.parse_interface_to_control(json_interface_to_shape)
+            interface = self.interfaceController.get_interface_by_name(interface_name)
+            traffic_shaper.add_interface_name(interface.name)
+            traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
+            self.trafficShaperCoreController.start_bandwitdh_shaping(traffic_shaper)
 
     def stop_bandwitdh_shaping(self, interface_name):
         if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):

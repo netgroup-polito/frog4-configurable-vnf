@@ -1,11 +1,11 @@
-from components.common.traffic_shaper.traffic_shaper_service import TrafficShaperService
+from components.common.traffic_shaper.traffic_shaper_service_wondershaper import TrafficShaperServiceWondershaper
 from common.config_instance import ConfigurationInstance
 import logging
 
 class TrafficShaperController():
 
     def __init__(self):
-        self.trafficShaperService = TrafficShaperService()
+        self.trafficShaperService = TrafficShaperServiceWondershaper()
         self.nf_type = ConfigurationInstance.get_nf_type(self)
         self.traffic_shaper_map = {}
 

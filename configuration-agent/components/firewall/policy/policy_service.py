@@ -118,8 +118,7 @@ class PolicyService():
             dst_port = "--ip-destination-port " + str(policy.dst_port) + " "
 
         for protocol in protocols:
-            Bash(
-                'ebtables -I ' + chain_name + protocol + in_interface + src_address + src_port + out_interface + dst_address + dst_port + '-j ' + action)
+            Bash('ebtables -I ' + chain_name + protocol + in_interface + src_address + src_port + out_interface + dst_address + dst_port + '-j ' + action)
 
     def _remove_policy_from_iptables(self, policy, table, chain):
         pass

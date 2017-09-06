@@ -1,5 +1,12 @@
-{
-  "interface_to_control": "eth0",
-  "download_limit": 1000,
+[
+  {
+  "interface_to_control": "eth1",
+  "download_limit": 10,
   "upload_limit": 10
-}
+  },
+  {
+    "interface_to_control": "eth2",
+    "download_limit": 10,
+    "upload_limit": 10
+  }
+]

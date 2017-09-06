@@ -17,8 +17,8 @@ class Interface(Resource):
         Gets the status of all interfaces
         """
         try:
-            dhcpController = NatController()
-            json_data = json.dumps(dhcpController.get_interfaces_status())
+            natController = NatController()
+            json_data = json.dumps(natController.get_interfaces_status())
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
 

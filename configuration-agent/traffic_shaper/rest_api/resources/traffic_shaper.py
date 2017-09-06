@@ -49,7 +49,6 @@ class TrafficShaper_Configuration(Resource):
         except Exception as err:
             return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
-    @traffic_shaper_ns.param("Interface name", "Interface name", "body", type="string", required=True)
     @traffic_shaper_ns.response(200, 'Bandwitdh shaping stopped.')
     @traffic_shaper_ns.response(404, 'Interface not found.')
     @traffic_shaper_ns.response(400, 'Bad request.')

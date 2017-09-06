@@ -7,8 +7,8 @@ class TrafficShaperParser():
 
     def parse_interface_to_control(self, json_configuration):
 
-        interface_id = json_configuration['interface_to_control']
-        return interface_id
+        interface_name = json_configuration['interface_to_control']
+        return interface_name
 
     def parse_traffic_shaper_configuration(self, json_configuration):
 

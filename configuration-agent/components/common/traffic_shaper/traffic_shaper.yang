@@ -7,11 +7,11 @@ container traffic_shaper{
     leaf download_limit{
         description = "in mega bits, default unlimited"
         type integer;
-        default = -1;
+        mandatory false;
     }
     leaf upload_limit{
         description = "in mega bits, default unlimited"
         type integer;
-        default = -1;
+        mandatory false;
     }
 }

@@ -5,6 +5,8 @@ if [ "$#" -lt 2 ] ; then
     exit;
 fi
 
+sed -i 's/10mbit/1000mbit/' /sbin/wondershaper
+
 nf_type=$1;
 datadisk_path=$2;
 on_change_interval=$3;
