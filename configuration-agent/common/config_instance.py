@@ -1,55 +1,65 @@
 class ConfigurationInstance(object):
 
-    vnf = None
-    #nf_type = None
-    datadisk_path = None
-    on_change_interval = None
-    #iface_management = None
-    #triple = None
+    def __init__(self):
+        self.db_file_path = "local_db.txt"
 
-    def get_vnf(self):
-        return ConfigurationInstance.vnf
-    def set_vnf(self, vnf):
-        ConfigurationInstance.vnf = vnf
 
+    def clear_db(self):
+        open(self.db_file_path, 'w').close()
+
+
+    def save_vnf_name(self, vnf_name):
+        self._save_parameter("vnf_name", vnf_name)
+    def get_vnf_name(self):
+        return self._get_parameter("vnf_name")
+
+    def save_nf_type(self, nf_type):
+        self._save_parameter("nf_type", nf_type)
     def get_nf_type(self):
-        with open('tmpFileA', 'r') as file:
-            nf_type = file.readlines()
-        file.close()
-        return nf_type[0]
-        #return ConfigurationInstance.nf_type
-    def set_nf_type(self, nf_type):
-        with open('tmpFileA', 'w') as file:
-            file.write(nf_type)
-        file.close()
-        #ConfigurationInstance.nf_type = nf_type
+        return self._get_parameter("nf_type")
 
+    def save_datadisk_path(self, datadisk_path):
+        self._save_parameter("datadisk_path", datadisk_path)
     def get_datadisk_path(self):
-        return ConfigurationInstance.datadisk_path
-    def set_datadisk_path(self, datadisk_path):
-        ConfigurationInstance.datadisk_path = datadisk_path
+        return self._get_parameter("datadisk_path")
 
+    def save_on_change_interval(self, on_change_interval):
+        self._save_parameter("on_change_interval", on_change_interval)
     def get_on_change_interval(self):
-        return ConfigurationInstance.on_change_interval
-    def set_on_change_interval(self, on_change_interval):
-        ConfigurationInstance.on_change_interval = on_change_interval
+        return self._get_parameter("on_change_interval")
 
+    def save_iface_management(self, iface_management):
+        self._save_parameter("iface_management", iface_management)
     def get_iface_management(self):
-        with open('tmpFileB', 'r') as file:
-            iface_management = file.readlines()
-        file.close()
-        return iface_management[0]
-    def set_iface_management(self, iface_management):
-        with open('tmpFileB', 'w') as file:
-            file.write(iface_management)
-        file.close()
+        return self._get_parameter("iface_management")
 
+    def save_triple(self, triple):
+        self._save_parameter("triple", triple)
     def get_triple(self):
-        with open('tmpFileC', 'r') as file:
-            triple = file.readlines()
-        file.close()
-        return triple[0]
-    def set_triple(self, triple):
-        with open('tmpFileC', 'w') as file:
-            file.write(triple)
-        file.close()
+        return self._get_parameter("triple")
+
+
+    def _save_parameter(self, name, value):
+        try:
+            with open(self.db_file_path, 'a') as db_file:
+                db_file.write(name + " " + value + "\n")
+                #db_file.truncate()
+        except Exception as e:
+            raise IOError("Error during the writing of file: " + self.db_file_path + "\n" + str(e))
+
+    def _get_parameter(self, name):
+        try:
+            with open(self.db_file_path, 'r') as db_file:
+                lines = db_file.readlines()
+                db_file.close()
+        except Exception as e:
+            raise IOError("Error during the reading of file: " + self.db_file_path + "\n" + str(e))
+
+        for line in lines:
+            args = line.strip().split(' ')
+            if args[0] == name:
+                return args[1]
+
+        return None
+
+

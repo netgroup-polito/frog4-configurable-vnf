@@ -42,7 +42,7 @@ class InterfaceService():
 
     # return all current configured interfaces
     def get_interfaces(self):
-        iface_management = ConfigurationInstance.get_iface_management(self)
+        iface_management = ConfigurationInstance().get_iface_management()
         interfaces = []
         net_ifaces = netifaces.interfaces()
         for net_iface in net_ifaces:
