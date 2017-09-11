@@ -38,7 +38,7 @@ class ConfigurationInstance(object):
     def get_triple(self):
         return self._get_parameter("triple")
 
-
+    
     def _save_parameter(self, name, value):
         try:
             with open(self.db_file_path, 'a') as db_file:

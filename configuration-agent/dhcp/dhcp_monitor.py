@@ -5,6 +5,7 @@ from components.dhcp.dhcp_server.dhcp_server_monitor import DhcpServerMonitor
 from components.dhcp.dhcp_client.dhcp_client_controller import DhcpClientController
 from components.dhcp.dhcp_client.dhcp_client_monitor import DhcpClientsMonitor
 from dhcp.dhcp_controller import DhcpController
+from common.message_bus_controller import MessageBusController
 
 from threading import Thread
 from datetime import datetime
@@ -14,8 +15,6 @@ import json
 class DhcpMonitor():
 
     def __init__(self, tenant_id, graph_id, vnf_id):
-
-        self.messageBus = None
 
         self.dhcpController = DhcpController()
         self.interfaceController = InterfaceController()
@@ -51,10 +50,7 @@ class DhcpMonitor():
         self.configuration_interface = configuration_interface
         return self.dhcpController.get_interface_ipv4Configuration_address(configuration_interface)
 
-    def start(self, message_bus):
-
-        self.messageBus = message_bus
-        self.messageBus.set_controller(self)
+    def start(self):
 
         threads = []
         threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
@@ -78,13 +74,4 @@ class DhcpMonitor():
             body['event'] = "PERIODIC"
         body['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         body['data'] = data
-        self.messageBus.publish_topic(msg , json.dumps(body, indent=4, sort_keys=True))
-
-    def on_data_callback(self, src, msg):
-        logging.debug("[DhcpMonitor] From: " + src + " Msg: " + msg)
-
-
-
-
-
-
+        MessageBusController().publish_on_bus(msg, json.dumps(body, indent=4, sort_keys=True))

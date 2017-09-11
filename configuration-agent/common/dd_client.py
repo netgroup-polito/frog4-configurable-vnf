@@ -56,10 +56,11 @@ class DDclient(clientSafe.ClientSafe):
         """ callback for point to point messages """
         src = src.decode()
         msg = msg.decode()
-        #logging.debug("[MessageBus] From: " + src + " Msg: " + msg)
+        #logging.debug("[DDClient] From: " + src + " Msg: " + msg)
         self.controller.on_data_callback(src, msg)
 
     def on_reg(self):
+        #logging.debug("[DDclient] on_reg ack")
         self.controller.on_reg_callback()
 
     def on_error(self, code, msg):
