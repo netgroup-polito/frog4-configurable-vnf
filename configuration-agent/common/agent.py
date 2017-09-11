@@ -219,8 +219,8 @@ class ConfigurationAgent():
 
     def _vnf_registration(self):
         msg = ""
-        msg += "tenant-id:" + self.tenant_id + "\n"
-        msg += "graph-id:" + self.graph_id + "\n"
-        msg += "vnf-id:" + self.vnf_id + "\n"
-        msg += "rest-address" + self.rest_address
-        self.messageBus.publish_public_topic('hello', msg)
+        msg += "tenant-id " + self.tenant_id + "\n"
+        msg += "graph-id " + self.graph_id + "\n"
+        msg += "vnf-id " + self.vnf_id + "\n"
+        msg += "rest-address " + self.rest_address
+        self.messageBus.publish_public_topic('vnf_hello', msg)

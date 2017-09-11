@@ -6,7 +6,7 @@ class TrafficShaperController():
 
     def __init__(self):
         self.trafficShaperService = TrafficShaperServiceWondershaper()
-        self.nf_type = ConfigurationInstance.get_nf_type(self)
+        self.nf_type = ConfigurationInstance().get_nf_type()
         self.traffic_shaper_map = {}
 
     def enable_ip_forwarding(self):

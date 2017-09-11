@@ -5,7 +5,7 @@ class ArpTableController():
 
     def __init__(self):
         self.arpTableService = ArpTableService()
-        self.nf_type = ConfigurationInstance.get_nf_type(self)
+        self.nf_type = ConfigurationInstance().get_nf_type()
 
     def add_arp_entry(self, ip_address, mac_address):
         if self.nf_type == "docker" or self.nf_type == "vm":

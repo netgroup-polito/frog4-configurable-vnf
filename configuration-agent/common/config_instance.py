@@ -42,7 +42,7 @@ class ConfigurationInstance(object):
     def _save_parameter(self, name, value):
         try:
             with open(self.db_file_path, 'a') as db_file:
-                db_file.write(name + " " + value + "\n")
+                db_file.write(name + " " + str(value) + "\n")
                 #db_file.truncate()
         except Exception as e:
             raise IOError("Error during the writing of file: " + self.db_file_path + "\n" + str(e))
