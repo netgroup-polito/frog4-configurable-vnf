@@ -5,7 +5,7 @@ class DhcpServerController():
 
     def __init__(self):
         self.dhcpServerService = DhcpServerService()
-        self.nf_type = ConfigurationInstance.get_nf_type(self)
+        self.nf_type = ConfigurationInstance().get_nf_type()
 
     def configure_dhcp_server(self, dhcp_server):
         if self.nf_type == "docker" or self.nf_type == "vm":

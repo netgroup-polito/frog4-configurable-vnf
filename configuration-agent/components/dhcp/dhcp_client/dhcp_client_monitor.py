@@ -43,7 +43,7 @@ class DhcpClientsMonitor():
                 if element.period not in self.periods:
                     self.periods.append(element.period)
 
-        self.on_change_interval = ConfigurationInstance.get_on_change_interval(self)
+        self.on_change_interval = ConfigurationInstance().get_on_change_interval()
         logging.debug("on_change_interval: " + str(self.on_change_interval))
 
         self.dhcp_clients_old = curr_dhcp_clients

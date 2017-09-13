@@ -5,7 +5,7 @@ class WhitelistController():
 
     def __init__(self):
         self.whitelistService = WhitelistService()
-        self.nf_type = ConfigurationInstance.get_nf_type(self)
+        self.nf_type = ConfigurationInstance().get_nf_type()
 
     def configure_url(self, url):
         if self.nf_type == "docker" or self.nf_type == "vm":

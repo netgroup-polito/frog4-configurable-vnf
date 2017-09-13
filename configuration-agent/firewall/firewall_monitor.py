@@ -7,6 +7,7 @@ from components.firewall.blacklist.blacklist_monitor import BlacklistMonitor
 from components.firewall.whitelist.whitelist_controller import WhitelistController
 from components.firewall.whitelist.whitelist_monitor import WhitelistMonitor
 from firewall.firewall_controller import FirewallController
+from common.message_bus_controller import MessageBusController
 
 from threading import Thread
 from datetime import datetime
@@ -16,8 +17,6 @@ import json
 class FirewallMonitor():
 
     def __init__(self, tenant_id, graph_id, vnf_id):
-
-        self.messageBus = None
 
         self.firewallController = FirewallController()
         self.interfaceController = InterfaceController()
@@ -59,10 +58,7 @@ class FirewallMonitor():
         self.configuration_interface = configuration_interface
         return self.firewallController.get_interface_ipv4Configuration_address(configuration_interface)
 
-    def start(self, message_bus):
-
-        self.messageBus = message_bus
-        self.messageBus.set_controller(self)
+    def start(self):
 
         threads = []
         threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
@@ -87,7 +83,4 @@ class FirewallMonitor():
             body['event'] = "PERIODIC"
         body['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         body['data'] = data
-        self.messageBus.publish_topic(msg , json.dumps(body, indent=4, sort_keys=True))
-
-    def on_data_callback(self, src, msg):
-        logging.debug("[FirewallMonitor] From: " + src + " Msg: " + msg)
+        MessageBusController().publish_on_bus(msg, json.dumps(body, indent=4, sort_keys=True))

@@ -5,7 +5,7 @@ class DhcpClientController():
 
     def __init__(self):
         self.dhcpClientService = DhcpClientService()
-        self.nf_type = ConfigurationInstance.get_nf_type(self)
+        self.nf_type = ConfigurationInstance().get_nf_type()
 
     def client_exists(self, mac_address):
         client = self.get_client(mac_address)

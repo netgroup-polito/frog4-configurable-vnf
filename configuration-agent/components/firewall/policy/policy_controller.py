@@ -5,7 +5,7 @@ class PolicyController():
 
     def __init__(self):
         self.policyService = PolicyService()
-        self.nf_type = ConfigurationInstance.get_nf_type(self)
+        self.nf_type = ConfigurationInstance().get_nf_type()
         self.policies_map = {}
 
     def add_policy(self, policy, table="FILTER", chain="FORWARD"):
