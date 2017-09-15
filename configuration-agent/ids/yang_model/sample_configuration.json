@@ -1,0 +1,35 @@
+{
+	"config-ids:interfaces": {
+		"ifEntry": [	
+			{
+				"id": "L3Port:0",
+				"name": "eth0",
+				"type": "L3",
+				"management": true,
+				"ipv4_configuration": {
+					"configurationType": "dhcp"
+				}
+			},
+			{
+				"id": "L2Port:1",
+				"name": "eth1",
+				"type": "transparent"
+			},
+			{
+				"id": "L2Port:2",
+				"name": "eth2",
+				"type": "transparent"
+			}
+		]
+	},
+	"config-ids:ids": {
+		"configuration": {
+			"network_to_defend": "200.0.0.0/24",
+			"attack_to_monitor": [
+				{
+					"name": "port_scan"
+				}
+			]
+		}
+	}
+} 

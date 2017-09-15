@@ -1,0 +1,131 @@
+module config-ids {
+    namespace "http://netgroup.ipv6.polito.it/vnf";
+    prefix "ids";
+    import ietf-inet-types {
+		prefix inet;
+	}
+    description "IDS configuration";
+
+	container interfaces {
+		list ifEntry{
+		    key "name";
+		    min-elements 2;
+		    max-elements 3;
+		    atomic true;
+		    advertise onchange;
+		    leaf name {
+				description "name='Name'";
+				type string;
+			}
+			leaf type{
+			    description "name='Type'";
+			    type enumeration {
+                    enum L3;
+                    enum transparent;
+                    enum not_defined;
+    			}
+			}
+			leaf management{
+			    description "name='Management'";
+			    type boolean;
+			    mandatory false;
+			}
+			container ipv4_configuration{
+			    presence "it contains ipv4 configuration";
+			    advertise onchange;
+			    leaf configurationType{
+			        description "name='Configuration type'";
+			        type enumeration {
+                        enum dhcp;
+                        enum static;
+                        enum not_defined;
+    				}
+			    }
+			    leaf address{
+			        description "name='IP Address";
+			        type inet:ipv4-address;
+			        mandatory false;
+			    }
+			    leaf netmask{
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
+			    }
+			    leaf mac_address{
+                    description "name='MAC Address'";
+                    type inet:mac-address;
+                    mandatory false;
+			    }
+			    leaf default_gw{
+			        description "name='Default GW";
+			        type inet:ipv4-address;
+			        mandatory false;
+			    }
+			}
+			container ipv6_configuration{
+			    presence "it contains ipv4 configuration";
+			    leaf configurationType{
+			        description "name='Configuration type'";
+			        type enumeration {
+                        enum dhcp;
+                        enum static;
+                        enum not_defined;
+    				}
+			    }
+			    leaf address{
+			        description "name='IP Address";
+			        type inet:ipv6-address;
+			        mandatory false;
+			    }
+			    leaf netmask{
+			        description "name='Netmask";
+			        type inet:ip-address;
+			        mandatory false;
+			    }
+			    leaf default_gw{
+			        description "name='Default GW";
+			        type inet:ipv6-address;
+			        mandatory false;
+			    }
+			}
+		}
+	}
+
+	container ids {
+		container configuration{
+		    config true;
+		    advertise onchange;
+		    atomic true;
+		    leaf network_to_defend{
+		        description "name='Network to defend (IP/Netmask)";
+		        type inet:ipv4-address;
+		    }
+		    list attack_to_monitor{
+		        key "name";
+		        leaf name{
+		            type enumeration {
+                    enum port_scan;
+    			}
+		        }
+		    }
+		}
+
+		container attack_detected{
+		    config false;
+		    advertise onchange;
+		    atomic true;
+		    leaf attack_name{
+		        type enumeration {
+                    enum port_scan;
+    			}
+		    }
+		    leaf src_address{
+		        type inet:ip-address;
+		    }
+		    leaf dst_address{
+		        type inet:ip-address;
+		    }
+		}
+
+	}
+ }
