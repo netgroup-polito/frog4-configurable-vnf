@@ -1,9 +1,9 @@
-from components.common.iperf.iperf_controller import IperfController as IperfCoreController
-from components.common.iperf.iperf_parser import IperfParser as IperfCoreParser
+import logging
 from components.common.interface.interface_controller import InterfaceController
 from components.common.interface.interface_parser import InterfaceParser
+from components.iperf.iperf_controller import IperfController as IperfCoreController
+from components.iperf.iperf_parser import IperfParser as IperfCoreParser
 from iperf.iperf_parser import IperfParser
-import logging
 
 # set log level
 log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'

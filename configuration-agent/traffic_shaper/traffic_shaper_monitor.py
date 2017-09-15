@@ -2,7 +2,6 @@ from components.common.interface.interface_controller import InterfaceController
 from components.common.interface.interface_monitor import InterfacesMonitor
 from traffic_shaper.traffic_shaper_controller import TrafficShaperController
 from common.message_bus_controller import MessageBusController
-
 from threading import Thread
 from datetime import datetime
 import logging

@@ -15,6 +15,7 @@ mkdir -p $dst_dir
 cp -r $src_dir/common $dst_dir/
 mkdir $dst_dir/components
 cp -r $src_dir/components/common $dst_dir/components/common/
+cp -r $src_dir/components/iperf $dst_dir/components/iperf/
 cp -r $src_dir/vnf_template_library $dst_dir/
 cp -r $src_dir/iperf $dst_dir/
 cp -r $src_dir/iperf/start_iperf_agent.sh $dst_dir/start_agent.sh

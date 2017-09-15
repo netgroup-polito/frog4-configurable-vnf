@@ -1,4 +1,4 @@
-from components.common.traffic_shaper.traffic_shaper_model import TrafficShaper
+from components.traffic_shaper.traffic_shaper_model import TrafficShaper
 
 class TrafficShaperParser():
 

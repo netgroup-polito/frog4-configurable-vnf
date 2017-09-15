@@ -1,6 +1,6 @@
-from components.common.traffic_shaper.traffic_shaper_service_wondershaper import TrafficShaperServiceWondershaper
 from common.config_instance import ConfigurationInstance
-import logging
+from components.traffic_shaper.traffic_shaper_service_wondershaper import TrafficShaperServiceWondershaper
+
 
 class TrafficShaperController():
 

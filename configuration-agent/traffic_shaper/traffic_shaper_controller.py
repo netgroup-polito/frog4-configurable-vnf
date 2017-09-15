@@ -1,10 +1,9 @@
-from components.common.traffic_shaper.traffic_shaper_controller import TrafficShaperController as TrafficShaperCoreController
-from components.common.traffic_shaper.traffic_shaper_parser import TrafficShaperParser as TrafficShaperCoreParser
+import logging
 from components.common.interface.interface_controller import InterfaceController
 from components.common.interface.interface_parser import InterfaceParser
+from components.traffic_shaper.traffic_shaper_controller import TrafficShaperController as TrafficShaperCoreController
+from components.traffic_shaper.traffic_shaper_parser import TrafficShaperParser as TrafficShaperCoreParser
 from traffic_shaper.traffic_shaper_parser import TrafficShaperParser
-import logging
-import pprint
 
 # set log level
 log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
