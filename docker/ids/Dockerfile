@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     bridge-utils
 
+RUN pip3 install --upgrade pip
+RUN pip3 install idstools
+
 RUN wget https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz
 RUN tar xvfz daq-2.0.6.tar.gz
 WORKDIR daq-2.0.6

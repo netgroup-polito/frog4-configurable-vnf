@@ -31,6 +31,3 @@ cd ..
 sed -i "s/include \$RULE\_PATH/#include \$RULE\_PATH/" /etc/snort/snort.conf
 
 mv /etc/snort/snort.conf /etc/snort/snort_BKP.conf
-mv my_snort.conf /etc/snort/snort.conf
-
-snort -T -i eth1 -c /etc/snort/snort.conf

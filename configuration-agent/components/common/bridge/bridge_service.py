@@ -8,6 +8,7 @@ class BridgeService():
         Bash('brctl addbr ' + bridge.name)
         Bash('brctl addif ' + bridge.name + ' ' + bridge.iface1)
         Bash('brctl addif ' + bridge.name + ' ' + bridge.iface2)
+        Bash('ifconfig ' + bridge.name + ' up')
         Bash('route del default')
         Bash('/usr/sbin/dhclient ' + bridge.name + ' -v')
 
