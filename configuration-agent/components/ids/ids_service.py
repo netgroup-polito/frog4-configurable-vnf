@@ -38,5 +38,5 @@ class IdsService():
         str += "event_filter gen_id 1, sig_id 1000006, type limit, track by_src, count 1, seconds 60\n"
         Bash('echo ' + str + ' >> /etc/snort/threshold.conf')
 
-    def start_monitor(self):
+    def start_ids(self):
         pass

@@ -5,5 +5,5 @@ class IdsParser():
         json_interfaces = conf_interfaces['ifEntry']
         return json_interfaces
 
-    def parse_ids(self, json_configuration):
+    def parse_ids_configuration(self, json_configuration):
         return json_configuration["config-ids:ids"]

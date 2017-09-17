@@ -1,6 +1,6 @@
 from common.agent import ConfigurationAgent
 from common.utils import check_validity_initial_params
-from iperf.iperf_monitor import IperfMonitor
+from ids.ids_monitor import IdsMonitor
 
 import sys
 from subprocess import call
@@ -14,7 +14,7 @@ class IdsAgent():
 
         configurationAgent = ConfigurationAgent("ids", nf_type, datadisk_path, on_change_interval)
 
-        configurationAgent.start_monitoring(IperfMonitor)
+        configurationAgent.start_monitoring(IdsMonitor)
 
         configurationAgent.start_rest_controller("iperf.rest_api.iperf_rest_start")
 

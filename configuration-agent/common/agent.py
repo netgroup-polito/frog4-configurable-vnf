@@ -77,8 +77,9 @@ class ConfigurationAgent():
         self._read_metadata_file(self.metadata_file)
         if os.path.isdir("/etc/doubledecker") is False:
             os.makedirs("/etc/doubledecker")
-        if os.path.exists("/etc/doubledecker/" + self.tenant_id + "-keys.json") is False:
-            shutil.copy(self.tenant_keys_file, "/etc/doubledecker/" + self.tenant_id + "-keys.json")
+        tenant_keys_path = "/etc/doubledecker/" + self.tenant_id + "-keys.json"
+        if os.path.exists(tenant_keys_path) is False:
+            shutil.copy(self.tenant_keys_file, tenant_keys_path)
 
         self.configuration_interface = self._get_iface_from_template()
         logging.debug("configuration interface: " + self.configuration_interface)

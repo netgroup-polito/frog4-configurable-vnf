@@ -1,5 +1,6 @@
 from components.common.interface.interface_controller import InterfaceController
 from components.common.interface.interface_monitor import InterfacesMonitor
+from components.ids.attacks_monitor import AttacksMonitor
 from ids.ids_controller import IdsController
 from common.message_bus_controller import MessageBusController
 
@@ -22,11 +23,14 @@ class IdsMonitor():
         self.configuration_interface = None
 
         self.interfacesMonitor = None
+        self.attacksMonitor = None
 
     def set_initial_configuration(self, initial_configuration):
 
         curr_interfaces = self.interfaceController.get_interfaces()
         self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
+
+        self.attacksMonitor = AttacksMonitor(self)
 
         logging.debug("Setting initial configuration...")
         self.idsController.set_configuration(initial_configuration)
@@ -40,6 +44,7 @@ class IdsMonitor():
 
         threads = []
         threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.attacksMonitor.start_monitoring, args=()))
 
         # Start all threads
         for t in threads:

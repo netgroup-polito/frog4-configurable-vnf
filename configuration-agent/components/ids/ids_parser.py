@@ -39,7 +39,7 @@ class IdsParser():
 
         return ids_configuration_dict
 
-    def get_attack_dected_dict(self, attack_name, src_addr, dst_addr):
+    def get_attack_detected_dict(self, attack_name, src_addr, dst_addr):
 
         dict = {}
 
