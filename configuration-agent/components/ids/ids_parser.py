@@ -2,10 +2,9 @@ from components.ids.ids_model import Ids
 
 class IdsParser():
 
-    def parse_ids(self, json_ids):
-        return json_ids['configuration']
-
     def parse_ids_configuration(self, json_configuration):
+
+        json_configuration = json_configuration['configuration']
 
         network_to_defend = None
         if 'network_to_defend' in json_configuration:

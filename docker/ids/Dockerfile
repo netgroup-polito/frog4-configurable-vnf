@@ -42,5 +42,21 @@ RUN ln -s /usr/local/bin/snort /usr/sbin/snort
 #########################################################################
 
 ADD ./snort.conf my_snort.conf
-ADD ./start.sh start.sh
+ADD ./init_snort.sh init_snort.sh
+RUN chmod +x init_snort.sh
+RUN ./init_snort.sh
+
+# Copy the agent into the docker
+RUN mkdir -p /configuration_agent
+WORKDIR configuration_agent
+ADD ./ids-agent/ids ids
+ADD ./ids-agent/common common
+ADD ./ids-agent/components components
+ADD ./ids-agent/vnf_template_library vnf_template_library
+ADD ./ids-agent/start_agent.sh start_agent.sh
+RUN chmod +x start_agent.sh
+
+WORKDIR /
+
+ADD ./ids-agent/start.sh start.sh
 RUN chmod +x start.sh

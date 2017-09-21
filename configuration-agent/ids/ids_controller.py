@@ -35,8 +35,13 @@ class IdsController():
 
         # Configure IDS
         if 'config-ids:ids' in json_configuration:
+            logging.debug("Found and Ids Configuration, try to set it...")
             ids_configuration = self.idsParser.parse_ids_configuration(json_configuration)
             self.set_ids_configuration(ids_configuration)
+            logging.debug("Found and Ids Configuration, try to set it...done!")
+            logging.debug("Starting snort as a daemon...")
+            self.idsCoreController.start_ids()
+            logging.debug("Starting snort as a daemon...done!")
 
     def get_full_status(self):
         pass
@@ -45,7 +50,6 @@ class IdsController():
     def get_interfaces_status(self):
         conf_interfaces = {}
         conf_interfaces["ifEntry"] = self.get_interfaces()
-        conf_interfaces["wan-interface"] = self.get_wan_interface()
         return conf_interfaces
 
     # Interfaces/ifEntry
@@ -156,10 +160,8 @@ class IdsController():
         if br_found is None:
             self.bridgeController.create_bridge(bridge)
             logging.debug("Bridge created")
-            return True
         else:
             logging.debug("Bridge already existent")
-            return False
 
     # Ids
     def set_ids_configuration(self, json_ids_configuration):

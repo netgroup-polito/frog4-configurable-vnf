@@ -14,6 +14,7 @@ class IdsController():
 
     def set_configuration(self, ids_configuration):
         if self.nf_type == "docker" or self.nf_type == "vm":
+            logging.debug("network_to_defend: " + ids_configuration.network_to_defend)
             self.idsService.set_configuration(ids_configuration.network_to_defend)
 
         for attack in ids_configuration.attacks_to_monitor:
@@ -32,5 +33,5 @@ class IdsController():
 
     def start_ids(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
-            pass
+            self.idsService.start_ids()
 

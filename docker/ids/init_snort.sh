@@ -1,15 +1,5 @@
 #!/bin/bash
 
-/usr/sbin/dhclient eth0 -v
-
-ifconfig eth1 0
-ifconfig eth2 0
-brctl addbr br0
-brctl addif br0 eth1
-brctl addif br0 eth2
-route del default
-ifconfig br0 up
-
 mkdir /etc/snort
 mkdir /etc/snort/preproc_rules
 mkdir /etc/snort/rules

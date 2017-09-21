@@ -1,13 +1,9 @@
 from flask import Flask, request
 import logging
-import json
-from threading import Thread
-from common.message_bus_controller import MessageBusController
-from common.config_instance import ConfigurationInstance
+
 from ids.rest_api.api import ids_blueprint
-from ids.ids_monitor import IdsMonitor
-#from ids.rest_api.api.resources.interface import api as interface_api
-#from ids.rest_api.api.resources.ids import api as ids_api
+from ids.rest_api.resources.interface import api as interface_api
+from ids.rest_api.resources.ids import api as ids_api
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 

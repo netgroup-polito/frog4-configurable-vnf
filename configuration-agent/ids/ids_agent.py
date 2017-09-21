@@ -16,7 +16,7 @@ class IdsAgent():
 
         configurationAgent.start_monitoring(IdsMonitor)
 
-        configurationAgent.start_rest_controller("iperf.rest_api.iperf_rest_start")
+        configurationAgent.start_rest_controller("ids.rest_api.ids_rest_start")
 
 
 if __name__ == "__main__":
