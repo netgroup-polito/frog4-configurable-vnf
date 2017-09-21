@@ -7,6 +7,7 @@ from firewall.firewall_controller import FirewallController
 from firewall.rest_api.api import api
 
 whitelist_ns = api.namespace('firewall', 'Whitelist Resource')
+firewallController = FirewallController()
 
 @whitelist_ns.route('/whitelist', methods=['GET','POST'])
 @whitelist_ns.route('/whitelist/<id>', methods=['DELETE'])
@@ -20,7 +21,6 @@ class Whitelist(Resource):
         Add an url to the whitelist
         """
         try:
-            firewallController = FirewallController()
             json_data = json.loads(request.data.decode())
             firewallController.add_whitelist_url(json_data)
             return Response(status=202)
@@ -35,7 +35,6 @@ class Whitelist(Resource):
         Get all the urls from the whitelist
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_whitelist())
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -51,7 +50,6 @@ class Whitelist(Resource):
         Remove an url from the whitelist
         """
         try:
-            firewallController = FirewallController()
             firewallController.delete_whitelist_url(id)
             return Response(status=202)
 

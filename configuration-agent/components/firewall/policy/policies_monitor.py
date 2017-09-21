@@ -33,15 +33,15 @@ class PoliciesMonitor():
 
         self.elements = {}
         self.elements['policy'] = Element(advertise=self.ON_CHANGE)
-        self.elements['description'] = Element(advertise=self.ON_CHANGE)
-        self.elements['action'] = Element(advertise=self.ON_CHANGE)
-        self.elements['protocol'] = Element(advertise=self.ON_CHANGE)
-        self.elements['inInterface'] = Element(advertise=self.ON_CHANGE)
-        self.elements['outInterface'] = Element(advertise=self.ON_CHANGE)
-        self.elements['srcAddress'] = Element(advertise=self.ON_CHANGE)
-        self.elements['dstAddress'] = Element(advertise=self.ON_CHANGE)
-        self.elements['srcPort'] = Element(advertise=self.ON_CHANGE)
-        self.elements['dstPort'] = Element(advertise=self.ON_CHANGE)
+        self.elements['description'] = Element(advertise=self.SILENT)
+        self.elements['action'] = Element(advertise=self.SILENT)
+        self.elements['protocol'] = Element(advertise=self.SILENT)
+        self.elements['inInterface'] = Element(advertise=self.SILENT)
+        self.elements['outInterface'] = Element(advertise=self.SILENT)
+        self.elements['srcAddress'] = Element(advertise=self.SILENT)
+        self.elements['dstAddress'] = Element(advertise=self.SILENT)
+        self.elements['srcPort'] = Element(advertise=self.SILENT)
+        self.elements['dstPort'] = Element(advertise=self.SILENT)
         ##################################################################
 
         self.periods = []

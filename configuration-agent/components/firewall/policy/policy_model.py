@@ -50,13 +50,9 @@ class Policy:
         return str
 
     def __eq__(self, other):
-        if self.id != other.id:
+        if self.action.lower() != other.action.lower():
             return False
-        if self.description != other.description:
-            return False
-        if self.action != other.action:
-            return False
-        if self.protocol != other.protocol:
+        if self.protocol.lower() != other.protocol.lower():
             return False
         if self.in_interface != other.in_interface:
             return False

@@ -34,16 +34,16 @@ class InterfacesMonitor():
         self.url_ipv4Config_defaultGW = self.url_ipv4Config + "/default_gw"
 
         self.elements = {}
-        self.elements['interface'] = Element(advertise=self.SILENT)
-        self.elements['id'] = Element(advertise=self.ON_CHANGE)
-        self.elements['name'] = Element(advertise=self.ON_CHANGE)
-        self.elements['type'] = Element(advertise=self.ON_CHANGE)
-        self.elements['management'] = Element(advertise=self.ON_CHANGE)
-        self.elements['ipv4Configuration'] = Element(advertise=self.PERIODIC, period=5000)
-        self.elements['address'] = Element(advertise=self.ON_CHANGE)
-        self.elements['netmask'] = Element(advertise=self.ON_CHANGE)
+        self.elements['interface'] = Element(advertise=self.ON_CHANGE)
+        self.elements['id'] = Element(advertise=self.SILENT)
+        self.elements['name'] = Element(advertise=self.SILENT)
+        self.elements['type'] = Element(advertise=self.SILENT)
+        self.elements['management'] = Element(advertise=self.SILENT)
+        self.elements['ipv4Configuration'] = Element(advertise=self.SILENT)
+        self.elements['address'] = Element(advertise=self.SILENT)
+        self.elements['netmask'] = Element(advertise=self.SILENT)
         self.elements['macAddress'] = Element(advertise=self.SILENT)
-        self.elements['defaultGW'] = Element(advertise=self.ON_CHANGE)
+        self.elements['defaultGW'] = Element(advertise=self.SILENT)
         ##################################################################
 
         self.periods = []
@@ -53,7 +53,7 @@ class InterfacesMonitor():
                 if element.period not in self.periods:
                     self.periods.append(element.period)
 
-        self.on_change_interval = ConfigurationInstance().get_on_change_interval()
+        self.on_change_interval = float(ConfigurationInstance().get_on_change_interval())
         logging.debug("on_change_interval: " + str(self.on_change_interval))
 
         self.interfaces_old = curr_interfaces

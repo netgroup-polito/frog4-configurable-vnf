@@ -7,6 +7,7 @@ from firewall.firewall_controller import FirewallController
 from firewall.rest_api.api import api
 
 blacklist_ns = api.namespace('firewall', 'Blacklist Resource')
+firewallController = FirewallController()
 
 @blacklist_ns.route('/blacklist', methods=['GET','POST'])
 @blacklist_ns.route('/blacklist/<id>', methods=['DELETE'])
@@ -20,7 +21,6 @@ class Blacklist(Resource):
         Add an url to the blacklist
         """
         try:
-            firewallController = FirewallController()
             json_data = json.loads(request.data.decode())
             firewallController.add_blacklist_url(json_data)
             return Response(status=202)
@@ -35,7 +35,6 @@ class Blacklist(Resource):
         Get all the urls from the blacklist
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_blacklist())
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -51,7 +50,6 @@ class Blacklist(Resource):
         Remove an url from the blacklist
         """
         try:
-            firewallController = FirewallController()
             firewallController.delete_blacklist_url(id)
             return Response(status=202)
 

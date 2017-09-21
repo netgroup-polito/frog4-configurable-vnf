@@ -20,27 +20,27 @@ class PolicyParser():
             protocol = self.parse_protocol(json_policy)
 
         in_interface = None
-        if 'in_interface' in json_policy:
+        if 'in-interface' in json_policy:
             in_interface = self.parse_in_interface(json_policy)
 
         out_interface = None
-        if 'out_interface' in json_policy:
+        if 'out-interface' in json_policy:
             out_interface = self.parse_out_interface(json_policy)
 
         src_address = None
-        if 'src_address' in json_policy:
+        if 'src-address' in json_policy:
             src_address = self.parse_src_address(json_policy)
 
         dst_address = None
-        if 'dst_address' in json_policy:
+        if 'dst-address' in json_policy:
             dst_address = self.parse_dst_address(json_policy)
 
         src_port = None
-        if 'src_port' in json_policy:
+        if 'src-port' in json_policy:
             src_port = self.parse_src_port(json_policy)
 
         dst_port = None
-        if 'dst_port' in json_policy:
+        if 'dst-port' in json_policy:
             dst_port = self.parse_dst_port(json_policy)
 
 
@@ -72,10 +72,10 @@ class PolicyParser():
         return json_policy['out-interface']
 
     def parse_src_address(self, json_policy):
-        return json_policy['src_address']
+        return json_policy['src-address']
 
     def parse_dst_address(self, json_policy):
-        return json_policy['dst_address']
+        return json_policy['dst-address']
 
     def parse_src_port(self, json_policy):
         return json_policy['src-port']
@@ -100,22 +100,22 @@ class PolicyParser():
             policy_dict['protocol'] = policy.protocol
 
         if policy.in_interface is not None:
-            policy_dict['in_interface'] = policy.in_interface
+            policy_dict['in-interface'] = policy.in_interface
 
         if policy.out_interface is not None:
-            policy_dict['out_interface'] = policy.out_interface
+            policy_dict['out-interface'] = policy.out_interface
 
         if policy.src_address is not None:
-            policy_dict['src_address'] = policy.src_address
+            policy_dict['src-address'] = policy.src_address
 
         if policy.dst_address is not None:
-            policy_dict['dst_address'] = policy.dst_address
+            policy_dict['dst-address'] = policy.dst_address
 
         if policy.src_port is not None:
-            policy_dict['src_port'] = policy.src_port
+            policy_dict['src-port'] = policy.src_port
 
         if policy.dst_port is not None:
-            policy_dict['dst_port'] = policy.dst_port
+            policy_dict['dst-port'] = policy.dst_port
 
         return policy_dict
 

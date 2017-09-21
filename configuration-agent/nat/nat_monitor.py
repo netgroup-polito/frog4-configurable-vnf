@@ -58,7 +58,7 @@ class NatMonitor():
             t.join()
 
     def publish_on_bus(self, url, method, data):
-        msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url
+        msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/" + url
         body = {}
         if method is not None:
             body['event'] = method.upper()

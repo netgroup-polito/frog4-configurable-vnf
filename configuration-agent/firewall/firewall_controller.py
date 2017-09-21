@@ -10,7 +10,13 @@ from components.firewall.blacklist.blacklist_parser import BlacklistParser
 from components.firewall.whitelist.whitelist_controller import WhitelistController
 from components.firewall.whitelist.whitelist_parser import WhitelistParser
 from firewall.firewall_parser import FirewallParser
+from common.utils import Bash
 import logging
+
+# set log level
+log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
+log_date_format = '[%d-%m-%Y %H:%M:%S]'
+logging.basicConfig(filename="logging_agent.log", level=logging.DEBUG, format=log_format, datefmt=log_date_format)
 
 class FirewallController():
 
@@ -58,17 +64,19 @@ class FirewallController():
         bridge = Bridge("br0", to_lan_interface.name, to_wan_interface.name)
         logging.debug("Bridge to create: " + bridge.__str__())
         if self.create_bridge(bridge) is True:
+            Bash('route del default')
+            Bash('/usr/sbin/dhclient ' + bridge.name + ' -nw')
             br_iface = self.interfaceController.get_interface_by_name(bridge.name)
             policy = Policy(description="drop all traffic from fw_host to lan_iface",
                             action="drop",
                             protocol="ipv4",
-                            out_interface=to_lan_interface,
+                            out_interface=to_lan_interface.name,
                             src_address=br_iface.ipv4_configuration.address)
             self.policyController.add_policy(policy, table="FILTER", chain="OUTPUT")
             #Bash('ebtables -A OUTPUT -p IPv4 --ip-src ' + br_iface.ipv4_configuration.address + ' --out-interface ' + to_lan_interface + ' -j DROP')
 
         json_policies = self.policyParser.parse_policies(conf_firewall)
-        for json_policy in json_policies:
+        for json_policy in json_policies[::-1]:
             self.add_policy(json_policy)
 
         json_blacklist = self.blacklistParser.parse_blacklist(conf_firewall)
@@ -235,6 +243,7 @@ class FirewallController():
         policies = self.policyController.get_policies()
         for pol in policies:
             if pol.__eq__(policy):
+                logging.debug("The policy already exists, return")
                 return
         id = self.policyController.add_policy(policy)
         logging.debug("Configured policy: " + policy.__str__())

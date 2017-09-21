@@ -7,6 +7,7 @@ from firewall.firewall_controller import FirewallController
 from firewall.rest_api.api import api
 
 policy_ns = api.namespace('firewall', 'Policy Resource')
+firewallController = FirewallController()
 
 @policy_ns.route('/policies', methods=['GET','POST'])
 @policy_ns.route('/policies/<id>', methods=['GET','PUT','DELETE'])
@@ -20,7 +21,6 @@ class Policy(Resource):
         Add a policy
         """
         try:
-            firewallController = FirewallController()
             json_data = json.loads(request.data.decode())
             firewallController.add_policy(json_data)
             return Response(status=202)
@@ -36,7 +36,6 @@ class Policy(Resource):
         Get a policy
         """
         try:
-            firewallController = FirewallController()
             if id is None:
                 json_data = json.dumps(firewallController.get_policies())
             else:
@@ -78,7 +77,6 @@ class Policy(Resource):
         Remove a policy
         """
         try:
-            firewallController = FirewallController()
             firewallController.delete_policy(id)
             return Response(status=202)
 
@@ -97,7 +95,6 @@ class Policy_Description(Resource):
         Get the policy description parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_description(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -117,7 +114,6 @@ class Policy_Action(Resource):
         Get the policy action parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_action(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -137,7 +133,6 @@ class Policy_Protocol(Resource):
         Get the policy protocol parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_protocol(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -157,7 +152,6 @@ class Policy_InInterface(Resource):
         Get the policy in-interface parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_in_interface(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -177,7 +171,6 @@ class Policy_OutInterface(Resource):
         Get the policy out-interface parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_out_interface(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -197,7 +190,6 @@ class Policy_SrcAddress(Resource):
         Get the policy src-address parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_src_address(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -217,7 +209,6 @@ class Policy_DstAddress(Resource):
         Get the policy dst-address parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_dst_address(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -237,7 +228,6 @@ class Policy_SrcPort(Resource):
         Get the policy src-port parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_src_port(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp
@@ -257,7 +247,6 @@ class Policy_DstPort(Resource):
         Get the policy dst-port parameter
         """
         try:
-            firewallController = FirewallController()
             json_data = json.dumps(firewallController.get_policy_dst_port(id))
             resp = Response(json_data, status=200, mimetype="application/json")
             return resp

@@ -63,8 +63,8 @@ class FirewallMonitor():
         threads = []
         threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
         #threads.append(Thread(target=self.policiesMonitor.start_monitoring, args=()))
-        threads.append(Thread(target=self.blacklistMonitor.start_monitoring, args=()))
-        threads.append(Thread(target=self.whitelistMonitor.start_monitoring, args=()))
+        #threads.append(Thread(target=self.blacklistMonitor.start_monitoring, args=()))
+        #threads.append(Thread(target=self.whitelistMonitor.start_monitoring, args=()))
 
         # Start all threads
         for t in threads:
@@ -75,7 +75,7 @@ class FirewallMonitor():
             t.join()
 
     def publish_on_bus(self, url, method, data):
-        msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "." + url
+        msg = self.tenant_id + "." + self.graph_id + "." + self.vnf_id + "/" + url
         body = {}
         if method is not None:
             body['event'] = method.upper()

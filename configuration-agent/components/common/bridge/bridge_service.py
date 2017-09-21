@@ -9,8 +9,8 @@ class BridgeService():
         Bash('brctl addif ' + bridge.name + ' ' + bridge.iface1)
         Bash('brctl addif ' + bridge.name + ' ' + bridge.iface2)
         Bash('ifconfig ' + bridge.name + ' up')
-        Bash('route del default')
-        Bash('/usr/sbin/dhclient ' + bridge.name + ' -v')
+        #Bash('route del default')
+        #Bash('/usr/sbin/dhclient ' + bridge.name + ' -v')
 
     def update_bridge(self, bridge):
         Bash('ifconfig ' + bridge.iface1 + ' down')
