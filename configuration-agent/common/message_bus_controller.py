@@ -2,6 +2,7 @@ from common.dd_client import DDclient
 from threading import Event, Thread
 import time
 import logging
+import json
 
 class Singleton(type):
     _instances = {}
@@ -32,11 +33,17 @@ class MessageBusController(object, metaclass=Singleton):
         self.handler = handler
 
     def publish_public_on_bus(self, topic, data):
-        logging.debug("(publish_public) Topic: " + topic + " Data: " + data)
+        if topic.__eq__("vnf_hello"):
+            logging.debug("(publish_public) Topic: " + topic)
+        else:
+            logging.debug("(publish_public) Topic: " + topic + " Data: " + data)
         self.ddClient.publish_public_topic(topic, data)
 
     def publish_on_bus(self, topic, data):
-        logging.debug("(publish) Topic: " + topic + " Data: " + data)
+        if topic.__eq__("vnf_hello"):
+            logging.debug("(publish) Topic: " + topic)
+        else:
+            logging.debug("(publish) Topic: " + topic + " Data: " + data)
         self.ddClient.publish_topic(topic, data)
 
     def subscribe(self, topic):
@@ -81,19 +88,22 @@ class MessageBusController(object, metaclass=Singleton):
                     self._send_vnf_hello()
 
     def schedule_hello_message(self):
+        logging.debug("Start scheduling hello message!")
         thread = Thread(target=self._periodic_vnf_hello)
         thread.start()
 
     def _periodic_vnf_hello(self):
         while True:
-            #logging.debug("_periodic_vnf_hello!")
+            logging.debug("_periodic_vnf_hello!")
             self._send_vnf_hello()
             time.sleep(self.VNF_HELLO_TIMER)
 
     def _send_vnf_hello(self):
-        msg = ""
-        msg += "tenant-id " + self.tenant_id + "\n"
-        msg += "graph-id " + self.graph_id + "\n"
-        msg += "vnf-id " + self.vnf_id + "\n"
-        msg += "rest-address " + self.rest_address
-        self.publish_public_on_bus('vnf_hello', msg)
+        msg = {}
+        msg['tenant-id'] = self.tenant_id
+        msg['graph-id'] = self.graph_id
+        msg['vnf-id'] = self.vnf_id
+        msg['rest-address'] = self.rest_address
+        json_msg = json.dumps(msg)
+        self.publish_public_on_bus('vnf_hello', json_msg)
+        self.publish_on_bus('vnf_hello', json_msg)

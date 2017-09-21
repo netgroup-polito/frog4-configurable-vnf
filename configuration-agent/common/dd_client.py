@@ -1,12 +1,12 @@
 from doubledecker import clientSafe
-
-from threading import Thread
+from threading import Thread, Lock
 import logging
 
 class DDclient(clientSafe.ClientSafe):
 
     def __init__(self, controller):
         self.controller = controller
+        #self.lock = Lock()
 
     #####################################################
     ################## Public functions #################
@@ -31,8 +31,10 @@ class DDclient(clientSafe.ClientSafe):
         pass
 
     def publish_public_topic(self, topic, msg):
+        #self.lock.acquire()  # will block if lock is already held
         #logging.debug("publish_public_topic: " + topic + " " + msg)
         self.publish_public("public."+topic, msg)
+        #self.lock.release()
 
     def publish_topic(self, topic, msg):
         #logging.debug("public_topic: " + topic + " " + msg)
