@@ -90,6 +90,8 @@ module config-traffic-shaper {
     }
 
     container traffic_shaper{
+        config true;
+        advertise silent;
         list configuration{
             leaf interface_to_control {
                 type leafref {
