@@ -348,13 +348,16 @@ class FirewallController():
         return policy.dst_port
 
     def delete_policies(self):
-        pass
+        self.policyController.delete_policies()
 
     def delete_policy(self, id):
         if self.policyController.policy_exists(id):
             self.policyController.delete_policy(id)
         else:
             raise ValueError("could not find policy: " + id)
+
+    def clear_policy_repo(self):
+        self.policyController.clear_policy_repo()
 
     # Firewall/Blacklist
     def add_blacklist_url(self, url):

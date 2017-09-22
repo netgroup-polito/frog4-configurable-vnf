@@ -49,7 +49,7 @@ class FirewallMonitor():
         curr_whitelist = self.whitelistController.get_whitelist()
         self.whitelistMonitor = WhitelistMonitor(self, curr_whitelist)
 
-
+        self.firewallController.clear_policy_repo()
         logging.debug("Setting initial configuration...")
         self.firewallController.set_configuration(initial_configuration)
         logging.debug("Setting initial configuration...done!")
@@ -62,7 +62,7 @@ class FirewallMonitor():
 
         threads = []
         threads.append(Thread(target=self.interfacesMonitor.start_monitoring, args=()))
-        #threads.append(Thread(target=self.policiesMonitor.start_monitoring, args=()))
+        threads.append(Thread(target=self.policiesMonitor.start_monitoring, args=()))
         #threads.append(Thread(target=self.blacklistMonitor.start_monitoring, args=()))
         #threads.append(Thread(target=self.whitelistMonitor.start_monitoring, args=()))
 

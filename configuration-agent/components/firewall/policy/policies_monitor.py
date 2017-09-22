@@ -21,27 +21,9 @@ class PoliciesMonitor():
         self.PERIODIC = Constants.ADVERTISE_PERIODIC
 
         self.url_policy = "config-firewall:firewall/policies"
-        self.url_description = "/description"
-        self.url_action = "/action"
-        self.url_protocol = "/protocol"
-        self.url_inInterface = "/in-interface"
-        self.url_outInterface = "/out-interface"
-        self.url_srcAddress = "/src-address"
-        self.url_dstAddress = "/dst-address"
-        self.url_srcPort = "/src-port"
-        self.url_dstPort = "/dst-port"
 
         self.elements = {}
         self.elements['policy'] = Element(advertise=self.ON_CHANGE)
-        self.elements['description'] = Element(advertise=self.SILENT)
-        self.elements['action'] = Element(advertise=self.SILENT)
-        self.elements['protocol'] = Element(advertise=self.SILENT)
-        self.elements['inInterface'] = Element(advertise=self.SILENT)
-        self.elements['outInterface'] = Element(advertise=self.SILENT)
-        self.elements['srcAddress'] = Element(advertise=self.SILENT)
-        self.elements['dstAddress'] = Element(advertise=self.SILENT)
-        self.elements['srcPort'] = Element(advertise=self.SILENT)
-        self.elements['dstPort'] = Element(advertise=self.SILENT)
         ##################################################################
 
         self.periods = []
@@ -175,88 +157,14 @@ class PoliciesMonitor():
         return policy
 
     def _publish_policy_leafs_on_change(self, id, policy, method):
-
         if self.elements['policy'].advertise == self.ON_CHANGE:
             self._publish_policy(id, policy, method)
 
-        if policy.description is not None:
-            if self.elements['description'].advertise == self.ON_CHANGE:
-                self._publish_policy_description(id, policy.description, method)
-
-        if policy.action is not None:
-            if self.elements['action'].advertise == self.ON_CHANGE:
-                self._publish_policy_action(id, policy.action, method)
-
-        if policy.protocol is not None:
-            if self.elements['protocol'].advertise == self.ON_CHANGE:
-                self._publish_policy_protocol(id, policy.protocol, method)
-
-        if policy.in_interface is not None:
-            if self.elements['inInterface'].advertise == self.ON_CHANGE:
-                self._publish_policy_inInterface(id, policy.in_interface, method)
-
-        if policy.out_interface is not None:
-            if self.elements['outInterface'].advertise == self.ON_CHANGE:
-                self._publish_policy_outInterface(id, policy.out_interface, method)
-
-        if policy.src_address is not None:
-            if self.elements['srcAddress'].advertise == self.ON_CHANGE:
-                self._publish_policy_srcAddress(id, policy.src_address, method)
-
-        if policy.dst_address is not None:
-            if self.elements['dstAddress'].advertise == self.ON_CHANGE:
-                self._publish_policy_dstAddress(id, policy.dst_address, method)
-
-        if policy.src_port is not None:
-            if self.elements['srcPort'].advertise == self.ON_CHANGE:
-                self._publish_policy_srcPort(id, policy.src_port, method)
-
-        if policy.dst_port is not None:
-            if self.elements['dstPort'].advertise == self.ON_CHANGE:
-                self._publish_policy_dstPort(id, policy.dst_port, method)
-
     def _publish_policy_leafs_periodic(self, policy, period):
-
         id = policy.id
-
         if self.elements['policy'].advertise == self.PERIODIC and self.elements['policy'].period == period:
             self._publish_policy(id, policy)
 
-        if policy.description is not None:
-            if self.elements['description'].advertise == self.PERIODIC and self.elements['description'].period == period:
-                self._publish_policy_description(id, policy.description)
-
-        if policy.action is not None:
-            if self.elements['action'].advertise == self.PERIODIC and self.elements['action'].period == period:
-                self._publish_policy_action(id, policy.action)
-
-        if policy.protocol is not None:
-            if self.elements['protocol'].advertise == self.PERIODIC and self.elements['protocol'].period == period:
-                self._publish_policy_protocol(id, policy.protocol)
-
-        if policy.in_interface is not None:
-            if self.elements['inInterface'].advertise == self.PERIODIC and self.elements['inInterface'].period == period:
-                self._publish_policy_inInterface(id, policy.in_interface)
-
-        if policy.out_interface is not None:
-            if self.elements['outInterface'].advertise == self.PERIODIC and self.elements['outInterface'].period == period:
-                self._publish_policy_outInterface(id, policy.out_interface)
-
-        if policy.src_address is not None:
-            if self.elements['srcAddress'].advertise == self.PERIODIC and self.elements['srcAddress'].period == period:
-                self._publish_policy_srcAddress(id, policy.src_address)
-
-        if policy.dst_address is not None:
-            if self.elements['dstAddress'].advertise == self.PERIODIC and self.elements['dstAddress'].period == period:
-                self._publish_policy_dstAddress(id, policy.dst_address)
-
-        if policy.src_port is not None:
-            if self.elements['srcPort'].advertise == self.PERIODIC and self.elements['srcPort'].period == period:
-                self._publish_policy_srcPort(id, policy.src_port)
-
-        if policy.dst_port is not None:
-            if self.elements['dstPort'].advertise == self.PERIODIC and self.elements['dstPort'].period == period:
-                self._publish_policy_dstPort(id, policy.dst_port)
 
     def _timer_periodic_callback(self, period):
 
@@ -275,39 +183,3 @@ class PoliciesMonitor():
         policy_dict = self.policyParser.get_policy_dict(data)
         url = self.url_policy + "/" + id
         self.ddController.publish_on_bus(url, method, policy_dict)
-
-    def _publish_policy_description(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_description
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_action(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_action
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_protocol(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_protocol
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_inInterface(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_inInterface
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_outInterface(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_outInterface
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_srcAddress(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_srcAddress
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_dstAddress(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_dstAddress
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_srcPort(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_srcPort
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_policy_dstPort(self, id, data, method=None):
-        url = self.url_policy + "/" + id + self.url_dstPort
-        self.ddController.publish_on_bus(url, method, data)

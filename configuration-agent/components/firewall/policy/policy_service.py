@@ -1,4 +1,5 @@
 from components.firewall.policy.policy_model import Policy
+from components.firewall.policy.policy_repository import PolicyRepository
 from common.utils import Bash
 import iptc
 import logging
@@ -10,26 +11,48 @@ class PolicyService():
             self._add_policy_in_ebtables(policy, table, chain)
         else:
             self._add_policy_in_iptables(policy, table, chain)
+        PolicyRepository().save_policy(policy)
 
-    def remove_policy(self, policy, table, chain):
-        if (policy.in_interface is not None or policy.out_interface is not None):
-            self._remove_policy_from_ebtables(policy, table, chain)
-        else:
-            self._remove_policy_from_iptables(policy, table, chain)
+    def remove_policies(self, table, chain):
+        policies = self.get_policies(table, chain)
+        for policy in policies:
+            id = policy.id
+            self.remove_policy(id, table, chain)
+
+    def remove_policy(self, id, table, chain):
+        policy = PolicyRepository().get_policy(id)
+        if policy is not None:
+            if (policy.in_interface is not None or policy.out_interface is not None):
+                self._remove_policy_from_ebtables(policy, table, chain)
+            else:
+                self._remove_policy_from_iptables(policy, table, chain)
 
     def get_policies(self, table, chain):
+        policies = PolicyRepository().get_policies()
+        return policies
+        """
         policies = []
         policies.extend(self._get_policies_from_iptables(table, chain))
         policies.extend(self._get_policies_from_ebtables(table, chain))
         return policies
+        """
 
     def get_policy(self, id, table, chain):
+        policy = PolicyRepository().get_policy(id)
+        if policy is not None:
+            return policy
+        else:
+            return None
+        """
         policies = self.get_policies()
         for policy in policies:
             if policy.id == id:
                 return policy
         return None
+        """
 
+    def clear_policy_repo(self):
+        PolicyRepository().clear_repo()
 
 
     # private functions
@@ -121,10 +144,90 @@ class PolicyService():
             Bash('ebtables -I ' + chain_name + protocol + in_interface + src_address + src_port + out_interface + dst_address + dst_port + '-j ' + action)
 
     def _remove_policy_from_iptables(self, policy, table, chain):
-        pass
+        # table: FILTER | NAT
+        # chain: INPUT | FORWARD | OUTPUT
+
+        table_name = table.upper()
+        chain_name = chain.upper()
+
+        rule = iptc.Rule()
+
+        if (policy.src_address is not None):
+            rule.src = policy.src_address
+
+        if (policy.dst_address is not None):
+            rule.dst = policy.dst_address
+
+        if (policy.protocol != "all"):
+            rule.protocol = policy.protocol
+            match = rule.create_match(policy.protocol)
+
+        if (policy.src_port is not None):
+            match.sport = policy.src_port
+
+        if (policy.dst_port is not None):
+            match.dport = policy.dst_port
+
+        if (policy.description is not None):
+            match = rule.create_match("comment")
+            match.comment = policy.description
+
+        rule.target = iptc.Target(rule, policy.action.upper())
+
+        if table_name == "FILTER":
+            table = iptc.Table(iptc.Table.FILTER)
+        elif table_name == "NAT":
+            table = iptc.Table(iptc.Table.NAT)
+
+        chain = iptc.Chain(table, chain_name)
+        chain.delete_rule(rule)
 
     def _remove_policy_from_ebtables(self, policy, table, chain):
-        pass
+        # table: FILTER | NAT
+        # chain: INPUT | FORWARD | OUTPUT
+
+        table_name = table.upper()
+        chain_name = chain.upper() + " "
+
+        protocols = []
+        if policy.protocol != "all":
+            if policy.protocol == "ipv4":
+                protocols.append("-p IPv4 ")
+            else:
+                protocols.append("-p ip --ip-proto " + str(policy.protocol) + " ")
+        else:
+            protocols.append("-p ip --ip-proto tcp ")
+            protocols.append("-p ip --ip-proto udp ")
+            protocols.append("-p ip --ip-proto icmp ")
+
+        action = policy.action.upper()
+
+        in_interface = ""
+        if (policy.in_interface is not None):
+            in_interface = "--in-interface " + str(policy.in_interface) + " "
+
+        out_interface = ""
+        if (policy.out_interface is not None):
+            out_interface = "--out-interface " + str(policy.out_interface) + " "
+
+        src_address = ""
+        if (policy.src_address is not None):
+            src_address = "--ip-src " + str(policy.src_address) + " "
+
+        dst_address = ""
+        if (policy.dst_address is not None):
+            dst_address = "--ip-dst " + str(policy.dst_address) + " "
+
+        src_port = ""
+        if (policy.src_port is not None):
+            src_port = "--ip-source-port " + str(policy.src_port) + " "
+
+        dst_port = ""
+        if (policy.dst_port is not None):
+            dst_port = "--ip-destination-port " + str(policy.dst_port) + " "
+
+        for protocol in protocols:
+            Bash('ebtables -D ' + chain_name + protocol + in_interface + src_address + src_port + out_interface + dst_address + dst_port + '-j ' + action)
 
     def _get_policies_from_iptables(self, table, chain):
         # table: FILTER | NAT
