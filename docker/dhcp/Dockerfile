@@ -4,6 +4,9 @@ MAINTAINER Politecnico di Torino
 RUN apt-get update && apt-get install -y \
     isc-dhcp-server
 
+RUN pip3 install --upgrade pip
+RUN pip3 install isc_dhcp_leases
+
 #########################################################################
 #									#
 #			Script boot					#

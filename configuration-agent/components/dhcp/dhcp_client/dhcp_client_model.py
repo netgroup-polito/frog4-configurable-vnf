@@ -19,7 +19,7 @@ class Client():
         if self.hostname is not None:
             str += "'hostname': " + self.hostname + ", "
         if self.valid_until is not None:
-            str += "'valid_until': " + self.valid_until
+            str += "'lease_time': " + self.valid_until
         str += "}"
         return str
 

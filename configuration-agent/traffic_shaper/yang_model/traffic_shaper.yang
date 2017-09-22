@@ -91,7 +91,7 @@ module config-traffic-shaper {
 
     container traffic_shaper{
         config true;
-        advertise silent;
+        advertise on_demand;
         list configuration{
             leaf interface_to_control {
                 type leafref {

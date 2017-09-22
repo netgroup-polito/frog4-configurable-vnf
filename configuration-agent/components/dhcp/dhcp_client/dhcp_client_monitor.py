@@ -39,7 +39,7 @@ class DhcpClientsMonitor():
         logging.debug("on_change_interval: " + str(self.on_change_interval))
 
         self.dhcp_clients_old = curr_dhcp_clients
-        print("dhcp_clients_old: " + str(len(self.dhcp_clients_old)))
+        logging.debug("dhcp_clients_old: " + str(len(self.dhcp_clients_old)))
         self.dhcp_clients_new = []
         self.dhcp_clients_updated = []
         self.dhcp_clients_removed = []
@@ -59,7 +59,7 @@ class DhcpClientsMonitor():
 
             self._get_new_dhcp_clients()
 
-            #print("clients_new: " + str(len(self.dhcp_clients_new)))
+            #logging.debug("clients_new: " + str(len(self.dhcp_clients_new)))
             if len(self.dhcp_clients_new) > 0:
                 for client in self.dhcp_clients_new:
                     id = client.mac_address
@@ -92,6 +92,7 @@ class DhcpClientsMonitor():
         client_map = {}
         # Check new or modified dhcp clients
         for client in curr_clients:
+            #logging.debug(client.__str__())
             # get the old client whose mac_address is the same of the new client
             old_client = next((x for x in self.dhcp_clients_old if x.mac_address == client.mac_address), None)
             if old_client is None:
