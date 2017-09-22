@@ -1,6 +1,5 @@
 from components.iperf.model import IperfClient
 from components.iperf.model import IperfServer
-#from components.common.iperf.model.stat import Stats
 
 class IperfParser():
 
@@ -40,14 +39,16 @@ class IperfParser():
         if 'bidirectional' in json_client_params:
             bidirectional = json_client_params['bidirectional']
 
+        bitrate = None
+        if 'bitrate' in json_client_params:
+            bitrate = json_client_params['bitrate']
+
         return IperfClient(server_address,
                            server_port,
                            protocol,
                            duration,
-                           bidirectional)
+                           bidirectional,
+                           bitrate)
 
-
-    def get_stats_dict(self, stats):
-        pass
 
 

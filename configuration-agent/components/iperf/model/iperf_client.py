@@ -5,13 +5,15 @@ class IperfClient:
                  server_port=None,
                  protocol="tcp",
                  duration=10,
-                 bidirectional=False):
+                 bidirectional=False,
+                 bitrate=None):
 
         self.server_address = server_address
         self.server_port = server_port
         self.protocol = protocol
         self.duration = duration
         self.bidirectional = bidirectional
+        self.bitrate = bitrate
 
     def __str__(self):
         string = "{"
@@ -24,6 +26,8 @@ class IperfClient:
         if self.duration is not None:
             string += "'duration': " + str(self.duration) + ", "
         if self.bidirectional is not None:
-            string += "'bidirectional': %s" % self.bidirectional
+            string += "'bidirectional': %s" % self.bidirectional + ", "
+        if self.bitrate is not None:
+            string += "'bitrate': " + str(self.bitrate)
         string += "}"
         return string

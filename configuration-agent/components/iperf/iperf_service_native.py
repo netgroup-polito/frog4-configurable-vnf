@@ -14,6 +14,8 @@ class IperfServiceNative():
             cmd += " --udp"
         if iperf_client.bidirectional is True:
             cmd += " --reverse"
+        if iperf_client.bitrate is not None:
+            cmd += " --bitrate " + str(iperf_client.bitrate)
         logging.debug("iperf client cmd: " + cmd)
         bash = Bash(cmd)
         result = bash.get_output()

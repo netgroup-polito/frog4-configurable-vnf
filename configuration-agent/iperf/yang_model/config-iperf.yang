@@ -125,10 +125,11 @@ module config-iperf {
                 default false;
                 mandatory false;
             }
-        }
-        container stats{
-            leaf bandwidth{
-                type string;
+            leaf bitrate{
+                description "target bitrate in bits/sec. By default 1 Mbit/sec for UDP, unlimited for TCP."
+                type integer;
+                default false;
+                mandatory false;
             }
         }
     }
