@@ -1,19 +1,23 @@
 list clients {
-	key "mac_address";
-	leaf mac_address {
-		description "name='MAC Address'";
-		type string;
-	}
-	leaf ip_address {
-		description "name='IP Address'";
-		type string;
-	}
-	    leaf hostname{
-		    description "name='Hostname'";
-			type inet:ip-address;
+	atomic true;
+	advertise onchange;
+	list clients {
+	    key "mac_address";
+		leaf mac_address {
+			description "name='MAC Address'";
+			type inet:mac-address;
 		}
-		leaf valid_until{
-		    description "name='Valid until'";
+		leaf ip_address {
+			description "name='IP Address'";
+			type inet:ipv4-address;
+		}
+		leaf hostname{
+		    description "name='Hostname'";
 		    type string;
 		}
+		leaf lease_time{
+		    description "name='Lease Time'";
+		    type string;
+		}
+	}
 }

@@ -14,6 +14,6 @@ class DhcpClientParser():
             client_dict['hostname'] = client.hostname
 
         if client.valid_until is not None:
-            client_dict['valid_until'] = client.valid_until
+            client_dict['lease_time'] = client.valid_until
 
         return client_dict

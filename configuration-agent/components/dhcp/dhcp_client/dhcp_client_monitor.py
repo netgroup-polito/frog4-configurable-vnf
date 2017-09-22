@@ -23,17 +23,9 @@ class DhcpClientsMonitor():
         self.PERIODIC = Constants.ADVERTISE_PERIODIC
 
         self.url_clients = "config-dhcp-server:server/clients"
-        self.url_macAddress = "/mac_address"
-        self.url_ipAddress = "/ip_address"
-        self.url_hostname = "/hostname"
-        self.url_validUntil = "/valid_until"
 
         self.elements = {}
-        self.elements['client'] = Element(advertise=self.SILENT)
-        self.elements['macAddress'] = Element(advertise=self.ON_CHANGE)
-        self.elements['ipAddress'] = Element(advertise=self.ON_CHANGE)
-        self.elements['hostname'] = Element(advertise=self.ON_CHANGE)
-        self.elements['validUntil'] = Element(advertise=self.ON_CHANGE)
+        self.elements['client'] = Element(advertise=self.ON_CHANGE)
         ##################################################################
 
         self.periods = []
@@ -149,48 +141,14 @@ class DhcpClientsMonitor():
                 self._publish_dhcpClient_leafs_periodic(client, period)
 
     def _publish_dhcpClient_leafs_periodic(self, client, period):
-
         id = client.mac_address
-
         if self.elements['client'].advertise == self.PERIODIC and self.elements['client'].period == period:
             self._publish_client(id, client)
 
-        if client.mac_address is not None:
-            if self.elements['macAddress'].advertise == self.PERIODIC and self.elements['macAddress'].period == period:
-                self._publish_client_macAddress(id, client.mac_address)
-
-        if client.ip_address is not None:
-            if self.elements['ipAddress'].advertise == self.PERIODIC and self.elements['ipAddress'].period == period:
-                self._publish_client_ipAddress(id, client.ip_address)
-
-        if client.hostname is not None:
-            if self.elements['hostname'].advertise == self.PERIODIC and self.elements['hostname'].period == period:
-                self._publish_client_hostname(id, client.hostname)
-
-        if client.valid_until is not None:
-            if self.elements['validUntil'].advertise == self.PERIODIC and self.elements['validUntil'].period == period:
-                self._publish_client_validUntil(id, client.valid_until)
 
     def _publish_dhcpClient_leafs_on_change(self, id, client, method):
-
         if self.elements['client'].advertise == self.ON_CHANGE:
             self._publish_client(id, client, method)
-
-        if client.mac_address is not None:
-            if self.elements['macAddress'].advertise == self.ON_CHANGE:
-                self._publish_client_macAddress(id, client.mac_address, method)
-
-        if client.ip_address is not None:
-            if self.elements['ipAddress'].advertise == self.ON_CHANGE:
-                self._publish_client_ipAddress(id, client.ip_address, method)
-
-        if client.hostname is not None:
-            if self.elements['hostname'].advertise == self.ON_CHANGE:
-                self._publish_client_hostname(id, client.hostname, method)
-
-        if client.valid_until is not None:
-            if self.elements['validUntil'].advertise == self.ON_CHANGE:
-                self._publish_client_validUntil(id, client.valid_until, method)
 
 
     ################### Private publish functions ###################
@@ -198,19 +156,3 @@ class DhcpClientsMonitor():
         client_dict = self.dhcpClientParser.get_client_dict(data)
         url = self.url_clients + "/" + id
         self.ddController.publish_on_bus(url, method, client_dict)
-
-    def _publish_client_macAddress(self, id, data, method=None):
-        url = self.url_clients + "/" + id + self.url_macAddress
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_client_ipAddress(self, id, data, method=None):
-        url = self.url_clients + "/" + id + self.url_ipAddress
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_client_hostname(self, id, data, method=None):
-        url = self.url_clients + "/" + id + self.url_hostname
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_client_validUntil(self, id, data, method=None):
-        url = self.url_clients + "/" + id + self.url_validUntil
-        self.ddController.publish_on_bus(url, method, data)
