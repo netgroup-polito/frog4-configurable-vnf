@@ -1,5 +1,11 @@
 from components.firewall.policy.policy_parser import PolicyParser
+import json
+import logging
 
+# set log level
+log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
+log_date_format = '[%d-%m-%Y %H:%M:%S]'
+logging.basicConfig(filename="logging_agent.log", level=logging.DEBUG, format=log_format, datefmt=log_date_format)
 
 class PolicyRepository():
 
@@ -10,14 +16,15 @@ class PolicyRepository():
         open(self.db_file_path, 'w').close()
 
     def save_policy(self, policy):
-        id = policy.__hash__()
+        id = str(policy.__hash__())
         policy.id = id
-        json_policy = PolicyParser().get_policy_dict(policy)
-        self._save_parameter(id, json_policy)
+        policy_dict = PolicyParser().get_policy_dict(policy)
+        self._save_parameter(id, policy_dict)
+        #logging.debug("saved policy on repo: " + policy.__str__())
         return id
 
     def get_policy(self, id):
-        json_policy = self._get_parameter(id)
+        json_policy = self._get_parameter(str(id))
         if json_policy is not None:
             policy = PolicyParser().parse_policy(json_policy)
             return policy
@@ -33,13 +40,13 @@ class PolicyRepository():
         return policies
 
     def remove_policy(self, id):
-        self._remove_parameter(id)
+        self._remove_parameter(str(id))
 
 
     def _save_parameter(self, name, value):
         try:
             with open(self.db_file_path, 'a') as db_file:
-                db_file.write(name + " " + value + "\n")
+                db_file.write(str(name) + "#" + json.dumps(value) + "\n")
                 #db_file.truncate()
         except Exception as e:
             raise IOError("Error during the writing of file: " + self.db_file_path + "\n" + str(e))
@@ -53,9 +60,9 @@ class PolicyRepository():
             raise IOError("Error during the reading of file: " + self.db_file_path + "\n" + str(e))
 
         for line in lines:
-            args = line.strip().split(' ')
-            if args[0] == name:
-                return args[1]
+            args = line.strip().split('#')
+            if args[0].__eq__(name):
+                return json.loads(args[1])
 
         return None
 
@@ -69,9 +76,9 @@ class PolicyRepository():
         try:
             with open(self.db_file_path, 'w') as db_file:
                 for line in lines:
-                    args = line.strip().split(' ')
-                    if args[0] != name:
-                        db_file.write(args[0] + " " + args[1] + "\n")
+                    args = line.strip().split('#')
+                    if not args[0].__eq__(name):
+                        db_file.write(args[0] + "#" + args[1] + "\n")
                 #db_file.truncate()
         except Exception as e:
             raise IOError("Error during the writing of file: " + self.db_file_path + "\n" + str(e))
@@ -87,6 +94,7 @@ class PolicyRepository():
 
         parameters = []
         for line in lines:
-            args = line.strip().split(' ')
-            parameters.append(args[1])
+            args = line.strip().split('#')
+            param = json.loads(args[1])
+            parameters.append(param)
         return parameters

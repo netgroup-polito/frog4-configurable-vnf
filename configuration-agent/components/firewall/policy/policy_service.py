@@ -26,6 +26,7 @@ class PolicyService():
                 self._remove_policy_from_ebtables(policy, table, chain)
             else:
                 self._remove_policy_from_iptables(policy, table, chain)
+            PolicyRepository().remove_policy(id)
 
     def get_policies(self, table, chain):
         policies = PolicyRepository().get_policies()

@@ -40,6 +40,7 @@ class FirewallMonitor():
         curr_interfaces = self.interfaceController.get_interfaces()
         self.interfacesMonitor = InterfacesMonitor(self, curr_interfaces)
 
+        self.firewallController.clear_policy_repo()
         curr_policies = self.firewallController.get_policies()
         self.policiesMonitor = PoliciesMonitor(self, curr_policies)
 
@@ -49,7 +50,6 @@ class FirewallMonitor():
         curr_whitelist = self.whitelistController.get_whitelist()
         self.whitelistMonitor = WhitelistMonitor(self, curr_whitelist)
 
-        self.firewallController.clear_policy_repo()
         logging.debug("Setting initial configuration...")
         self.firewallController.set_configuration(initial_configuration)
         logging.debug("Setting initial configuration...done!")

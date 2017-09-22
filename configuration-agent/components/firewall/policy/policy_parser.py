@@ -7,6 +7,10 @@ class PolicyParser():
 
     def parse_policy(self, json_policy):
 
+        id = None
+        if 'id' in json_policy:
+            id = self.parse_id(json_policy)
+
         description = None
         if 'description' in json_policy:
             description = self.parse_description(json_policy)
@@ -44,7 +48,7 @@ class PolicyParser():
             dst_port = self.parse_dst_port(json_policy)
 
 
-        return Policy(id=None,
+        return Policy(id=id,
                       description=description,
                       action=action,
                       protocol=protocol,
@@ -55,6 +59,9 @@ class PolicyParser():
                       src_port=src_port,
                       dst_port=dst_port
                       )
+
+    def parse_id(self, json_policy):
+        return json_policy['id']
 
     def parse_description(self, json_policy):
         return json_policy['description']

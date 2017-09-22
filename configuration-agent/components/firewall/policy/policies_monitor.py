@@ -181,5 +181,9 @@ class PoliciesMonitor():
     ################### Private publish functions ###################
     def _publish_policy(self, id, data, method=None):
         policy_dict = self.policyParser.get_policy_dict(data)
+        logging.debug("_publish_policy with id: " + id)
+        print("_publish_policy with id: " + id)
         url = self.url_policy + "/" + id
+        logging.debug("_publish_policy at url: " + url)
+        print("_publish_policy at url: " + url)
         self.ddController.publish_on_bus(url, method, policy_dict)

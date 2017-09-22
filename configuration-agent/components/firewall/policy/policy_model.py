@@ -25,29 +25,29 @@ class Policy:
 
 
     def __str__(self):
-        str = "{"
+        string = "{"
         if self.id is not None:
-            str += "'id': " + self.id + ", "
+            string += "'id': " + str(self.id) + ", "
         if self.description is not None:
-            str += "'description': " + self.description + ", "
+            string += "'description': " + self.description + ", "
         if self.action is not None:
-            str += "'action': " + self.action + ", "
+            string += "'action': " + self.action + ", "
         if self.protocol is not None:
-            str += "'protocol': " + self.protocol + ", "
+            string += "'protocol': " + self.protocol + ", "
         if self.in_interface is not None:
-            str += "'in_interface': " + self.in_interface + ", "
+            string += "'in_interface': " + self.in_interface + ", "
         if self.out_interface is not None:
-            str += "'out_interface': " + self.out_interface + ", "
+            string += "'out_interface': " + self.out_interface + ", "
         if self.src_address is not None:
-            str += "'src_address': " + self.src_address + ", "
+            string += "'src_address': " + self.src_address + ", "
         if self.dst_address is not None:
-            str += "'dst_address': " + self.dst_address + ", "
+            string += "'dst_address': " + self.dst_address + ", "
         if self.src_port is not None:
-            str += "'src_port': " + self.src_port + ", "
+            string += "'src_port': " + self.src_port + ", "
         if self.dst_port is not None:
-            str += "'dst_port': " + self.dst_port
-        str += "}"
-        return str
+            string += "'dst_port': " + self.dst_port
+            string += "}"
+        return string
 
     def __eq__(self, other):
         if self.action.lower() != other.action.lower():

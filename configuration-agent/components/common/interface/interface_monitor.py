@@ -22,28 +22,10 @@ class InterfacesMonitor():
         self.ON_CHANGE = Constants.ADVERTISE_ON_CHANGE
         self.PERIODIC = Constants.ADVERTISE_PERIODIC
 
-        self.url_iface = "config-dhcp-server:interfaces/ifEntry"
-        self.url_id = "/id"
-        self.url_name = "/name"
-        self.url_type = "/type"
-        self.url_management = "/management"
-        self.url_ipv4Config = "/ipv4_configuration"
-        self.url_ipv4Config_address = self.url_ipv4Config + "/address"
-        self.url_ipv4Config_netmask = self.url_ipv4Config + "/netmask"
-        self.url_ipv4Config_macAddress = self.url_ipv4Config + "/mac_address"
-        self.url_ipv4Config_defaultGW = self.url_ipv4Config + "/default_gw"
+        self.url_iface = "interfaces/ifEntry"
 
         self.elements = {}
         self.elements['interface'] = Element(advertise=self.ON_CHANGE)
-        self.elements['id'] = Element(advertise=self.SILENT)
-        self.elements['name'] = Element(advertise=self.SILENT)
-        self.elements['type'] = Element(advertise=self.SILENT)
-        self.elements['management'] = Element(advertise=self.SILENT)
-        self.elements['ipv4Configuration'] = Element(advertise=self.SILENT)
-        self.elements['address'] = Element(advertise=self.SILENT)
-        self.elements['netmask'] = Element(advertise=self.SILENT)
-        self.elements['macAddress'] = Element(advertise=self.SILENT)
-        self.elements['defaultGW'] = Element(advertise=self.SILENT)
         ##################################################################
 
         self.periods = []
@@ -177,84 +159,12 @@ class InterfacesMonitor():
         if self.elements['interface'].advertise == self.ON_CHANGE:
             self._publish_interface(id, interface, method)
 
-        if interface.id is not None:
-            if self.elements['id'].advertise == self.ON_CHANGE:
-                self._publish_interface_id(id, interface.id, method)
-
-        if interface.name is not None:
-            if self.elements['name'].advertise == self.ON_CHANGE:
-                self._publish_interface_name(id, interface.name, method)
-
-        if interface.type is not None:
-            if self.elements['type'].advertise == self.ON_CHANGE:
-                self._publish_interface_type(id, interface.type, method)
-
-        if interface.management is not None:
-            if self.elements['management'].advertise == self.ON_CHANGE:
-                self._publish_interface_management(id, interface.management, method)
-
-        if interface.ipv4_configuration is not None:
-            if self.elements['ipv4Configuration'].advertise == self.ON_CHANGE:
-                self._publish_interface_ipv4Config(id, interface.ipv4_configuration, method)
-
-            if interface.ipv4_configuration.address is not None:
-                if self.elements['address'].advertise == self.ON_CHANGE:
-                    self._publish_interface_ipv4Config_address(id, interface.ipv4_configuration.address, method)
-
-            if interface.ipv4_configuration.netmask is not None:
-                if self.elements['netmask'].advertise == self.ON_CHANGE:
-                    self._publish_interface_ipv4Config_netmask(id, interface.ipv4_configuration.netmask, method)
-
-            if interface.ipv4_configuration.mac_address is not None:
-                if self.elements['macAddress'].advertise == self.ON_CHANGE:
-                    self._publish_interface_ipv4Config_macAddress(id, interface.ipv4_configuration.mac_address, method)
-
-            if interface.ipv4_configuration.default_gw is not None:
-                if self.elements['defaultGW'].advertise == self.ON_CHANGE:
-                    self._publish_interface_ipv4Config_defaultGW(id, interface.ipv4_configuration.default_gw, method)
-
     def _publish_interface_leafs_periodic(self, interface, period):
 
         id = interface.name
 
         if self.elements['interface'].advertise == self.PERIODIC and self.elements['interface'].period == period:
             self._publish_interface(id, interface)
-
-        if interface.id is not None:
-            if self.elements['id'].advertise == self.PERIODIC and self.elements['id'].period == period:
-                self._publish_interface_id(id, interface.id)
-
-        if interface.name is not None:
-            if self.elements['name'].advertise == self.PERIODIC and self.elements['name'].period == period:
-                self._publish_interface_name(id, interface.name)
-
-        if interface.type is not None:
-            if self.elements['type'].advertise == self.PERIODIC and self.elements['type'].period == period:
-                self._publish_interface_type(id, interface.type)
-
-        if interface.management is not None:
-            if self.elements['management'].advertise == self.PERIODIC and self.elements['management'].period == period:
-                self._publish_interface_management(id, interface.management)
-
-        if interface.ipv4_configuration is not None:
-            if self.elements['ipv4Configuration'].advertise == self.PERIODIC and self.elements['ipv4Configuration'].period == period:
-                self._publish_interface_ipv4Config(id, interface.ipv4_configuration)
-
-            if interface.ipv4_configuration.address is not None:
-                if self.elements['address'].advertise == self.PERIODIC and self.elements['address'].period == period:
-                    self._publish_interface_ipv4Config_address(id, interface.ipv4_configuration.address)
-
-            if interface.ipv4_configuration.netmask is not None:
-                if self.elements['netmask'].advertise == self.PERIODIC and self.elements['netmask'].period == period:
-                    self._publish_interface_ipv4Config_netmask(id, interface.ipv4_configuration.netmask)
-
-            if interface.ipv4_configuration.mac_address is not None:
-                if self.elements['macAddress'].advertise == self.PERIODIC and self.elements['macAddress'].period == period:
-                    self._publish_interface_ipv4Config_macAddress(id, interface.ipv4_configuration.mac_address)
-
-            if interface.ipv4_configuration.default_gw is not None:
-                if self.elements['defaultGW'].advertise == self.PERIODIC and self.elements['defaultGW'].period == period:
-                    self._publish_interface_ipv4Config_defaultGW(id, interface.ipv4_configuration.default_gw)
 
     def _timer_periodic_callback(self, period):
 
@@ -274,40 +184,5 @@ class InterfacesMonitor():
         url = self.url_iface + "/" + id
         self.ddController.publish_on_bus(url, method, interface_dict)
 
-    def _publish_interface_id(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_id
-        self.ddController.publish_on_bus(url, method, data)
 
-    def _publish_interface_name(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_name
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_interface_type(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_type
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_interface_management(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_management
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_interface_ipv4Config(self, id, data, method=None):
-        ipv4Config_dict = self.interfaceParser.get_interface_ipv4Configuration(data)
-        url = self.url_iface + "/" + id + self.url_ipv4Config
-        self.ddController.publish_on_bus(url, method, ipv4Config_dict)
-
-    def _publish_interface_ipv4Config_address(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_ipv4Config_address
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_interface_ipv4Config_netmask(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_ipv4Config_netmask
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_interface_ipv4Config_macAddress(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_ipv4Config_macAddress
-        self.ddController.publish_on_bus(url, method, data)
-
-    def _publish_interface_ipv4Config_defaultGW(self, id, data, method=None):
-        url = self.url_iface + "/" + id + self.url_ipv4Config_defaultGW
-        self.ddController.publish_on_bus(url, method, data)
 
