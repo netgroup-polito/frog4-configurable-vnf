@@ -1,4 +1,4 @@
-from components.common.iperf.iperf_service_native import IperfServiceNative
+from components.iperf.iperf_service_native import IperfServiceNative
 
 from common.config_instance import ConfigurationInstance
 from components.iperf.iperf_service import IperfService
