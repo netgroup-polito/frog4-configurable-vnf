@@ -26,7 +26,7 @@ class ConfigurationInstance(object):
     def save_on_change_interval(self, on_change_interval):
         self._save_parameter("on_change_interval", on_change_interval)
     def get_on_change_interval(self):
-        return self._get_parameter("on_change_interval")
+        return int(self._get_parameter("on_change_interval"))
 
     def save_iface_management(self, iface_management):
         self._save_parameter("iface_management", iface_management)
