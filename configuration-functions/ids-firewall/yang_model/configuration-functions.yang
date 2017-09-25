@@ -1,0 +1,55 @@
+module configuration-functions {
+	namespace "http://netgroup.ipv6.polito.it/cf";
+	prefix "cf";
+	import ietf-inet-types {
+		prefix inet;
+	}
+
+    container interface_management {
+        leaf name {
+            description "name='Name'";
+            type string;
+        }
+        container ipv4_configuration{
+            presence "it contains ipv4 configuration";
+            leaf configurationType{
+                description "name='Configuration type'";
+                type enumeration {
+                    enum dhcp;
+                    enum static;
+                    enum not_defined;
+                }
+            }
+            leaf address{
+                description "name='IP Address";
+                type inet:ipv4-address;
+                mandatory false;
+            }
+            leaf netmask{
+                description "name='Netmask";
+                type inet:ip-address;
+                mandatory false;
+            }
+            leaf mac_address{
+                description "name='MAC Address'";
+                type inet:mac-address;
+                mandatory false;
+            }
+            leaf default_gw{
+                description "name='Default GW";
+                type inet:ipv4-address;
+                mandatory false;
+            }
+        }
+	}
+
+	container nfs{
+        leaf ids{
+            type uuid;
+            config true;
+        }
+        leaf firewall{
+            type uuid;
+            config true;
+	    }
+	}
