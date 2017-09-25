@@ -1,5 +1,5 @@
-from components.iperf.model import IperfClient
-from components.iperf.model import IperfServer
+from components.iperf.model.iperf_client import IperfClient
+from components.iperf.model.iperf_server import IperfServer
 
 class IperfParser():
 
