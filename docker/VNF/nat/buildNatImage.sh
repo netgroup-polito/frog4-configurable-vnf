@@ -6,7 +6,7 @@ if [ "$#" -lt 1 ] ; then
 fi
 
 image_name=$1
-src_dir="../../configuration-agent"
+src_dir="../../../configuration-agent"
 dst_dir="nat-agent"
 
 mkdir -p $dst_dir
