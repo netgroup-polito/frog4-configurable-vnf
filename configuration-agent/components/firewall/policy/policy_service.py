@@ -66,56 +66,29 @@ class PolicyService():
         table_name = table.upper()
         chain_name = chain.upper()
 
-        if policy.protocol.lower().__eq__("all"):
+        protocol = policy.protocol.lower()
 
-            cmd = "iptables -A " + chain_name + " -p all"
+        cmd = "iptables -A " + chain_name + " -p " + protocol
 
-            if (policy.src_address is not None):
-                cmd += " -s " + policy.src_address
+        if (policy.src_address is not None):
+            cmd += " -s " + policy.src_address
 
-            if (policy.dst_address is not None):
-                cmd += " -d " + policy.dst_address
+        if (not protocol.__eq__("all") and policy.src_port is not None):
+            cmd += " --sport " + policy.src_port
 
-            cmd += " -j " + policy.action.upper()
+        if (policy.dst_address is not None):
+            cmd += " -d " + policy.dst_address
 
-            if (policy.description is not None):
-                cmd += " -m comment --comment '" + policy.description + "'"
+        if (not protocol.__eq__("all") and policy.dst_port is not None):
+            cmd += " --dport " + policy.dst_port
 
-            logging.debug(cmd)
-            Bash(cmd)
-            return
+        cmd += " -j " + policy.action.upper()
 
-        else:
-            rule = iptc.Rule()
+        if (policy.description is not None):
+            cmd += " -m comment --comment '" + policy.description + "'"
 
-            if(policy.src_address is not None):
-                rule.src = policy.src_address
-
-            if(policy.dst_address is not None):
-                rule.dst = policy.dst_address
-
-            rule.protocol = policy.protocol
-            match = rule.create_match(policy.protocol)
-
-            if(policy.src_port is not None):
-                match.sport = policy.src_port
-
-            if(policy.dst_port is not None):
-                match.dport = policy.dst_port
-
-            if(policy.description is not None):
-                match = rule.create_match("comment")
-                match.comment = policy.description
-
-            rule.target = iptc.Target(rule, policy.action.upper())
-
-            if table_name == "FILTER":
-                table = iptc.Table(iptc.Table.FILTER)
-            elif table_name == "NAT":
-                table = iptc.Table(iptc.Table.NAT)
-
-            chain = iptc.Chain(table, chain_name)
-            chain.insert_rule(rule)
+        logging.debug(cmd)
+        Bash(cmd)
 
     def _add_policy_in_ebtables(self, policy,  table, chain):
         # table: FILTER | NAT

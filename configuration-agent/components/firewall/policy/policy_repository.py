@@ -1,6 +1,7 @@
 from components.firewall.policy.policy_parser import PolicyParser
 import json
 import logging
+import datetime
 
 # set log level
 log_format = '%(asctime)s [%(levelname)s] %(filename)s:%(lineno)s %(message)s'
@@ -46,7 +47,8 @@ class PolicyRepository():
     def _save_parameter(self, name, value):
         try:
             with open(self.db_file_path, 'a') as db_file:
-                db_file.write(str(name) + "#" + json.dumps(value) + "\n")
+                now = datetime.datetime.now().strftime("%d/%m/%y %H:%M:%S")
+                db_file.write(now + "#" + str(name) + "#" + json.dumps(value) + "\n")
                 #db_file.truncate()
         except Exception as e:
             raise IOError("Error during the writing of file: " + self.db_file_path + "\n" + str(e))
@@ -61,8 +63,8 @@ class PolicyRepository():
 
         for line in lines:
             args = line.strip().split('#')
-            if args[0].__eq__(name):
-                return json.loads(args[1])
+            if args[1].__eq__(name):
+                return json.loads(args[2])
 
         return None
 
@@ -77,8 +79,8 @@ class PolicyRepository():
             with open(self.db_file_path, 'w') as db_file:
                 for line in lines:
                     args = line.strip().split('#')
-                    if not args[0].__eq__(name):
-                        db_file.write(args[0] + "#" + args[1] + "\n")
+                    if not args[1].__eq__(name):
+                        db_file.write(args[0] + "#" + args[1] + "#" + args[2] + "\n")
                 #db_file.truncate()
         except Exception as e:
             raise IOError("Error during the writing of file: " + self.db_file_path + "\n" + str(e))
@@ -95,6 +97,6 @@ class PolicyRepository():
         parameters = []
         for line in lines:
             args = line.strip().split('#')
-            param = json.loads(args[1])
+            param = json.loads(args[2])
             parameters.append(param)
         return parameters
