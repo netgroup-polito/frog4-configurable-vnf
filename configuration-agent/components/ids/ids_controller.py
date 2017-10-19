@@ -23,13 +23,18 @@ class IdsController():
     def add_attackToMonitor(self, attack):
         if attack.__eq__("port_scan"):
             self._configure_detection_portScan()
+        elif attack.__eq__("ping_flood"):
+            self._configure_detection_pingFlood()
         else:
             logging.debug("attack: " + attack + " unknown")
-            raise ValueError("attack: " + attack + " unknown")
 
     def _configure_detection_portScan(self):
         if self.nf_type == "docker" or self.nf_type == "vm":
             self.idsService.configure_detection_portScan()
+
+    def _configure_detection_pingFlood(self):
+        if self.nf_type == "docker" or self.nf_type == "vm":
+            self.idsService.configure_detection_pingFlood()
 
     def start_ids(self):
         if self.nf_type == "docker" or self.nf_type == "vm":

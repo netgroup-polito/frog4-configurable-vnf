@@ -102,15 +102,25 @@ class NfsController(object, metaclass=Singleton):
         data = json_data["data"]
 
         attack_name = data["attack_name"]
+        logging.debug("Attack received: " + attack_name)
+        if attack_name.__eq__("port_scan"):
+            protocol = "tcp"
+        elif attack_name.__eq__("ping_flood"):
+            protocol = "icmp"
+        else:
+            logging.info("Attack: " + attack_name + " unknown.")
+            logging.info("I can't configure the firewall")
+            return
+
         src_ip = data["src_address"]
         dst_ip = data["dst_address"]
 
         policy_dict = {}
         policy_dict["action"] = "drop"
-        policy_dict["protocol"] = "tcp"
+        policy_dict["protocol"] = protocol
         policy_dict["src-address"] = src_ip
         policy_dict["dst-address"] = dst_ip
-        policy_dict["description"] = "Block tcp traffic"
+        policy_dict["description"] = "Block " + protocol + " traffic"
 
         url = self.firewall_rest_address + self.url_policy
         logging.debug("url to use for post: " + url)

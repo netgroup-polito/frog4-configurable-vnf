@@ -10,6 +10,7 @@ class AttacksMonitor():
 
         self.attack_map = {}
         self.attack_map['1000006'] = "port_scan"
+        self.attack_map['1000031'] = "ping_flood"
 
         self.reader = unified2.SpoolRecordReader("/var/log/snort", "snort.log", follow=True)
 
