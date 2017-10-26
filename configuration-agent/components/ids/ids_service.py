@@ -49,12 +49,12 @@ class IdsService():
         # Add Ping flood rule to snort_rules
         # Here we are using detection filter to generate an alert whenever there"
         # are more than 100 ICMP Echo Request within a 1-second interval"
-        rule = "alert icmp any any -> $HOME_NET any (msg:'Ping flood'; detection_filter:track by_src, count 99, seconds 1; sid:1000031; rev:1;)"
+        rule = "alert icmp any any -> $HOME_NET any (msg:'Ping flood'; detection_filter:track by_src, count 99, seconds 5; sid:1000031; rev:1;)"
         with open("/etc/snort/rules/local.rules", "a") as text_file:
             print("{}".format(rule), file=text_file)
 
         # Configure threshold
-        str = "# The following command tells snort to limit the alerts for the rule with the sid of 1000031 to 1 per every 20 seconds\n"
+        str = "# The following command tells snort to limit the alerts for the rule with the sid of 1000031 to 1 per every 60 seconds\n"
         str += "event_filter gen_id 1, sig_id 1000031, type limit, track by_src, count 1, seconds 20\n"
         with open("/etc/snort/threshold.conf", "a") as text_file:
             print("{}".format(str), file=text_file)
