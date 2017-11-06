@@ -1,0 +1,23 @@
+module my-extensions {
+       
+   extension advertise {
+      description "This statement defines how a node has to be exported";
+      argument "ondemand | onthreshold | onchange | periodic";
+   }
+
+	extension advertise-period {
+      description "In case of 'periodic' advertisement, it defines the period express in seconds";
+      argument "period";
+   }
+
+	extension atomic {
+		description "This statement defines how access to the node"
+		argument "true | false"	
+	}
+
+	extension config {
+		description "This statement defines if a node is configurable (r/w) or not (only read)"
+		argument "true | false"	
+	}
+
+} 
