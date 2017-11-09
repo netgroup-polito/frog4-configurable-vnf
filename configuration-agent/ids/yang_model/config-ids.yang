@@ -3,7 +3,7 @@ module config-ids {
     prefix "ids";
     import ietf-inet-types {
 		prefix inet;
-	}
+    }
     description "IDS configuration";
 
 	container interfaces {
@@ -104,8 +104,9 @@ module config-ids {
 		        key "name";
 		        leaf name{
 		            type enumeration {
-                    enum port_scan;
-    			}
+                                enum port_scan;
+				enum ping_flood;
+    			    }
 		        }
 		    }
 		}
@@ -116,7 +117,8 @@ module config-ids {
 		    atomic true;
 		    leaf attack_name{
 		        type enumeration {
-                    enum port_scan;
+                            enum port_scan;
+			    enum ping_flood;
     			}
 		    }
 		    leaf src_address{
