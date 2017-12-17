@@ -2,6 +2,7 @@ FROM generic-image
 MAINTAINER Politecnico di Torino
 
 RUN apt-get update && apt-get install -y \
+    bridge-utils \
     wondershaper
 
 #########################################################################

@@ -23,6 +23,19 @@ class TrafficShaperController():
             self.trafficShaperService.stop_bandwitdh_shaping(interface_name)
         del self.traffic_shaper_map[interface_name]
 
+    def update_bandwidth_shaping(self, trafficShaper):
+        if self.nf_type == "docker" or self.nf_type == "vm":
+            interface_name = trafficShaper.interface_name
+            self.trafficShaperService.stop_bandwitdh_shaping(interface_name)
+            old_dwld = self.traffic_shaper_map[interface_name].download_limit
+            old_upld = self.traffic_shaper_map[interface_name].upload_limit
+            if trafficShaper.download_limit is None:
+                trafficShaper.download_limit = old_dwld
+            if trafficShaper.upload_limit is None:
+                trafficShaper.upload_limit = old_upld
+            self.trafficShaperService.start_bandwitdh_shaping(trafficShaper)
+            self.traffic_shaper_map[interface_name] = trafficShaper
+
     def update_bandwidth_shaping_download_limit(self, interface_name, download_limit):
         traffic_shaper = self.traffic_shaper_map[interface_name]
         traffic_shaper.download_limit = download_limit

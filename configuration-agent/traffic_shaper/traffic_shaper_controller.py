@@ -1,6 +1,8 @@
 import logging
 from components.common.interface.interface_controller import InterfaceController
 from components.common.interface.interface_parser import InterfaceParser
+from components.common.bridge.bridge_controller import BridgeController
+from components.common.bridge.bridge_model import Bridge
 from components.traffic_shaper.traffic_shaper_controller import TrafficShaperController as TrafficShaperCoreController
 from components.traffic_shaper.traffic_shaper_parser import TrafficShaperParser as TrafficShaperCoreParser
 from traffic_shaper.traffic_shaper_parser import TrafficShaperParser
@@ -19,8 +21,12 @@ class TrafficShaperController():
         self.interfaceController = InterfaceController()
         self.interfaceParser = InterfaceParser()
 
+        self.bridgeController = BridgeController()
+
         self.trafficShaperCoreController = TrafficShaperCoreController()
         self.trafficShaperCoreParser = TrafficShaperCoreParser()
+
+        self.transparent_interfaces = []
 
     def set_configuration(self, json_configuration):
 
@@ -28,7 +34,16 @@ class TrafficShaperController():
         for json_iface in json_interfaces:
             self.configure_interface(json_iface)
 
-        self.enable_ip_forwarding()
+        if len(self.transparent_interfaces) == 2:
+            iface1 = self.transparent_interfaces[0].name
+            iface2 = self.transparent_interfaces[1].name
+            bridge = Bridge("br0", iface1, iface2)
+            logging.debug("Bridge to create: " + bridge.__str__())
+            self.create_bridge(bridge)
+        elif len(self.transparent_interfaces) == 0:
+            self.enable_ip_forwarding()
+        else:
+            logging.debug("Error: transparent interfaces must be two")
 
         json_traffic_shaper = self.trafficShaperParser.parse_traffic_shaper_configuration(json_configuration)
         if 'configuration' in json_traffic_shaper:
@@ -53,6 +68,17 @@ class TrafficShaperController():
         conf_interfaces["ifEntry"] = self.get_interfaces()
         return conf_interfaces
 
+    # Bridge
+    def create_bridge(self, bridge):
+        br_found = self.interfaceController.get_interface_by_name(bridge.name)
+        if br_found is None:
+            self.bridgeController.create_bridge(bridge)
+            logging.debug("Bridge created")
+            return True
+        else:
+            logging.debug("Bridge already existent")
+            return False
+
     # Interfaces/ifEntry
     def get_interfaces(self):
         interfaces = self.interfaceController.get_interfaces()
@@ -70,7 +96,11 @@ class TrafficShaperController():
 
     def configure_interface(self, json_interface):
         interface = self.interfaceParser.parse_interface(json_interface)
-        if interface.type != "transparent":
+        if interface.type == "transparent":
+            self.transparent_interfaces.append(interface)
+            logging.debug("Found a transparent interface: " + interface.__str__())
+            return
+        else:
             iface_found = self.interfaceController.get_interface_by_name(interface.name)
             if iface_found is not None:
                 if iface_found.__eq__(interface):
@@ -170,6 +200,15 @@ class TrafficShaperController():
             self.trafficShaperCoreController.stop_bandwitdh_shaping(interface_name)
         else:
             raise ValueError("could not find traffic shaper for interface: " + interface_name)
+
+    def update_bandwitdh_shaping(self, interface_name, json_traffic_shaper):
+        if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):
+            traffic_shaper = self.trafficShaperCoreParser.parse_traffic_shaper_configuration(json_traffic_shaper)
+            logging.debug(traffic_shaper.__str__())
+            interface = self.interfaceController.get_interface_by_name(interface_name)
+            traffic_shaper.add_interface_name(interface.name)
+            traffic_shaper.add_interface_address(interface.ipv4_configuration.address)
+            self.trafficShaperCoreController.update_bandwidth_shaping(traffic_shaper)
 
     def update_bandwitdh_shaping_download_limit(self, interface_name, download_limit):
         if self.trafficShaperCoreController.traffic_shaper_exists(interface_name):

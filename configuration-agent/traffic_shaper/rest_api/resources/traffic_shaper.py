@@ -1,5 +1,5 @@
 from flask import request, Response
-from flask_restplus import Resource
+from flask_restplus import Resource, fields
 import json
 import logging
 
@@ -9,6 +9,10 @@ from traffic_shaper.rest_api.api import api
 traffic_shaper_ns = api.namespace('traffic_shaper', 'Traffic Shaper Resource')
 trafficShaperController = TrafficShaperController()
 
+tc_put = api.model('Traffic Shaper Configuration', {
+    'download_limit': fields.Integer(required=True, description='speed in mega bits'),
+    'upload_limit': fields.Integer(required=True, description='speed in mega bits'),
+})
 @traffic_shaper_ns.route("/bandwidth_shaping/<if_name>", methods=['PUT','GET','DELETE'])
 @traffic_shaper_ns.route("/bandwidth_shaping", methods=['POST','GET'])
 class TrafficShaper_Configuration(Resource):
@@ -30,6 +34,7 @@ class TrafficShaper_Configuration(Resource):
             return Response(json.dumps(str(err)), status=500, mimetype="application/json")
 
     @traffic_shaper_ns.param("Interface name", "Interface name", "body", type="string", required=True)
+    @traffic_shaper_ns.expect(tc_put)
     @traffic_shaper_ns.response(200, 'Bandwitdh shaping configuration updated.')
     @traffic_shaper_ns.response(404, 'Interface not found.')
     @traffic_shaper_ns.response(400, 'Bad request.')
@@ -40,7 +45,7 @@ class TrafficShaper_Configuration(Resource):
         """
         try:
             json_data = json.loads(request.data.decode())
-            trafficShaperController.start_bandwitdh_shaping(json_data)
+            trafficShaperController.update_bandwitdh_shaping(if_name, json_data)
             return Response(status=200)
 
 
